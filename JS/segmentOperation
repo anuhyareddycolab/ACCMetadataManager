@@ -1,0 +1,643 @@
+loadLibrary("meta:common.js");  
+loadLibrary("meta:bestPhoneNumbers.js"); 
+
+
+// ******************************************** Create Segment ***************************************************************************// 
+
+
+    function createSegment(requestBodyObject){
+        if(JSON.stringify(requestBodyObject.data) == '{}'){                                  // validating request payload data
+                  return executeResult(300,"Error in request payload data" ,"Fail");
+           }
+           else{
+              try{
+                var segment= meta.segment.create();                                          // creating segment schema record
+        segment.touchId=requestBodyObject.data.touchId;
+                             segment.segmentName=requestBodyObject.data.segmentName;
+                             segment.save();
+                    
+                    var segmentId= segment.id;
+                    
+                    var responseObject={};
+                    responseObject.methodName=requestBodyObject.methodName;                  // querying segment records after successfull record creation 
+                    var queryData= xtk.queryDef.create(
+                        <queryDef schema="meta:segment" operation="select">
+                          <select>
+                            <node expr="@segmentName"/>
+                            <node expr="@segmentCode"/>
+                          </select>
+                          <where>
+                            <condition expr={" @id='"+segmentId+"'"}/>
+                          </where>
+                        </queryDef>);
+                    var segmentData= queryData.ExecuteQuery();
+                    var responseData={};                                                     // preparing JSON response data for API
+                    responseData.segmentId=segmentId; 
+                    responseData.touchId=requestBodyObject.data.touchId;
+                    
+                    for each(var ada in segmentData){
+                    responseData.segmentName=ada.@segmentName.toString();
+                    responseData.segmentCode=ada.@segmentCode.toString();
+                    }
+                    
+                responseObject.data=responseData;
+                return JSON.stringify(responseObject);
+              }
+              catch(error){              
+                return executeResult(300,"Error in creating segment record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+              }
+           
+           } 
+    }
+    
+    
+// ******************************************** Delete Segment ***************************************************************************// 
+
+
+    function deleteSegment(requestBodyObject)
+    {
+      if(JSON.stringify(requestBodyObject.data) == '{}'){
+                  return executeResult(300,"Error in request payload data" ,"Fail");                             // validating request payload data
+                } 
+                else { 
+                    try{
+                          var queryData= xtk.queryDef.create(
+                                         <queryDef schema="meta:segment" operation="get">
+                                          <select>
+                                            <node expr="@id"/>                                          
+                                          </select>
+                                          <where>
+                                            <condition expr={" @id='"+requestBodyObject.data.segmentId+"'"}/>
+                                          </where>
+                                         </queryDef>);
+                          var segmentData=queryData.ExecuteQuery();
+                          
+                          //@@ check for segmentId in phoneNumberAssignment table
+                          var jobCount= xtk.queryDef.create(
+                                  <queryDef schema="meta:phoneNumberAssignment" operation="get">
+                                    <select>
+                                      <node expr="Count(@id)" alias="@countId"/>
+                                    </select>                                    
+                                    <where>
+                                       <condition expr={"@segmentId ='"+requestBodyObject.data.segmentId+"'"}/>
+                                     </where>                                                                                     
+                                  </queryDef>);
+                                  var sPhoneCount=parseInt(jobCount.ExecuteQuery().@countId); 
+                                      
+                                 if(sPhoneCount > 0){                                  
+                                    if(getSegmentIdFromPhoneNumberAssignmnet (requestBodyObject.data.segmentId)>0){
+                                    var phoneNumberId=getPhoneNumberIdFromSegmentId (requestBodyObject.data.segmentId);
+                                     xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="update" _key="@segmentId" segmentId={requestBodyObject.data.segmentId} isMarkDeleted="1"> </phoneNumberAssignment>);        //mark delete phoneNumber Assignment record first   
+                                    updateReleaseDate(phoneNumberId);
+                                     }
+                                  }
+                                  
+                                  //@@ check for segmentId in segmentAssignment table
+                                    var jobCount= xtk.queryDef.create(
+                                            <queryDef schema="meta:segmentAssignment" operation="get">
+                                              <select>
+                                                <node expr="Count(@id)" alias="@countId"/>
+                                              </select>                                    
+                                              <where>
+                                                 <condition expr={"@segmentId ='"+requestBodyObject.data.segmentId+"'"}/>
+                                               </where>                                                                                     
+                                            </queryDef>);
+                                            var sSACount=parseInt(jobCount.ExecuteQuery().@countId);
+                                     if(sSACount > 0){
+                                      xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@segmentId" segmentId={requestBodyObject.data.segmentId} isMarkDeleted="1"> </segmentAssignment>);        //delete segment assignment record first
+                                    }
+                                    xtk.session.Write(<segment xtkschema="meta:segment" _operation="update" _key="@id" id={requestBodyObject.data.segmentId} isMarkDeleted="1"></segment>);
+                          return executeResult(200,"Request of Id:"+ requestBodyObject.data.segmentId +" deleted successfully.","Success");
+                    }
+                    catch(error){   
+                          return executeResult(300,"Error in deleting segment record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                          }
+             }
+    
+    }
+
+
+
+// ******************************************** Create Segment Assignment***************************************************************************// 
+
+ 
+  function createSegmentAssignment(requestBodyObject)
+    {
+      var xmlToWrite=<segmentAssignment xtkschema="meta:segmentAssignment"/>;                                        // Xml collection
+      if(JSON.stringify(requestBodyObject.data) == '{}'){
+                      return executeResult(300,"Error in request payload data" ,"Fail");                             // validating request payload data
+                    } 
+                    else { 
+                        try{
+            var phoneAssignmentId=0;
+                var campaignId=requestBodyObject.data.campaignId;
+                var touchId=requestBodyObject.data.touchId;
+                var touchStartDate=requestBodyObject.data.touchStartDate;
+                var touchEndDate=requestBodyObject.data.touchEndDate;
+        var createPhoneNumber=requestBodyObject.data.createPhoneNumber;
+                              for(var i=0;i<requestBodyObject.data.segmentsAssignment.length;i++){                          
+                               var segmentId = requestBodyObject.data.segmentsAssignment[i].segmentId;                           
+                               var languageId=requestBodyObject.data.segmentsAssignment[i].segmentLanguageId;                         
+                               var phoneNumberId=requestBodyObject.data.segmentsAssignment[i].segmentPhoneNumberId;
+                               var urlLink=requestBodyObject.data.segmentsAssignment[i].urlLink;  
+                 var urlLinkWithUTM=requestBodyObject.data.segmentsAssignment[i].urlLinkWithUTM; 
+                 var urlLinkVanity=requestBodyObject.data.segmentsAssignment[i].urlLinkVanity; 
+                  if(createPhoneNumber == "1") {               
+                xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId}  languageId={languageId} campaignId={campaignId} touchId={touchId} assignedStartDate={touchStartDate} assignedEndDate={touchEndDate}> </phoneNumberAssignment>);
+                updateReleaseDate(phoneNumberId);
+                 phoneAssignmentId=getPhoneNumberAssignmentId (segmentId);
+          }
+                logInfo("phoneAssignmentId &&&&:"+phoneAssignmentId);
+                  
+                              
+                               xmlToWrite.appendChild(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId} urlLink={urlLink} languageId={languageId} phoneAssignmentId={phoneAssignmentId} urlLinkWithUTM={urlLinkWithUTM} urlLinkVanity={urlLinkVanity}></segmentAssignment>);
+
+                             }                          
+                              xtk.session.WriteCollection(xmlToWrite);
+                              
+                               var responseObject={};
+                               responseObject.methodName=requestBodyObject.methodName;
+                               var metadata={};
+                               metadata.campaignId=requestBodyObject.data.campaignId;
+                               metadata.Message="Segment Assignment requests are created successfully.";
+                               responseObject.data=metadata;
+                               return JSON.stringify(responseObject);
+                              //return executeResult(200,"Segment Assignment requests are created successfully.","Success");
+                        }
+                        catch(error){   
+                              return executeResult(300,"Error in creating segment assignment record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                              }
+                 }
+    
+    }
+    
+    
+// ******************************************** get PhoneNumber AssignmentId***************************************************************************//  
+ function getPhoneNumberAssignmentId (segmentId){
+    var phoneAssignmentId = sqlGetInt("SELECT iPhoneNumberAssignmentId from MetaPhoneNumberAssignment where  iSegmentId="+segmentId+" AND iIsMarkDeleted='0'");
+ return phoneAssignmentId;
+ }
+
+
+
+// ******************************************** Update Segment Assignment***************************************************************************// 
+
+
+  function updateSegmentAssignment(requestBodyObject)
+      {
+        var xmlToWrite=<segmentAssignment xtkschema="meta:segmentAssignment"/>;                                        // Xml collection
+        if(JSON.stringify(requestBodyObject.data) == '{}'){
+                        return executeResult(300,"Error in request payload data" ,"Fail");                             // validating request payload data
+         } 
+         else { 
+              try{
+        var phoneAssignmentId=0;
+        var phoneNumberAssignmentSegmentId=0;
+                var campaignId=requestBodyObject.data.campaignId;
+                var touchId=requestBodyObject.data.touchId;
+                var touchStartDate=requestBodyObject.data.touchStartDate;
+                var touchEndDate=requestBodyObject.data.touchEndDate;
+        var createPhoneNumber=requestBodyObject.data.createPhoneNumber;
+                  for(var i=0;i<requestBodyObject.data.segmentsAssignment.length;i++){                          
+                    var segmentId = requestBodyObject.data.segmentsAssignment[i].segmentId;                           
+                    var languageId=requestBodyObject.data.segmentsAssignment[i].segmentLanguageId;                         
+                    var phoneNumberId=requestBodyObject.data.segmentsAssignment[i].segmentPhoneNumberId;
+                    var urlLink=requestBodyObject.data.segmentsAssignment[i].urlLink;
+                    var segmentAssignmentId=requestBodyObject.data.segmentsAssignment[i].segmentAssignmentId; 
+                    var urlLinkWithUTM=requestBodyObject.data.segmentsAssignment[i].urlLinkWithUTM; 
+          var urlLinkVanity=requestBodyObject.data.segmentsAssignment[i].urlLinkVanity; 
+          phoneNumberAssignmentSegmentId=getSegmentIdFromPhoneNumberAssignmnet (segmentId);
+              //if segment assignment alraedy avaialble       
+                    if(segmentAssignmentId != "new"){  
+                     //if segment assignment alraedy avaialble  with phone assignment, update release date of old phone number and new phone number
+            var oldPhoneNumberId=getPhoneNumberIdFromSegmentId (segmentId); 
+            var oldPhoneAssignmentId=getPhoneNumberAssignmentId (segmentId);
+            logInfo("oldPhoneNumberId &&&"+oldPhoneNumberId + " phoneNumberId:"+phoneNumberId +" phoneNumberAssignmentSegmentId: "+phoneNumberAssignmentSegmentId +" segmentId: "+segmentId+" oldPhoneAssignmentId: "+oldPhoneAssignmentId)
+            if(createPhoneNumber == "1" && phoneNumberAssignmentSegmentId > 0 && oldPhoneNumberId !=phoneNumberId ) { 
+            
+       //mark delete existing assignmnet
+           xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="update" _key="@id" id={oldPhoneAssignmentId} isMarkDeleted="1"> </phoneNumberAssignment>);
+       // Update old phone number release date
+           updateReleaseDate(oldPhoneNumberId);
+                   
+          // Craete new phone assignment
+      xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId}  languageId={languageId} campaignId={campaignId} touchId={touchId} assignedStartDate={touchStartDate} assignedEndDate={touchEndDate}> </phoneNumberAssignment>);
+                     // Update new phone number release date
+          updateReleaseDate(phoneNumberId);
+                   phoneAssignmentId=getPhoneNumberAssignmentId (segmentId);
+           logInfo("updated phoneAssignmentId &&&"+phoneAssignmentId);
+            }
+            //if segment assignment alraedy avaialble and enabled phone selection from no to yes 
+          
+        
+      if (createPhoneNumber == "1" && phoneNumberAssignmentSegmentId < 1) {
+        
+         xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId}  languageId={languageId} campaignId={campaignId} touchId={touchId} assignedStartDate={touchStartDate} assignedEndDate={touchEndDate}> </phoneNumberAssignment>);
+                  updateReleaseDate(phoneNumberId);
+                   phoneAssignmentId=getPhoneNumberAssignmentId (segmentId);
+            }
+      
+                  logInfo("phoneAssignmentId &&&&:"+phoneAssignmentId);
+                        xmlToWrite.appendChild(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@id" id={segmentAssignmentId}  segmentId={segmentId}   phoneNumberId={phoneNumberId} urlLink={urlLink} languageId={languageId} phoneAssignmentId={phoneAssignmentId} urlLinkWithUTM={urlLinkWithUTM} urlLinkVanity={urlLinkVanity}> </segmentAssignment>);
+                       }
+               //if segment assignment no to yes chnaged         
+                    else{
+                    // and enabled phone selection  
+          if(createPhoneNumber == "1") {  
+            xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId}  languageId={languageId} campaignId={campaignId} touchId={touchId} assignedStartDate={touchStartDate} assignedEndDate={touchEndDate}> </phoneNumberAssignment>);
+                  updateReleaseDate(phoneNumberId);
+                   phoneAssignmentId=getPhoneNumberAssignmentId (segmentId);
+          }
+                        xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="insert"  segmentId={segmentId}   phoneNumberId={phoneNumberId} urlLink={urlLink} languageId={languageId} phoneAssignmentId={phoneAssignmentId} urlLinkWithUTM={urlLinkWithUTM} urlLinkVanity={urlLinkVanity} > </segmentAssignment>);
+                    }
+          
+                    }                          
+                    xtk.session.WriteCollection(xmlToWrite);
+                               var responseObject={};
+                               responseObject.methodName=requestBodyObject.methodName;
+                               var metadata={};
+                               metadata.campaignId=requestBodyObject.data.campaignId;
+                               metadata.Message="Segment Assignment requests are updated successfully.";
+                               responseObject.data=metadata;
+                               return JSON.stringify(responseObject);
+                    
+                    
+                    //return executeResult(200,"Segment Assignment requests are updated successfully.","Success");
+               }
+               catch(error){   
+                    return executeResult(300,"Error in updating segment assignment record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+               }
+         }
+      
+       }
+       
+       
+       
+       
+// ******************************************** Get Phone Number***************************************************************************//    
+
+      function getPhoneNumber(requestBodyObject){
+          if(JSON.stringify(requestBodyObject.data) == '{}'){
+                        return executeResult(300,"Error in request payload data" ,"Fail");                             // validating request payload data
+         } 
+         else { 
+              try{ 
+              //logInfo("brandId ^^^^"+requestBodyObject.data.brandId);               
+                  var phoneNumberObject={};
+                  var phoneQuery = xtk.queryDef.create(
+                              <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                                <select>
+                                  <node expr="@id"/>
+                                  <node expr="@phoneNumber"/>
+                                </select>
+                                  <where>
+                                     <condition expr={"@brandId='"+requestBodyObject.data.brandId+"'"}/>
+                                   </where>
+                              </queryDef>);
+                  var phoneQueryData=phoneQuery.ExecuteQuery(); 
+                  
+                  phoneNumberObject.methodName="getPhoneDetails"
+                  var data=[];
+                  for each(var ada in phoneQueryData){
+                    var phonedata={};
+          var phoneNumberId=ada.@id.toString();
+                    phonedata.PhoneId =ada.@id.toString();
+                    phonedata.PhoneNumber=ada.@phoneNumber.toString();
+           phonedata.brandName=getMetaName(phoneNumberId,'iBrandId','MetaBrand'); 
+           //logInfo("brandName ^^^^"+getMetaName(phoneNumberId,'iBrandId','MetaBrand'));                      
+                            phonedata.lobName=getMetaName(phoneNumberId,'ilobId','MetaLineOfBusiness');
+                            phonedata.languageName=getMetaName(phoneNumberId,'iLanguageId','MetaLanguage'); 
+              phonedata.initiativeName=getMetaName(phoneNumberId,'iinitiativeId','MetaInitiative');
+              phonedata.channelName=getMetaName(phoneNumberId,'iChannelId','MetaChannel');
+                    data.push(phonedata);
+                  } 
+                  phoneNumberObject.data= data;      
+                
+             return JSON.stringify(phoneNumberObject); 
+             }
+             catch(error){   
+                    return executeResult(300,"Error in reading phone number details- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+             }
+     }
+      }   
+      
+// ******************************************** Update Url Status***************************************************************************//   
+
+    function updateUrlStatus(requestBodyObject){
+  
+       if(JSON.stringify(requestBodyObject.data) == '{}'){
+                      return executeResult(300,"Error in request payload data" ,"Fail");
+                    }
+                    else{
+                          try{
+                          xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@id" id={requestBodyObject.data.segmentAssignmnetId} ctaUrlAssignmentStatus={requestBodyObject.data.urlStatus}> </segmentAssignment>);
+                          
+                           //@@ querying touch data
+                           var queryData= xtk.queryDef.create(
+                              <queryDef schema="meta:touch" operation="select">
+                                <select>
+                                  <node expr="@campaignId"/> 
+                                  <node expr="@havePhoneAssignments"/>  
+                                  <node expr="@haveUrlAssignments"/>
+                                  <node expr="@touchName"/>
+                                  <node expr="[campaign/@campaignName]" alias="@campaignName"/>   
+                                  <node expr="[campaign/initiative/@name]" alias="@initiativeName"/>                                                                                       
+                                </select>                                                      
+                                <where>                                                          
+                                  <condition expr={"@id = '"+requestBodyObject.data.touchId+"'"}/>                            
+                                </where>                             
+                               </queryDef>);
+                           
+                           var touchData=queryData.ExecuteQuery(); 
+                           var initiativeName=touchData.touch.@initiativeName.toString();
+                           var campaignName=touchData.touch.@campaignName.toString();
+                           var touchName=touchData.touch.@touchName.toString();
+                           var campaignId=touchData.touch.@campaignId.toString();
+                           var currentDate=formatDate(new Date(),"%4Y-%2M-%2D %02H:%02N:%02S");
+                           var requestSubmitter=getOperator();
+                           var havePhone=touchData.touch.@havePhoneAssignments.toString(); 
+                           var haveUrl=touchData.touch.@haveUrlAssignments.toString();
+                          
+                            if(requestBodyObject.data.urlStatus == 'Approved'){ 
+                              updateRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Reviewer","Notification","0","","Url details approved","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Url details approved",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","url");
+                              createRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Manager","Notification","0","","Url details approved","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Url details approved",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","url");
+                            
+                            }
+                            if(requestBodyObject.data.urlStatus == 'Needs Review'){                              
+                               updateRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Reviewer","Warning","1","Review","Url details to review","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Url details marked for further review,use suggest alternate url to update url details.",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","url");
+                               createRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Manager","Notification","0","","Url details approved","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Url details approved",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","url");
+                            }
+                            
+                            //@@ getting segmentdetails based on touchId                           
+                              var segmentIdArray= getSegmentInformation(requestBodyObject.data.touchId); 
+                              var count=0;
+                                for(var i=0;i<segmentIdArray.length;i++){                               
+                                
+                                    var queryData= xtk.queryDef.create(
+                                      <queryDef schema="meta:segmentAssignment" operation="select">
+                                        <select>
+                                          <node expr="@phoneAssigmentStatus"/> 
+                                          <node expr="@ctaUrlAssignmentStatus"/>                                                                                                                           
+                                        </select>                                                      
+                                        <where>                                                          
+                                          <condition expr={"@segmentId = '"+segmentIdArray[i]+"'"}/>                            
+                                        </where>                             
+                                       </queryDef>); 
+                                                                 
+                                    var segmentAssignmentData=queryData.ExecuteQuery(); 
+                                    var phoneStatus=segmentAssignmentData.segmentAssignment.@phoneAssigmentStatus.toString();                                   
+                                    var urlStatus=segmentAssignmentData.segmentAssignment.@ctaUrlAssignmentStatus.toString();
+                                   
+                                    if(havePhone == "1" && haveUrl == "0"){
+                                      if(phoneStatus == 'Approved' && urlStatus != 'Approved'){                                 
+                                        count=count+1; 
+                                        logInfo("count:"+count);               
+                                      }
+                                      if(phoneStatus != 'Approved' && urlStatus != 'Approved'){                                                                            
+                                       break; 
+                                       }                                  
+                                    }
+                                    else if(havePhone == "0" && haveUrl == "1"){
+                                      if(phoneStatus != 'Approved' && urlStatus == 'Approved'){                                 
+                                        count=count+1;                
+                                      }
+                                      if(phoneStatus != 'Approved' && urlStatus != 'Approved'){                                                                             
+                                        break;                                
+                                      }
+                                     }
+                                     else if(havePhone == "1" && haveUrl == "1"){
+                                      if(phoneStatus == 'Approved' && urlStatus == 'Approved'){                                 
+                                        count=count+1;                
+                                      }
+                                      if(phoneStatus != 'Approved' || urlStatus != 'Approved'){                                                                              
+                                        break;                                
+                                      }                                     
+                                     }
+                                    if(count == segmentIdArray.length){
+                                       updateRequestNotification("",campaignId,"Campaign Reviewer","Notification","1","Approve","Review touch","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+" other approvals given, please review touch & approve.",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","touch");                                   
+                                    }
+                                }
+                            
+                            
+                           
+                        
+                      
+                         
+                          return executeResult(200,"segmentAssignment url status of Id:"+ requestBodyObject.data.segmentAssignmnetId +" updated successfully.","Success"); 
+                          }
+                          catch(error){
+                            return executeResult(300,"Error in updating segment assignmnet record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                          }
+      }
+    
+    } 
+
+
+
+// ******************************************** Update Phone Status***************************************************************************//  
+
+
+    function updatePhoneStatus(requestBodyObject){
+  
+       if(JSON.stringify(requestBodyObject.data) == '{}'){
+                      return executeResult(300,"Error in request payload data" ,"Fail");
+                    }
+                    else{
+                          try{
+                          
+                          //@@ querying touch data
+                           var queryData= xtk.queryDef.create(
+                              <queryDef schema="meta:touch" operation="select">
+                                <select>
+                                  <node expr="@campaignId"/> 
+                                  <node expr="@havePhoneAssignments"/>  
+                                  <node expr="@haveUrlAssignments"/>
+                                  <node expr="@touchName"/>
+                                  <node expr="[campaign/@campaignName]" alias="@campaignName"/>   
+                                  <node expr="[campaign/initiative/@name]" alias="@initiativeName"/>                                                                                       
+                                </select>                                                      
+                                <where>                                                          
+                                  <condition expr={"@id = '"+requestBodyObject.data.touchId+"'"}/>                            
+                                </where>                             
+                               </queryDef>);
+                             
+                             //@@ setting data to a variable
+                             var touchData=queryData.ExecuteQuery(); 
+                             var initiativeName=touchData.touch.@initiativeName.toString();
+                             var campaignName=touchData.touch.@campaignName.toString();
+                             var touchName=touchData.touch.@touchName.toString();
+                             var campaignId=touchData.touch.@campaignId.toString();
+                             var currentDate=formatDate(new Date(),"%4Y-%2M-%2D %02H:%02N:%02S");
+                             var requestSubmitter=getOperator();
+                             var phoneNumberAssignmentId=getSegmentAssignmentData(requestBodyObject.data.segmentId,1,0);
+                             var havePhone=touchData.touch.@havePhoneAssignments.toString(); 
+                             var haveUrl=touchData.touch.@haveUrlAssignments.toString();
+                           
+                          
+                          
+                             //@@ updating phoneStatus in segmentAssignment table
+                             xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@id" id={requestBodyObject.data.segmentAssignmnetId} phoneAssigmentStatus={requestBodyObject.data.phoneStatus}> </segmentAssignment>);
+                         
+                             //@@ getting phoneAssignmentId of requesting segmentId
+                             var phoneAssignmentId=getPhoneNumberAssignmentId (requestBodyObject.data.segmentId);
+                             
+                             //@@ updating status in phoneNumberAssignment table
+                             xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="update" _key="@id" id={phoneAssignmentId} status={requestBodyObject.data.phoneStatus}> </phoneNumberAssignment>);
+                         
+                             //@@ checking requesting phone status
+                             if(requestBodyObject.data.phoneStatus == 'Approved'){ 
+                                
+                                //@@ updating phoneNumberLibrary table for the requesting phoneNumberId only if status is approved                       
+                                xtk.session.Write(<phoneNumberLibrary xtkschema="meta:phoneNumberLibrary" _operation="update" _key="@id" id={requestBodyObject.data.phoneNumberId} initiativeId={requestBodyObject.data.initiativeId} lobId={requestBodyObject.data.lobId} brandId={requestBodyObject.data.brandId} channelId={requestBodyObject.data.channelId} languageId={requestBodyObject.data.languageId}  > </phoneNumberLibrary>);
+                             
+                                //@@ create one notification to Campaign Manager stating Phone assignment approved
+                                createRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Manager","Notification","0","","Phone assignment approved","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Phone assignment approved",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","");
+                                
+                                //@@ Sent one update notification to Phone Manager stating phone assignment approved
+                                updateRequestNotification(requestBodyObject.data.segmentId,campaignId,"Phone Manager","Notification","0","","Phone assignment approved","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Phone assignment approved",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,phoneNumberAssignmentId,"close","phone");                                   
+                            
+                             }
+                             
+                             //@@ checking requesting phone status
+                             if(requestBodyObject.data.phoneStatus == 'Needs Review'){                            
+                                
+                                //@@ create one notification to Campaign Manager stating Phone assignment under review
+                                createRequestNotification(requestBodyObject.data.segmentId,campaignId,"Campaign Manager","Notification","0","","Phone assignment under review","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Phone assignment marked for further review, reach out to phone manager offline.",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","");
+                                
+                                //@@ Sent one update notification to Phone Manager stating phone assignment to review
+                                updateRequestNotification(requestBodyObject.data.segmentId,campaignId,"Phone Manager","Warning","1","Review","Phone assignment to review","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Phone assignment marked for further review, use suggest alternate to assign other phone number",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,phoneNumberAssignmentId,"open","phone");                                   
+                             }
+                            
+                              //@@ getting segmentdetails based on touchId                           
+                              var segmentIdArray= getSegmentInformation(requestBodyObject.data.touchId); 
+                              var count=0;
+                                for(var i=0;i<segmentIdArray.length;i++){                               
+                                
+                                    var queryData= xtk.queryDef.create(
+                                      <queryDef schema="meta:segmentAssignment" operation="select">
+                                        <select>
+                                          <node expr="@phoneAssigmentStatus"/> 
+                                          <node expr="@ctaUrlAssignmentStatus"/>                                                                                                                           
+                                        </select>                                                      
+                                        <where>                                                          
+                                          <condition expr={"@segmentId = '"+segmentIdArray[i]+"'"}/>                            
+                                        </where>                             
+                                       </queryDef>); 
+                                                                 
+                                    var segmentAssignmentData=queryData.ExecuteQuery(); 
+                                    var phoneStatus=segmentAssignmentData.segmentAssignment.@phoneAssigmentStatus.toString();                                   
+                                    var urlStatus=segmentAssignmentData.segmentAssignment.@ctaUrlAssignmentStatus.toString();
+                                   
+                                    if(havePhone == "1" && haveUrl == "0"){
+                                      if(phoneStatus == 'Approved' && urlStatus != 'Approved'){                                 
+                                        count=count+1; 
+                                        logInfo("count:"+count);               
+                                      }
+                                      if(phoneStatus != 'Approved' && urlStatus != 'Approved'){                                                                            
+                                       break; 
+                                       }                                  
+                                    }
+                                    else if(havePhone == "0" && haveUrl == "1"){
+                                      if(phoneStatus != 'Approved' && urlStatus == 'Approved'){                                 
+                                        count=count+1;                
+                                      }
+                                      if(phoneStatus != 'Approved' && urlStatus != 'Approved'){                                                                             
+                                        break;                                
+                                      }
+                                     }
+                                     else if(havePhone == "1" && haveUrl == "1"){
+                                      if(phoneStatus == 'Approved' && urlStatus == 'Approved'){                                 
+                                        count=count+1;                
+                                      }
+                                      if(phoneStatus != 'Approved' || urlStatus != 'Approved'){                                                                              
+                                        break;                                
+                                      }                                     
+                                     }
+                                    if(count == segmentIdArray.length){
+                                       updateRequestNotification("",campaignId,"Campaign Reviewer","Notification","1","Approve","Review touch","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+" other approvals given, please review touch & approve.",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","touch");                                   
+                                    }
+                                }
+                             
+                          
+                          
+                          
+                          return executeResult(200,"segmentAssignment phone status of Id:"+ requestBodyObject.data.segmentAssignmnetId +" updated successfully.","Success"); 
+                          }
+                          catch(error){
+                            return executeResult(300,"Error in updating segment assignmnet record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                          }
+      }
+    
+    } 
+    
+ // ******************************************** Suggest Alternate Phone***************************************************************************//   
+ 
+  
+    function suggestAlternatePhone(requestBodyObject){
+      
+           if(JSON.stringify(requestBodyObject.data) == '{}'){
+                          return executeResult(300,"Error in request payload data" ,"Fail");
+                        }
+                        else{
+                              try{
+                              
+                                //@@ get oldPhoneNumberId based on segment Id 
+                                var oldPhoneNumberId=getPhoneNumberIdFromSegmentId(requestBodyObject.data.segmentId); 
+                                logMessage(oldPhoneNumberId,debugFlag);
+                                 var oldPhoneAssignmentId=getPhoneNumberAssignmentId (requestBodyObject.data.segmentId);
+                                 logMessage(oldPhoneAssignmentId,debugFlag);
+                                
+                                //@@ mark delete the existing oldPhonenumberId in phoneNumberAssignment schema
+                                xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="update" _key="@id" id={oldPhoneAssignmentId} isMarkDeleted="1"> </phoneNumberAssignment>);
+                               
+                                //@@ update relaseDate to freeing the oldPhoneNumberId
+                                updateReleaseDate(oldPhoneNumberId);
+                                
+                                //@@ create a new record in phone assignment with new phonenumberId                          
+                                var phoneNumberAssignment= meta.phoneNumberAssignment.create();                                         
+                                    phoneNumberAssignment.segmentId=requestBodyObject.data.segmentId;
+                                    phoneNumberAssignment.phoneNumberId=requestBodyObject.data.phoneNumberId;
+                                    phoneNumberAssignment.languageId=requestBodyObject.data.languageId;
+                                    phoneNumberAssignment.campaignId=requestBodyObject.data.campaignId;
+                                    phoneNumberAssignment.touchId=requestBodyObject.data.touchId;
+                                    phoneNumberAssignment.assignedStartDate=requestBodyObject.data.assignedStartDate;
+                                    phoneNumberAssignment.assignedEndDate=requestBodyObject.data.assignedEndDate;                              
+                                    phoneNumberAssignment.save();                    
+                                var phoneNumberAssignmentId= phoneNumberAssignment.id;
+                                
+                                //@@ update releaseDate for new phoneNumberId to make availble for assigned touch
+                                updateReleaseDate(requestBodyObject.data.phoneNumberId);
+                                 
+                                //@@  update new phone number assignment record details in segment assignment
+                                xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@segmentId" segmentId={requestBodyObject.data.segmentId} phoneNumberId={requestBodyObject.data.phoneNumberId} phoneAssignmentId={phoneNumberAssignmentId}> </segmentAssignment>);                          
+                                                            
+                              return executeResult(200,"New alternate phone number of segment assignment Id:"+ requestBodyObject.data.segmentAssignmentId +" updated successfully.","Success"); 
+                              }
+                              catch(error){
+                                return executeResult(300,"Error in updating alternate phone number - "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                              }
+          }
+        
+        }   
+        
+        
+ // ******************************************** Suggest Alternate Url***************************************************************************//   
+         
+         
+     function suggestAlternateUrl(requestBodyObject){
+      
+           if(JSON.stringify(requestBodyObject.data) == '{}'){
+                          return executeResult(300,"Error in request payload data" ,"Fail");
+                        }
+                        else{
+                              try{
+                              xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update" _key="@id" id={requestBodyObject.data.segmentAssignmentId} urlLink={requestBodyObject.data.urlLink} urlLinkWithUTM={requestBodyObject.data.urlLinkWithUTM} urlLinkVanity={requestBodyObject.data.urlLinkVanity}> </segmentAssignment>);
+                              return executeResult(200,"segmentAssignment url of Id:"+ requestBodyObject.data.segmentAssignmentId +" updated successfully.","Success"); 
+                              }
+                              catch(error){
+                                return executeResult(300,"Error in updating segment assignmnet url- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                              }
+          }
+        
+        } 
+        

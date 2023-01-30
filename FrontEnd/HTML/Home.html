@@ -1,0 +1,209 @@
+<% loadLibrary("meta:common_Back.js"); if( validateSession(response,request))
+return; %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Emblem Health</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap.min.css"
+    crossorigin="anonymous" />
+
+    <!-- Bootstrap JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>jquery-3.5.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Header.css" /> <link
+    rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Style.css" />
+    <script type="text/javascript">
+      $(document).ready(function () {
+        var admin = $("#applicationAdministrator").val();
+        //alert(admin);
+        if (admin == "true") {
+          $("#manage-list").css("display", "block");
+          $("#adminMessage").css("display", "none");
+        } else {
+          $("#manage-list").css("display", "none");
+          $("#adminMessage").css("display", "block");
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <header class="header">
+      <%try{document.write(header(request));} catch (err) { return false;}%>
+      <!-- <div class="col-12">
+        <div class="row headerDiv">
+          <div class="col-lg-3 col-md-3 col-sm-4">
+            <img src="<%=getOption("metaLogoURL")%>" class="img-fluid
+            center-home" alt="Logo" />
+            <div class="logoText-home"><%=getOption("metaLogoURLText")%></div>
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-4"></div>
+          <div class="col-lg-4 col-md-4 col-sm-4">
+            <input class="menu-btn" type="checkbox" id="menu-btn" />
+            <label class="menu-icon" for="menu-btn"
+              ><span class="navicon"></span
+            ></label>
+            <a href="#" id="mobileNotification" class="notification">
+              <img
+              src="<%=getOption("metaResourceDirectoryDefault")%>icon-notifications-alert-grey-20.png"
+              width="28" style="width: 28px;" />
+              <span class="badge">3</span>
+            </a>
+            <ul class="menu">
+              <a id="desktopNotification" href="#" class="notification">
+                <img
+                src="<%=getOption("metaResourceDirectoryDefault")%>icon-notifications-alert-grey-20.png"
+                width="28" style="width: 28px;" />
+                <span class="badge">3</span>
+              </a>
+              <li>
+                <span class="bar"></span>
+                <a href="#about"
+                  ><img class="userIcon"
+                  src="<%=getOption("metaResourceDirectoryDefault")%>icon-account-grey-20.png"
+                  />&nbsp;&nbsp;yash@merkleinc.com</a
+                ><span class="bar"></span>
+              </li>
+              <li><a href="#careers">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      -->
+    </header>
+    <main>
+      <div class="container-fluid mainDiv">
+        <h5 class="name"><b>Welcome Stephanie,</b></h5>
+        <p>Select an option below to get started</p>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-12 card-spacing">
+            <div class="card card-position">
+              <div class="card-body card-body-margin-top">
+                <h4 class="headline">
+                  Create a <br />
+                  New Campaign
+                </h4>
+                <p class="bodyText">
+                  Get started with a new program or <br />
+                  campaign. Add touches and metadata directly to your campaign,
+                  all in one place.
+                </p>
+              </div>
+              <div class="card-footer text-muted">
+                <button type="button" class="btn btn-warning">
+                  Create a Campaign
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 card-spacing">
+            <div class="card card-position">
+              <div class="card-body card-body-margin-top">
+                <h4 class="headline">
+                  Find and Manage an<br />
+                  Existing Campaign
+                </h4>
+                <p class="bodyText">
+                  Search campaign metadata and manage <br />
+                  an existing campaign.
+                </p>
+              </div>
+              <div class="card-footer text-muted">
+                <a href="#" class="btn btn-warning"
+                  >Find an Existing Campaign</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 card-spacing">
+            <div class="card card-position">
+              <div class="card-body card-body-margin-top">
+                <h4 class="headline">
+                  Manage <br />
+                  Phone Numbers
+                </h4>
+                <p class="bodyText">
+                  Manage or view existing phone numbers.<br />
+                  View existing phone number activity and submit a request for a
+                  phone number.
+                </p>
+              </div>
+              <div class="card-footer text-muted">
+                <a href="#" class="btn btn-warning">Manage Phone Numbers</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input
+        type="hidden"
+        id="applicationAdministrator"
+        name="ApplicationAdministrator"
+        value="false"
+      />
+      <div class="container-fluid manage-list">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12" id="adminMessage">
+            <%=getOption('metaValidateAccessMangelists')%>
+          </div>
+          <div
+            class="col-lg-12 col-md-12 col-sm-12 card-spacing"
+            id="manage-list"
+          >
+            <div class="card card-position">
+              <div class="card-body manage-list-body-adminOnly">
+                <div class="row">
+                  <div class="col-lg-11 col-md-11 col-sm-12"></div>
+                  <div class="col-lg-1 col-md-1 col-sm-12 no-padding">
+                    <div class="mode">Admin Only</div>
+                  </div>
+                </div>
+                <div class="row manage-list-body">
+                  <div class="col-lg-9 col-md-9 col-sm-12">
+                    <h5><b>Manage Lists</b></h5>
+                    <p>
+                      Manage available campaign metadata lists. Add or archive
+                      metadata lists to keep the <br />
+                      campaign creation experince as simple and seamless as
+                      possible.
+                    </p>
+                  </div>
+                  <div
+                    class="col-lg-3 col-md-3 col-sm-12 vertical-middle-Managebutton"
+                  >
+                    <a href="#" class="btn btn-outline-secondary"
+                      >Manage Metadata Lists</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+
+    <script src="<%=getOption('metaResourceDirectoryDefault')%>Index.js"></script>
+  </body>
+</html>

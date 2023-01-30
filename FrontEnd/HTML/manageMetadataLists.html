@@ -1,0 +1,1403 @@
+<%
+loadLibrary("meta:common_Back.js");
+if( validateSession(response,request))
+  return;
+%>
+<!doctype html>
+<html lang="en">
+    <head>
+	<link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Emblem Health</title>
+	<link rel="stylesheet" href="<%=getOption("metaResourceDirectoryDefault")%>manageMetadataLists.css"/>
+      <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap.min.css"
+    crossorigin="anonymous" />
+
+    <!-- Bootstrap JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>jquery-3.5.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+	  <!-- Custom CSS -->
+	    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Header.css" />
+
+     <style>
+        #loader {
+            border: 12px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 12px solid #444444;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .center {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+    </style>
+	<script>
+        document.onreadystatechange = function() {
+
+            if (document.readyState !== "complete") {
+                document.querySelector(
+                  "main").style.display = "none";
+				  document.querySelector(
+                  "header").style.display = "none";
+                document.querySelector(
+                  "#loader").style.display = "block";
+            } else {
+                document.querySelector(
+                  "#loader").style.display = "none";
+				  document.querySelector(
+                  "header").style.display = "block";
+                document.querySelector(
+                  "main").style.display = "block";
+				  var admin = $("#applicationAdministrator").val();
+
+				if (admin == "true") {
+				  $("main").css("display", "block");
+				  $("#adminMessage").css("display", "none");
+				} else {
+				  $("main").css("display", "none");
+				  $("#adminMessage").css("display", "block");
+				}
+            }
+        };
+    </script>
+
+    </head>
+    <body><div id="loader" class="center"></div>
+	 <header > <%try{document.write(header(request));} catch (err) { return false;}%></header>
+	<input
+        type="hidden"
+        id="applicationAdministrator"
+        name="ApplicationAdministrator"
+        value="true"
+      />
+
+		<div class="col-lg-12 col-md-12 col-sm-12" id="adminMessage" style="display:none;">
+			<%=getOption('metaValidateAccessMangelists')%>
+        </div>
+
+        <main style="display:none;>
+
+            <div class="container-fluid main-container">
+                <div class="pageInfo">
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="manage">Manage Metadata Lists</h4>
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <div class="mode">Admin Only</div>
+                        </div>
+                    </div>
+                    <div class="row descriptionRow">
+                        <div class="col-sm-5 pageDescription">
+                            Manage available campaign metadata lists. Add, archive, and restore metadata and drag items up or down to reorder lists to keep the campaign creation experience as simple and seamless as possible.
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group searchListsGroup mr-4">
+                                <input class="form-control py-2" type="search" placeholder="Search Lists" id="searchLists" aria-label="Search Lists">
+                                <span class="input-group-append">
+                                    <button class="searchButton" type="button">
+                                        <img class="searchIcon" src="<%=getOption('metaResourceDirectoryDefault')%>search-icon.PNG" />
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="listsWrapperCard" class="card listsWrapperCard">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div class="card listCard">
+                                <div class="card-header">
+                                    Initiatives
+                                    <button class="saveMetaChanges btn-primary" id="saveInitiativeChanges">Save Changes</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="initiative"></ul>
+                            </div>
+                            <div class="row">
+                                <button class="addListsButton mt-3 mb-4" id="addInitiative" type="button" data-toggle="modal" data-target="#initiativeModal">Add an Initiative +</button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card listCard">
+                                <div class="card-header">
+                                    Channels
+                                    <button class="saveMetaChanges btn-primary" id="saveChannelChanges">Save Changes</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="channel"></ul>
+                            </div>
+                            <div class="row">
+                                <button class="addListsButton mt-3 mb-4" id="addChannel" data-toggle="modal" data-target="#channelModal">Add a Channel +</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div class="card listCard">
+                                <div class="card-header">
+                                    Language
+                                    <button class="saveMetaChanges btn-primary" id="saveLanguageChanges">Save Changes</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="language"></ul>
+                            </div>
+                            <div class="row">
+                                <button class="addListsButton mt-3 mb-4" id="addLanguage" data-toggle="modal" data-target="#languageModal">Add a Language +</button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card listCard">
+                                <div class="card-header">
+                                    Line of Business
+                                    <button class="saveMetaChanges btn-primary" id="saveBusinessChanges">Save Changes</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="lineOfBusiness"></ul>
+                            </div>
+                            <div class="row">
+                                <button class="addListsButton mt-3 mb-4" id="addLoB" data-toggle="modal" data-target="#lineOfBusinessModal">Add a Line of Business +</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="card listCard">
+                                <div class="card-header">
+                                    Brands
+                                    <button class="saveMetaChanges btn-primary" id="saveBrandChanges">Save Changes</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="brand"></ul>
+                            </div>
+                            <div class="row">
+                                <button class="addListsButton mt-3 mb-4" id="addBrand" data-toggle="modal" data-target="#brandModal">Add a Brand +</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade createItemModal" id="initiativeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog createItemModalModalDialog" role="document">
+                  <div class="modal-content">
+                    <div class="closeModalWrapper mb-2">
+                        <button type="button" class="closeModal plainButton" data-dismiss="modal"><img class="closeModalIcon mr-2" src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"/>Manage Metadata Lists</button>
+                    </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title createItemModalTitle" id="initiativeModalTitle">Create a New Initiative</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form class="createItemModalForm" id="newInitiativeForm">
+                            <div class="form-group">
+                                <input class="form-control py-2 createItemModalInput" type="text" placeholder="Initiative Name*" id="newInitiativeInput" aria-label="Enter Initiative Name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control py-2 createItemModalInput" type="text" placeholder="Description (Optional)" id="newInitiativeDescriptionInput" aria-label="Description (Optional)"></textarea>
+                            </div>
+                            <span class="saveButtonSpan">
+                                <button class="saveButton emblemButton btn-primary createItemModalSaveItem" type="button" id="saveInitiative">Add Initiative</button>
+                            </span>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade createItemModal" id="channelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog createItemModalModalDialog" role="document">
+                  <div class="modal-content">
+                    <div class="closeModalWrapper mb-2">
+                        <button type="button" class="closeModal plainButton" data-dismiss="modal"><img class="closeModalIcon mr-2" src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"/>Manage Metadata Lists</button>
+                    </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title createItemModalTitle" id="channelModalTitle">Create a New Channel</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form class="createItemModalForm" id="newChannelForm">
+                            <div class="form-group">
+                                <input class="form-control py-2 createItemModalInput" type="text" placeholder="Channel Name*" id="newChannelInput" aria-label="Enter Initiative Name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control py-2 createItemModalInput" type="text" placeholder="Description (Optional)" id="newChannelDescriptionInput" aria-label="Description (Optional)"></textarea>
+                            </div>
+                            <span class="saveButtonSpan">
+                                <button class="saveButton emblemButton btn-primary createItemModalSaveItem" type="button" id="saveChannel">Add Channel</button>
+                            </span>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade createItemModal" id="languageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog createItemModalModalDialog" role="document">
+                  <div class="modal-content">
+                    <div class="closeModalWrapper mb-2">
+                        <button type="button" class="closeModal plainButton" data-dismiss="modal"><img class="closeModalIcon mr-2" src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"/>Manage Metadata Lists</button>
+                    </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title createItemModalTitle" id="languageModalTitle">Create a New Language</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form class="createItemModalForm" id="newLanguageForm">
+                            <div class="form-group">
+                                <input class="form-control py-2 createItemModalInput" type="text" placeholder="Language Name*" id="newLanguageInput" aria-label="Enter Initiative Name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control py-2 createItemModalInput" type="text" placeholder="Description (Optional)" id="newLanguageDescriptionInput" aria-label="Description (Optional)"></textarea>
+                            </div>
+                            <span class="saveButtonSpan">
+                                <button class="saveButton emblemButton btn-primary createItemModalSaveItem" type="button" id="saveLanguage">Add Language</button>
+                            </span>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade createItemModal" id="lineOfBusinessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog createItemModalModalDialog" role="document">
+                  <div class="modal-content">
+                    <div class="closeModalWrapper mb-2">
+                        <button type="button" class="closeModal plainButton" data-dismiss="modal"><img class="closeModalIcon mr-2" src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"/>Manage Metadata Lists</button>
+                    </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title createItemModalTitle" id="lineOfBusinessModalTitle">Create a New Line of Business</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form class="createItemModalForm" id="newLineOfBusinessForm">
+                            <div class="form-group">
+                                <input class="form-control py-2 createItemModalInput" type="text" placeholder="Line of Business Name*" id="newLineOfBusinessInput" aria-label="Enter Initiative Name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control py-2 createItemModalInput" type="text" placeholder="Description (Optional)" id="newLineOfBusinessDescriptionInput" aria-label="Description (Optional)"></textarea>
+                            </div>
+                            <span class="saveButtonSpan">
+                                <button class="saveButton emblemButton btn-primary createItemModalSaveItem" type="button" id="saveLineOfBusiness">Add Line of Business</button>
+                            </span>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="modal fade createItemModal" id="brandModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog createItemModalModalDialog" role="document">
+                  <div class="modal-content">
+                    <div class="closeModalWrapper mb-2">
+                        <button type="button" class="closeModal plainButton" data-dismiss="modal"><img class="closeModalIcon mr-2" src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"/>Manage Metadata Lists</button>
+                    </div>
+                    <div class="modal-header">
+                        <h1 class="modal-title createItemModalTitle" id="brandModalTitle">Create a New Brand</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form class="createItemModalForm" id="newBrandForm">
+                            <div class="form-group">
+                                <input class="form-control py-2 createItemModalInput" type="text" placeholder="Brand Name*" id="newBrandInput" aria-label="Enter Initiative Name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control py-2 createItemModalInput" type="text" placeholder="Description (Optional)" id="newBrandDescriptionInput" aria-label="Description (Optional)"></textarea>
+                            </div>
+                            <span class="saveButtonSpan">
+                                <button class="saveButton emblemButton btn-primary createItemModalSaveItem" type="button" id="saveBrand">Add Brand</button>
+                            </span>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <input
+                class="error viewManageList-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaviewManageList')%>"
+            />
+
+            <input
+                class="error createInitiative-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metacreateInitiative')%>"
+            />
+            <input
+                class="error updateInitiative-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaupdateInitiative')%>"
+            />
+
+            <input
+                class="error createChannel-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metacreateChannel')%>"
+            />
+            <input
+                class="error updateChannel-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaupdateChannel')%>"
+            />
+
+            <input
+                class="error createLanguage-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metacreateLanguage')%>"
+            />
+            <input
+                class="error updateLanguage-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaupdateLanguage')%>"
+            />
+
+            <input
+                class="error createLOB-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metacreateLOB')%>"
+            />
+            <input
+                class="error updateLOB-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaupdateLOB')%>"
+            />
+
+            <input
+                class="error createBrand-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metacreateBrand')%>"
+            />
+            <input
+                class="error updateBrand-error"
+                name="error"
+                type="hidden"
+                value="<%=getOption('metaupdateBrand')%>"
+            />
+            <div id="myModal" class="modal error-modal"></div>
+            <span id="nameError" style="color: Red;display: none;"></span>
+        </main>
+
+          <!-- Bootstrap JS -->
+        <script
+            src="<%=getOption('metaResourceDirectoryDefault')%>jquery-3.5.1.min.js"
+            crossorigin="anonymous"
+        ></script>
+        <!--jQuery UI-->
+        <script
+            src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous">
+        </script>
+        <script src="<%=getOption('metaResourceDirectoryDefault')%>Index.js"></script>
+
+        <script type="text/javascript">
+            class MetaDataItem {
+                constructor(Name, PositionNumber, isArchived) {
+                    this.Name = Name;
+                    this.PositionNumber = PositionNumber;
+                    this.isArchived = isArchived;
+                }
+            }
+
+            var metaData;
+
+            ////////////////////////////////////////
+            //     Populate all lists             //
+            ////////////////////////////////////////
+
+            //calls viewManageList
+            function getLists () {
+                var requestBodyObj = {
+                    methodName:"viewManageList",
+                    data:{}
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:"http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        //no message id if metadata was successfully fetched
+                        if (!response.hasOwnProperty('MessageID')) {
+
+                            //create json deserialize function and call here?
+                            metaData = JSON.parse(JSON.stringify(response.metaData));
+
+                            console.log(metaData);
+
+                            setLists(metaData);
+                        }
+                        else {
+                            var message = $(".viewManageList-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function (response) {
+                        var message = $(".viewManageList-error").val();
+                        errorMessage(message);
+
+                        return response;
+                    },
+                });
+            }
+
+            function setLists(metaData) {
+                var lists = $(".listCard ul");
+
+                //populate lists with data from server
+                lists.each( function () {
+                    var listData;
+
+                    //remove old elements to reflect changes
+                    $(this).empty();
+
+                    //find the right data for the list
+                    for(var x = 0; x < metaData.length; x++) {
+                        currentData = metaData[x];
+
+                        if (currentData.name == this.getAttribute("id")) {
+                            listData = currentData;
+                        }
+                    }
+
+                    //add data to lists
+                    for (var y = 0; y < listData.data.length; y++) {
+                        var listItem;
+
+                        if (listData.data[y].isArchived == "0") {
+                            listItem = $("<li class='list-group-item' id='" + listData.data[y].Name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                                + listData.data[y].Name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                        }
+                        else {
+                            listItem = $("<li class='list-group-item' id='" + listData.data[y].Name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                                + listData.data[y].Name + "<span class='restore'><img class='restore-icon' src='<%=getOption("metaResourceDirectoryDefault")%>restore.PNG' /></span></li>");
+                        }
+
+                        this.append(listItem.get(0));
+                    }
+                });
+            }
+
+            function enableDragAndDrop() {
+                var lists = $(".listCard ul");
+
+                lists.each( function () {
+                    $(this).sortable({
+                        handle: ".reorder-button",
+                        stop: function () {
+                            $(this).siblings(".card-header").children(".saveMetaChanges").show();
+                        }
+                    });
+                });
+            }
+
+            ////////////////////////////////////////
+            //               General              //
+            ////////////////////////////////////////
+
+            function checkInputData(name, listID) {
+                var itemFound = false;
+                var list = metaData.find( obj => {
+                    return obj.name === listID;
+                });
+
+                for (var i = 0; i < list.data.length; i++) {
+                    if (list.data[i].Name == name) {
+                        itemFound = true;
+                    }
+                }
+
+                return itemFound;
+            }
+
+            function updateListPositions(listElement) {
+                var listID = $(listElement).attr("id");
+                var metaDataListObj = metaData.find( obj => {
+                    return obj.name === listID;
+                });
+
+                var listItems = $("#" + listID + " li");
+                listItems.each(function () {
+                    var currItem = metaDataListObj.data.find( obj => {
+                        return obj.Name === $(this).attr("id");
+                    });
+
+                    currItem.PositionNumber = listItems.index(this);
+                });
+            }
+
+            function archiveItem(listItem) {
+                var restoreHtml = "<span class='restore'><img class='restore-icon' src='<%=getOption("metaResourceDirectoryDefault")%>restore.PNG' /></span>";
+
+                var listID = $(listItem).parent().attr("id");
+
+                var metaDataListObj = metaData.find( obj => {
+                    return obj.name === listID;
+                });
+
+                var metaDataItem = metaDataListObj.data.find( obj => {
+                    return obj.Name === $(listItem).attr("id");
+                });
+
+                metaDataItem.isArchived = '1';
+
+                $(listItem).children().remove(".archive");
+                $(listItem).append(restoreHtml);
+
+                $(listItem).parent().siblings(".card-header").children(".saveMetaChanges").show();
+
+                console.log(metaData);
+            }
+
+            function unArchiveItem(listItem) {
+                var archiveHtml = "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span>";
+
+                var listID = $(listItem).parent().attr("id");
+
+                var metaDataListObj = metaData.find( obj => {
+                    return obj.name === listID;
+                });
+
+                var metaDataItem = metaDataListObj.data.find( obj => {
+                    return obj.Name === $(listItem).attr("id");
+                });
+
+                metaDataItem.isArchived = '0';
+
+                $(listItem).children().remove(".restore");
+                $(listItem).append(archiveHtml);
+
+                $(listItem).parent().siblings(".card-header").children(".saveMetaChanges").show();
+
+                console.log(metaData);
+            }
+
+            function updateAllItems (listID) {
+                var list = metaData.find( obj => {
+                    return obj.name == listID;
+                });
+
+                console.log(listID);
+                console.log(list);
+
+
+                switch(String(listID)) {
+                    case 'initiative':
+                        list.data.forEach(item => {
+                            updateInitiative(item.Name, item.PositionNumber, item.isArchived);
+                        });
+                        break;
+                    case 'channel':
+                        list.data.forEach(item => {
+                            updateChannel(item.Name, item.PositionNumber, item.isArchived);
+                        });
+                        break;
+                    case "language":
+                        list.data.forEach(item => {
+                            updateLanguage(item.Name, item.PositionNumber, item.isArchived);
+                        });
+                        break;
+                    case 'lineOfBusiness':
+                        list.data.forEach(item => {
+                            updateLineOfBusiness(item.Name, item.PositionNumber, item.isArchived);
+                        });
+                        break;
+                    case 'brand':
+                        list.data.forEach(item => {
+                            updateBrand(item.Name, item.PositionNumber, item.isArchived);
+                        });
+                        break;
+                }
+            }
+
+            ////////////////////////////////////////
+            //        Initiative functions       //
+            ////////////////////////////////////////
+            function createInitiative() {
+                var name = $("#newInitiativeInput").val();
+                var description = $("#newInitiativeDescriptionInput").val();
+                var positionNumber = $("#initiative li").last().index() + 1;
+
+                var requestBodyObj = {
+                    methodName:"createInitiative",
+                    data:{
+                        name: name,
+                        description: description,
+                        positionNumber: positionNumber
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully added initiative");
+
+                            let newInitiative = new MetaDataItem(name, positionNumber, '0');
+                            var initiativeList = metaData.find( obj => {
+                                return obj.name == "initiative"
+                            });
+
+                            var listItem = $("<li class='list-group-item' id='" + name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                            + name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                            $("#initiative").append(listItem);
+
+                            initiativeList.data.push(newInitiative);
+                        }
+                        else {
+                            var message = $(".createInitiative-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    complete: function(response) {
+                        document.getElementById('newInitiativeForm').reset();
+                        $('#initiativeModal').modal('hide');
+                    },
+                    error: function () {
+                        var message = $(".createInitiative-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            function updateInitiative (initiativeName, positionNumber, isArchived) {
+                var requestBodyObj = {
+                    methodName:"updateInitiative",
+                    data:{
+                        name: initiativeName,
+                        positionNumber: positionNumber,
+                        isArchived: isArchived
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully updated initiative");
+                        }
+                        else {
+                            var message = $(".updateInitiative-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        var message = $(".updateInitiative-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            ////////////////////////////////////////
+            //        Channel functions       //
+            ////////////////////////////////////////
+            function createChannel() {
+                var name = $("#newChannelInput").val();
+                var description = $("#newChannelDescriptionInput").val();
+                var positionNumber = $("#channel li").last().index() + 1;
+
+                var requestBodyObj = {
+                    methodName:"createChannel",
+                    data:{
+                        name: name,
+                        description: description,
+                        positionNumber: positionNumber
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully added channel");
+
+                            let newChannel = new MetaDataItem(name, positionNumber, '0');
+                            var channelList = metaData.find( obj => {
+                                return obj.name == "channel"
+                            });
+
+                            var listItem = $("<li class='list-group-item' id='" + name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                            + name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                            $("#channel").append(listItem);
+
+                            channelList.data.push(newChannel);
+                        }
+                        else {
+                            var message = $(".createChannel-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    complete: function(response) {
+                        document.getElementById('newChannelForm').reset();
+                        $('#channelModal').modal('hide');
+                    },
+                    error: function () {
+                        var message = $(".createChannel-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            function updateChannel (channelName, positionNumber, isArchived) {
+                var requestBodyObj = {
+                    methodName:"updateChannel",
+                    data:{
+                        name: channelName,
+                        positionNumber: positionNumber,
+                        isArchived: isArchived
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully updated channel");
+                        }
+                        else {
+                            var message = $(".updateChannel-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        var message = $(".updateChannel-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            ////////////////////////////////////////
+            //          Language functions        //
+            ////////////////////////////////////////
+            function createLanguage() {
+                var name = $("#newLanguageInput").val();
+                var description = $("#newLanguageInput").val();
+                var positionNumber = $("#language li").last().index() + 1;
+
+                var requestBodyObj = {
+                    methodName:"createLanguage",
+                    data:{
+                        name: name,
+                        description: description,
+                        positionNumber: positionNumber
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully added language");
+
+                            let newLanguage = new MetaDataItem(name, positionNumber, '0');
+                            var languageList = metaData.find( obj => {
+                                return obj.name == "language"
+                            });
+
+                            var listItem = $("<li class='list-group-item' id='" + name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                            + name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                            $("#language").append(listItem);
+
+                            languageList.data.push(newLanguage);
+                        }
+                        else {
+                            var message = $(".createLanguage-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    complete: function(response) {
+                        document.getElementById('newLanguageForm').reset();
+                        $('#languageModal').modal('hide');
+                    },
+                    error: function () {
+                        var message = $(".createLanguage-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            function updateLanguage (languageName, positionNumber, isArchived) {
+                var requestBodyObj = {
+                    methodName:"updateLanguage",
+                    data:{
+                        name: languageName,
+                        positionNumber: positionNumber,
+                        isArchived: isArchived
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully updated language");
+                        }
+                        else {
+                            var message = $(".updateLanguage-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        var message = $(".updateLanguage-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            ////////////////////////////////////////
+            //             LoB functions          //
+            ////////////////////////////////////////
+            function createLineOfBusiness() {
+                var name = $("#newLineOfBusinessInput").val();
+                var description = $("#newLineOfBusinessInput").val();
+                var positionNumber = $("#lineOfBusiness li").last().index() + 1;
+
+                var requestBodyObj = {
+                    methodName:"createLOB",
+                    data:{
+                        name: name,
+                        description: description,
+                        positionNumber: positionNumber
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully added line of business");
+
+                            let newLineOfBusiness = new MetaDataItem(name, positionNumber, '0');
+                            var lineOfBusinessList = metaData.find( obj => {
+                                return obj.name == "lineOfBusiness"
+                            });
+
+                            var listItem = $("<li class='list-group-item' id='" + name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                            + name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                            $("#lineOfBusiness").append(listItem);
+
+                            lineOfBusinessList.data.push(newLineOfBusiness);
+                        }
+                        else {
+                            var message = $(".createLOB-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    complete: function(response) {
+                        document.getElementById('newLineOfBusinessForm').reset();
+                        $('#lineOfBusinessModal').modal('hide');
+                    },
+                    error: function () {
+                        var message = $(".createLOB-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            function updateLineOfBusiness (lineOfBusinessName, positionNumber, isArchived) {
+                var requestBodyObj = {
+                    methodName:"updateLOB",
+                    data:{
+                        name: lineOfBusinessName,
+                        positionNumber: positionNumber,
+                        isArchived: isArchived
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully updated line of business");
+                        }
+                        else {
+                            var message = $(".updateLOB-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        var message = $(".updateLOB-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            ////////////////////////////////////////
+            //           Brand functions          //
+            ////////////////////////////////////////
+            function createBrand() {
+                var name = $("#newBrandInput").val();
+                var description = $("#newBrandInput").val();
+                var positionNumber = $("#brand li").last().index() + 1;
+
+                var requestBodyObj = {
+                    methodName:"createBrand",
+                    data:{
+                        name: name,
+                        description: description,
+                        positionNumber: positionNumber
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully added brand");
+
+                            let newBrand = new MetaDataItem(name, positionNumber, '0');
+                            var brandList = metaData.find( obj => {
+                                return obj.name == "brand"
+                            });
+
+                            var listItem = $("<li class='list-group-item' id='" + name + "'><span class='reorder-button'><img class='reorder-icon mr-3' src='<%=getOption("metaResourceDirectoryDefault")%>reorder-icon.PNG' /></span>"
+                            + name + "<span class='archive'><img class='archive-icon' src='<%=getOption("metaResourceDirectoryDefault")%>archive.PNG' /></span></li>");
+                            $("#brand").append(listItem);
+
+                            brandList.data.push(newBrand);
+                        }
+                        else {
+                            var message = $(".createBrand-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    complete: function(response) {
+                        document.getElementById('newBrandForm').reset();
+                        $('#brandModal').modal('hide');
+                    },
+                    error: function () {
+                        var message = $(".createBrand-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            function updateBrand (brandName, positionNumber, isArchived) {
+                var requestBodyObj = {
+                    methodName:"updateBrand",
+                    data:{
+                        name: brandName,
+                        positionNumber: positionNumber,
+                        isArchived: isArchived
+                    }
+                };
+
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(requestBodyObj),
+                    dataType: "json",
+                    url:
+                        "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.MessageID == 200) {
+                            console.log("successfully updated brand");
+                        }
+                        else {
+                            var message = $(".updateBrand-error").val();
+                            errorMessage(message);
+                        }
+
+                        return response;
+                    },
+                    error: function () {
+                        var message = $(".updateBrand-error").val();
+                        errorMessage(message);
+                    },
+                });
+            }
+
+            $(document).ready(function () {
+                getLists();
+                enableDragAndDrop();
+
+                ////////////////////////////////////////
+                //        Event Listeners             //
+                ////////////////////////////////////////
+
+                $("#saveInitiative").click(function () {
+                    if($("#newInitiativeInput").val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid initiative name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newInitiativeInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newInitiativeInput").addClass("invalid");
+                    }
+                    else {
+                        $("#newInitiativeInput").popover("hide");
+                        $("#newInitiativeInput").removeClass("invalid");
+
+                        var newItem = $(this).val();
+                        var itemExists = checkInputData(newItem, "initiative");
+
+                        if (!itemExists) {
+                            createInitiative();
+                        }
+                        else {
+                            var trigger = "manual";
+                            var placement = "right";
+                            var content = "An initiative named " + newItem + " already exists. Please enter a new initiative name.";
+                            var template =
+                                '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>An initiative named ' + newItem + ' already exists. Please enter a new initiative name."</em></p></div></div></div>';
+                            popover(
+                                $("#newInitiativeInput").attr("id"),
+                                trigger,
+                                placement,
+                                content,
+                                template
+                            );
+                        }
+                    }
+                });
+
+                $("#saveChannel").click(function () {
+                    if($("#newChannelInput").val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid channel name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newChannelInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newChannelInput").addClass("invalid");
+                    }
+                    else {
+                        $("#newChannelInput").popover("hide");
+                        $("#newChannelInput").removeClass("invalid");
+
+                        createChannel();
+                    }
+                });
+
+                $("#saveLanguage").click(function () {
+                    if($("#newLanguageInput").val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid language name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newLanguageInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newLanguageInput").addClass("invalid");
+                    }
+                    else {
+                        $("#newLanguageInput").popover("hide");
+                        $("#newLanguageInput").removeClass("invalid");
+
+                        createLanguage();
+                    }
+                });
+
+                $("#saveLineOfBusiness").click(function () {
+                    if($("#newLineOfBusinessInput").val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid line of business name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newLineOfBusinessInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newLineOfBusinessInput").addClass("invalid");
+                    }
+                    else {
+                        $("#newLineOfBusinessInput").popover("hide");
+                        $("#newLineOfBusinessInput").removeClass("invalid");
+
+                        createLineOfBusiness();
+                    }
+                });
+
+                $("#saveBrand").click(function () {
+                    if($("#newBrandInput").val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid brand name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newBrandInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newBrandInput").addClass("invalid");
+                    }
+                    else {
+                        $("#newBrandInput").popover("hide");
+                        $("#newBrandInput").removeClass("invalid");
+
+                        createBrand();
+                    }
+                });
+
+                $(".saveMetaChanges").click( function () {
+                    var list = $(this).parent().siblings("ul");
+                    var listID = $(list).attr("id");
+
+                    console.log(listID);
+
+                    updateListPositions(list);
+
+                    updateAllItems(listID);
+
+                    $(this).hide();
+                });
+
+
+                $(".list-group").on('click', 'li .archive-icon', function(event){
+                    archiveItem($(this).parents("li").get(0));
+                });
+
+                $(".list-group").on('click', 'li .restore-icon', function(event){
+                    unArchiveItem($(this).parents("li").get(0));
+                });
+
+                $("#newInitiativeInput").blur(function () {
+                    if ($(this).val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid initiative name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newInitiativeInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newInitiativeInput").addClass("invalid");
+                    } else {
+                        $("#newInitiativeInput").popover("hide");
+                        $("#newInitiativeInput").removeClass("invalid");
+                    }
+                });
+
+                $("#newChannelInput").blur(function () {
+                    if ($(this).val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid channel name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newChannelInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newChannelInput").addClass("invalid");
+                    } else {
+                        $("#newChannelInput").popover("hide");
+                        $("#newChannelInput").removeClass("invalid");
+                    }
+                });
+
+                $("#newLanguageInput").blur(function () {
+                    if ($(this).val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid language name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newLanguageInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newLanguageInput").addClass("invalid");
+                    } else {
+                        $("#newLanguageInput").popover("hide");
+                        $("#newLanguageInput").removeClass("invalid");
+                    }
+                });
+
+                $("#newLineOfBusinessInput").blur(function () {
+                    if ($(this).val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid line of business name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newLineOfBusinessInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newLineOfBusinessInput").addClass("invalid");
+                    } else {
+                        $("#newLineOfBusinessInput").popover("hide");
+                        $("#newLineOfBusinessInput").removeClass("invalid");
+                    }
+                });
+
+                $("#newBrandInput").blur(function () {
+                    if ($(this).val().length === 0) {
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Please enter a valid brand name.";
+                        var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please enter a valid initiative name.</em></p></div></div></div>';
+                        popover(
+                            $("#newBrandInput").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                            template
+                        );
+                        $("#newBrandInput").addClass("invalid");
+                    } else {
+                        $("#newBrandInput").popover("hide");
+                        $("#newBrandInput").removeClass("invalid");
+                    }
+                });
+
+                $("#searchLists").keyup( function () {
+                    var text = $("#searchLists").val().toLowerCase().trim();
+                    var listItems = $("#listsWrapperCard").find("li");
+
+                    if(text.length > 0) {
+                        listItems.each( function () {
+                            if (!$(this).attr("id").toLowerCase().includes(text)) {
+                                $(this).hide();
+                            }
+                            else {
+                                $(this).show();
+                            }
+                        });
+                    }
+                    else {
+                        listItems.each( function () {
+                            $(this).show();
+                        });
+                    }
+                });
+
+                $(".addListsButton").on("click", function () {
+                    var form = $($(this).attr("data-target").toString()).find("form").get(0);
+
+                    form.reset();
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+table{
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+    margin-top: 25px;
+    margin-left: 10px;
+}
+td,
+th {
+border: 1px solid #dddddd;
+text-align: center;
+}
+
+tr:nth-child(even){
+    background-color: #dddddd;
+}
+
+.btn_create_duplicate{
+background-color: #c7d7bc;
+border-radius: 10px;
+position: relative;
+top: 20px;
+left: 300px;
+}
+
+.hidden{
+    display: none;
+}
+
+
+.row_selector{
+    width: 45px;
+    height: 5px;
+    /* border: 1px solid red; */
+}

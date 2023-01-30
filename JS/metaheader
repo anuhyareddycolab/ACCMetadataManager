@@ -1,0 +1,25 @@
+function header(){
+  var logo = getOption('metaLogoURL');
+  var logoText = getOption('metaLogoURLText');
+  var metaResourceDirectoryDefault = getOption('metaResourceDirectoryDefault');
+  if(isCampaignMetaManagers == true || isApplicationAdministrator() == true)
+  {
+    var text = '<div class="col-12"><div class="row headerDiv"><div class="col-lg-3 col-md-3 col-sm-4"><img src="'+logo+'emblem-logo-dark.png" class="img-fluid center-home" alt="Logo" /><div class="logoText-home">'+logoText+'</div></div><div class="col-lg-5 col-md-5 col-sm-4"></div><div class="col-lg-4 col-md-4 col-sm-4"><input class="menu-btn" type="checkbox" id="menu-btn" /><label class="menu-icon" for="menu-btn"><span class="navicon"></span></label><a href="#" id="mobileNotification" class="notification"><img src="'+metaResourceDirectoryDefault+'zeroNotifications.png" width="28" style="width: 28px;" /><span class="badge">3</span></a><ul class="menu"><a id="desktopNotification" href="#" class="notification"><img src="'+metaResourceDirectoryDefault+'zeroNotifications.png" width="28" style="width: 28px;" /><span class="badge">3</span></a><li><span class="bar"></span><a href="#about"><img class="userIcon" src="'+metaResourceDirectoryDefault+'icon-account-grey-20.png"/>&nbsp;&nbsp;yash@merkleinc.com</a><span class="bar"></span></li><li><a href="#careers">Logout</a></li></ul></div></div></div>';
+    return text;
+  }
+  else
+  {
+    var text = '<div class="col-12"><div class="row headerDiv"><div class="col-lg-3 col-md-3 col-sm-4"><img src="'+logo+'emblem-logo-dark.png" class="img-fluid center-home" alt="Logo" /><div class="logoText-home">'+logoText+'</div></div><div class="col-lg-5 col-md-5 col-sm-4"></div><div class="col-lg-4 col-md-4 col-sm-4"><input class="menu-btn" type="checkbox" id="menu-btn" /><label class="menu-icon" for="menu-btn"><span class="navicon"></span></label><a href="#" id="mobileNotification" class="notification"><img src="'+metaResourceDirectoryDefault+'icon-notifications-alert-grey-20.png" width="28" style="width: 28px;" /><span class="badge">3</span></a><ul class="menu"><a id="desktopNotification" href="#" class="notification"><img src="'+metaResourceDirectoryDefault+'icon-notifications-alert-grey-20.png" width="28" style="width: 28px;" /><span class="badge">3</span></a><li><span class="bar"></span><a href="#about"><img class="userIcon" src="'+metaResourceDirectoryDefault+'icon-account-grey-20.png"/>&nbsp;&nbsp;yash@merkleinc.com</a><span class="bar"></span></li><li><a href="#careers">Logout</a></li></ul></div></div></div>';
+    return text;
+  }
+}
+
+
+function errorMessageNew(error){
+   var message="gsdvsdbasjdb";
+return "<div class='modal-content'><span class='close'><img src='"+serverUrl+"res/EMBH_Dev/icon-close-yellow-15.png' class='closeImg' /></span><p><center>" +
+      message +
+      "</center></p></div>"
+}
+
+

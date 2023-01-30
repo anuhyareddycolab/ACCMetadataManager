@@ -1,0 +1,88 @@
+﻿<%@ page import="/nl/core/shared/nl.js" %><%
+NL.server().reset().require('/xtk/shared/xtk.js')
+ loadLibrary("meta:jsspcontext.js");
+  loadLibrary("meta:common_Back.js");
+    loadLibrary("embh:anu.js");
+
+if ( NL.JSSPContext == undefined ) {
+  // ## compatibility with build 7825
+  NL.JSSPContext = JSSPContext;
+}
+
+// headers to disable cache
+response.addHeader("Pragma", "no-cache")
+response.addHeader("Cache-Control", "no-cache");
+response.addHeader("Expires", new Date().toGMTString());
+response.setContentType("text/html;charset=utf-8")
+var jsspContext = new NL.JSSPContext(request)
+
+  
+if( !jsspContext.checkAuthentication(response) )
+
+
+  return;
+  
+
+%>
+
+<%
+// ##  Check user is admin or not
+var isAdmin= 0;
+logInfo("initial isAdmin: " + isAdmin)
+var operator = application.operator;
+logInfo("id: " + operator.id)
+
+logInfo("login: " + operator.login)
+logInfo("operartor name: " + operator.name)
+logInfo("description: " + operator.computeString)
+
+logInfo("=== Rights ===")
+for each(var right in operator.rights)
+logInfo("Group Right"+right)
+if(right == 'admin')
+isAdmin= 1;
+logInfo("final isAdmin: " + isAdmin)
+var hasAdminRight = application.operator.hasRight("admin")
+%>
+
+<%
+
+
+
+var query = xtk.queryDef.create(
+     <queryDef schema="xtk:operator" operation="select">
+         <select> 
+            <node expr="@label" /> 
+         </select>
+      <where>
+         <condition expr={"@id='"+application.operator.id+"'"} />
+      </where>                                                
+    </queryDef>);
+                            
+var queryData=query.ExecuteQuery()
+logInfo("queryData****"+queryData);
+var label;
+    for each(var data in queryData)
+     label=data.@label;                        
+                   
+
+
+
+var test =operator.name;
+logInfo("from function operator: " + getOperator())
+//logInfo("from function isAdmin: " + isAdmin())
+%>
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<h1> login Successful ,,.</h1> 
+hasAdminRight:<% document.write(hasAdminRight); %> <br>
+queryData:<% document.write(queryData); %> 
+operator.id:<% document.write(operator.id); %> 
+getOperatorLabel():<% document.write(getOperatorLabel()); %> 
+</head>
+</html>

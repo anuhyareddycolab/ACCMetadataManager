@@ -1,0 +1,403 @@
+loadLibrary("meta:common.js");
+
+function validateCampaignName(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+          
+ try{
+    var message;
+
+    var campaignName = sqlGetString("SELECT scampaignName FROM metacampaign where iinitiativeId='"+requestBodyObject.data.initiativeId+"' and scampaignName='"+requestBodyObject.data.campaignName+"'");
+    logInfo("campaignName****"+campaignName);
+
+    if(campaignName.length >0){
+
+    message="Campaign Name already Exists with Selected Initiative !";
+    return executeResult(200,message ,"Failed");
+    }
+    else{
+    message="Campaign Name doesn't Exists";
+    return executeResult(200,message ,"Success");
+    }
+    }
+  catch(error){
+                  return executeResult(300,"Error in validating campaign name  "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+              }
+          
+          }
+}
+
+
+ function validateTouchName(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validateTouchName";
+var touchId=requestBodyObject.data.touchId;
+ var touchId = sqlGetInt("SELECT iTouchId FROM metatouch where   sTouchName='"+requestBodyObject.data.touchName+"' AND icampaignId='"+requestBodyObject.data.campaignId+"' AND iIsMarkDeleted='0'");
+ logInfo("touchId :"+touchId);
+if(touchId > 0){
+status="Failure";
+ message="touch Name exists!";
+ }
+ else{
+status="Success";
+ message=" Touch Name is allowed";
+}
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return responseObject;
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validateTouchName "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+} 
+
+function validateAvailabilityOfPhoneNumber(requestBodyObject){
+   if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+var phoneNumberId=requestBodyObject.data.phoneNumberId;
+var touchStartDate=requestBodyObject.data.touchStartDate;
+var brandId=requestBodyObject.data.brandId;
+var channelId=requestBodyObject.data.channelId;
+var initiativeId=requestBodyObject.data.initiativeId;
+var lobId=requestBodyObject.data.lobId;
+var languageId=requestBodyObject.data.languageId;
+ var message;
+  var responseObject={};
+  var metadata={};
+  responseObject.methodName="validateAvailabilityOfPhoneNumber";
+var releaedateWithOutCollOffPeriod;
+logMessage(phoneNumberId,debugFlag);
+var releaseDate=getPhoneNumberReleaseDate(phoneNumberId);
+var coolOffPeriod=getCoolOffPeriod(phoneNumberId);
+var pseudoNumber =isPseudoNumber(phoneNumberId);
+var reservedNumber =isReservedNumber(phoneNumberId);
+var brandIdReserverd =getBrandId(phoneNumberId);
+var channelIdReserverd  =getChannelId(phoneNumberId);
+var initiativeIdReserverd  =getInitiativeId(phoneNumberId);
+var languageIdReserverd  =getLanguageId(phoneNumberId);
+var lobIdReserverd  =getLobId(phoneNumberId);
+var releaedateWithOutCollOffPeriod=calculateReleaedateWithOutCollOffPeriod(releaseDate,phoneNumberId,coolOffPeriod);
+var remainingCoolOffDays=getNumberOfDays(touchStartDate,releaseDate);
+releaseDate=GetReleaseDateInsupportedFormat(releaseDate);
+logInfo("releaedateWithOutCollOffPeriod " +releaedateWithOutCollOffPeriod+"releaseDate " +releaseDate)
+if(reservedNumber == 1 && (brandId !=brandIdReserverd || channelId!=channelIdReserverd || initiativeId !=initiativeIdReserverd || lobId!=lobIdReserverd || languageId!=languageIdReserverd)){
+   logMessage(phoneNumberId,debugFlag); 
+ message="Selected number is Reserved PhoneNumber where meta data is not matching !";
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ metadata.status="Failure";
+ responseObject.data=metadata;
+ return responseObject;
+}
+else if (pseudoNumber == 1){
+  logMessage(phoneNumberId,debugFlag); 
+ message="Selected number is Pseudo PhoneNumber  !";
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ metadata.status="Success";
+ responseObject.data=metadata;
+ return responseObject; 
+}
+
+else if((pseudoNumber != 1) && ((touchStartDate > releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod)) ){
+logMessage(phoneNumberId,debugFlag); 
+ message="Phone Number is Available !";
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ metadata.status="Success";
+ responseObject.data=metadata;
+ return responseObject;
+}
+else if((pseudoNumber != 1) && ((touchStartDate < releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod)) ){
+message="Selected Phone Number is in Cool off Period("+remainingCoolOffDays+" days remaining out of "+coolOffPeriod+"  days ) ending on "+releaseDate+" ";
+  logMessage(message,debugFlag); 
+  metadata.message=message;
+ metadata.status="Success";
+ responseObject.data=metadata;
+ return responseObject;
+}
+else{ 
+ message="Phone Number is Not Available !";
+  logMessage(message,debugFlag); 
+ metadata.message=message;
+ metadata.status="Failure";
+ responseObject.data=metadata;
+ return responseObject;
+}
+ }
+ catch(error){
+   return executeResult(300,"Error in validateAvailabilityOfPhoneNumber- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+ }
+ }
+  function getPhoneNumberReleaseDate(phoneNumberId){
+  try{
+    var releaseDate = sqlGetDate("SELECT tsRelease from MetaPhoneNumberLibrary where iPhoneNumberLibraryId="+phoneNumberId+" ");
+    if(releaseDate == null){
+     updateReleaseDate(phoneNumberId);
+     getPhoneNumberReleaseDate(phoneNumberId);
+    }
+    logMessage(releaseDate,debugFlag); 
+   return releaseDate;
+    }
+ catch(error){
+   return executeResult(300,"Error in getPhoneNumberReleaseDate- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+  }
+
+  
+function calculateReleaedateWithOutCollOffPeriod(releaseDate,phoneNumberId,coolOffPeriod){
+try{
+var releaedateWithOutCollOffPeriod = new Date(releaseDate);
+releaedateWithOutCollOffPeriod.setDate(releaedateWithOutCollOffPeriod.getDate() - coolOffPeriod);
+releaedateWithOutCollOffPeriod=new Date(releaedateWithOutCollOffPeriod).toISOString().slice(0, 10);
+ logMessage(releaedateWithOutCollOffPeriod,debugFlag); 
+return releaedateWithOutCollOffPeriod;
+ }
+ catch(error){
+   return executeResult(300,"Error in calculateReleaedateWithOutCollOffPeriod- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+
+  }
+  
+  function GetReleaseDateInsupportedFormat(releaseDate){
+  try{
+  releaseDate=new Date(releaseDate).toISOString().slice(0, 10);
+ logMessage(releaseDate,debugFlag); 
+return releaseDate;
+}
+   catch(error){
+   return executeResult(300,"Error in GetReleaseDateInsupportedFormat- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+  }
+  
+  function validateTouchDateEdit(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validateTouchDateEdit";
+ var touchId=requestBodyObject.data.touchId;
+ var phoneNumberAssignmentId = sqlGetInt("SELECT iPhoneNumberAssignmentId from MetaPhoneNumberAssignment where iTouchId="+touchId+" ");
+ logInfo("phoneNumberAssignmentId :"+phoneNumberAssignmentId);
+if(phoneNumberAssignmentId > 0){
+status="Failure";
+ message="Please remove existing segments and modify data!";
+ }
+ else{
+status="Success";
+ message="Edit allowed";
+}
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return responseObject;
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validateTouchDateEdit "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+} 
+
+function validateSegmentQuestionEdit(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validateSegmentQuestionEdit";
+var touchId=requestBodyObject.data.touchId;
+ var segmentId = sqlGetInt("SELECT iSegmentId from MetaSegment where iTouchId="+touchId+" ");
+ logInfo("segmentId :"+segmentId);
+if(segmentId > 0){
+status="Failure";
+ message="Please remove existing segments and modify data!";
+ }
+ else{
+status="Success";
+ message="edit allowed";
+}
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return JSON.stringify(responseObject);
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validateSegmentQuestionEdit "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+}
+  
+ function validatePhoneQuestionEdit(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validatePhoneQuestionEdit";
+var touchId=requestBodyObject.data.touchId;
+ var phoneNumberAssignmentId = sqlGetInt("SELECT iPhoneNumberAssignmentId from MetaPhoneNumberAssignment where iTouchId="+touchId+" ");
+ logInfo("phoneNumberAssignmentId :"+phoneNumberAssignmentId);
+if(phoneNumberAssignmentId > 0){
+status="Failure";
+ message="Please remove existing segments and modify data!";
+ }
+ else{
+status="Success";
+ message="Edit allowed";
+}
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return responseObject;
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validatePhoneQuestionEdit "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+} 
+
+
+
+function validateUniquePhoneNumber(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validateUniquePhoneNumber";
+
+ var didNumber = sqlGetInt("SELECT iPhoneNumberLibraryId FROM MetaPhoneNumberLibrary where   sDid='"+requestBodyObject.data.didNumber+"' ");
+ //var phoneNumberLibraryId = sqlGetInt("SELECT iPhoneNumberLibraryId FROM MetaPhoneNumberLibrary where   sPhoneNumber='"+requestBodyObject.data.phoneNumber+"' ");
+ if (didNumber > 0){
+   status="Failure";
+ message="DID Number already exists!";
+ }
+ else{
+status="Success";
+ message=" DID Number is allowed";
+}
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return responseObject;
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validateUniquePhoneNumber "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+} 
+
+
+function validateSubmitForApproval(requestBodyObject){
+ if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+        
+ try{
+  var message,status;
+  var responseObject={};
+  var metadata={};
+ responseObject.methodName="validateSubmitForApproval";
+
+var touchId=requestBodyObject.data.touchId;
+var havePhoneAssignments=requestBodyObject.data.havePhoneAssignments;
+ var phoneNumberAssignmentId = sqlGetInt("SELECT iPhoneNumberAssignmentId from MetaPhoneNumberAssignment where iTouchId="+touchId+" ");
+ logInfo("phoneNumberAssignmentId :"+phoneNumberAssignmentId);
+ if(havePhoneAssignments =="1"){
+if(phoneNumberAssignmentId > 0){
+status="Success";
+ message="Phone number available!";
+ }
+ else{
+   status="Failure";
+ message="Phone Number Assignment is not done!";
+ }
+ }
+
+ else{
+   status="Success";
+ message="Phone number assignment not required !";
+ }
+ 
+metadata.status=status;
+ logMessage(message,debugFlag); 
+ metadata.message=message;
+ responseObject.data=metadata;
+ logInfo("responseObject:"+JSON.stringify(responseObject));
+ return responseObject;
+
+ }
+ catch(error){
+   return executeResult(300,"Error in validateSubmitForApproval "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+        }
+}
+} 
+  
+ function getNumberOfDays(start, end) {
+    const date1 = new Date(start);
+    const date2 = new Date(end);
+
+    // One day in milliseconds
+    const oneDay = 1000 * 60 * 60 * 24;
+
+    // Calculating the time difference between two dates
+    const diffInTime = date2.getTime() - date1.getTime();
+
+    // Calculating the no. of days between two dates
+    const diffInDays = Math.round(diffInTime / oneDay);
+
+    return diffInDays;
+} 
+  
+    
+  

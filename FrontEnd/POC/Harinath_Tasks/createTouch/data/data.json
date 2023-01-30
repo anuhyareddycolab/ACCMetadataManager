@@ -1,0 +1,39 @@
+{
+    "records":[
+        {
+            "touch_Name":"ABC",
+            "channel":"Email",
+            "touch_date":"04/11/2021",
+            "unique_id":"T00001",
+            "segment":"S00001",
+            "Phone" : "1111111111",
+            "url":"Google",
+            "language":"En",
+            "status":"Open"
+        },
+        {
+            "touch_Name":"PQR",
+            "channel":"Email",
+            "touch_date":"04/12/2021",
+            "unique_id":"T00002",
+            "segment":"S00002",
+            "Phone" : "2222222222",
+            "url":"Google",
+            "language":"En",
+            "status":"Open"
+        },
+        {
+            "touch_Name":"XYZ",
+            "channel":"Email",
+            "touch_date":"04/13/2021",
+            "unique_id":"T00003",
+            "segment":"S00003",
+            "Phone" : "3333333333",
+            "url":"Google",
+            "language":"En",
+            "status":"Open"
+        }
+    
+    ]
+    
+}

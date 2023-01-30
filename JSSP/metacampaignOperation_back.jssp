@@ -1,0 +1,117 @@
+<%@ page import="/nl/core/shared/nl.js" %><%
+
+
+loadLibrary("meta:common.js"); 
+loadLibrary("meta:campaignOperation.js");
+loadLibrary("meta:touchOperation.js");
+loadLibrary("meta:segmentOperation.js");
+loadLibrary("meta:exitingCampaignDetails.js");
+//if( validateSession(response,request))
+//  return;  
+logonEscalation("krgupta");
+response.setContentType('application/json');
+response.setContentType('application/json');
+
+try{
+
+    var requestBodyString=request.getBodyAsString();    
+    var errorResponse = {};
+    
+    logMessage(requestBodyString,debugFlag);
+    logInfo("typeof(requestBodyString) :"+typeof(requestBodyString));
+    
+    var strCheck= isJSON(requestBodyString);
+    logMessage(strCheck,debugFlag);
+    
+    if(requestBodyString.length == 0 || typeof(requestBodyString) != 'string' || requestBodyString == "" || requestBodyString == undefined || strCheck == false || isNaN(requestBodyString) == false || JSON.stringify(JSON.parse(requestBodyString)) == '{}'){
+          errorResponse={"MessageID":"300","Message":"Bad request payload","Status":"Fail"};      
+          document.write(JSON.stringify(errorResponse));      
+    }
+    else if(JSON.parse(requestBodyString).methodName.length == 0){
+          errorResponse={"MessageID":"300","Message":"Method Name is invalid in request payload","Status":"Fail"};         
+          document.write(JSON.stringify(errorResponse)); 
+    }    
+    else if(JSON.parse(requestBodyString).methodName == "createCampaign"){
+           var requestBodyObject=JSON.parse(requestBodyString);
+           var ResponseObject=createCampaign(requestBodyObject);
+           logMessage(ResponseObject,debugFlag);
+           document.write(ResponseObject); 
+    
+    }
+    else if(JSON.parse(requestBodyString).methodName == "updateCampaign"){
+           var requestBodyObject=JSON.parse(requestBodyString);
+           var ResponseObject=updateCampaign(requestBodyObject);
+           logMessage(ResponseObject,debugFlag);
+           document.write(ResponseObject); 
+    
+    }
+    else if(JSON.parse(requestBodyString).methodName == "createTouch"){
+           var requestBodyObject=JSON.parse(requestBodyString);
+           var ResponseObject=createTouch(requestBodyObject);
+           logMessage(ResponseObject,debugFlag);
+           document.write(ResponseObject); 
+    
+    }
+    else if(JSON.parse(requestBodyString).methodName == "updateTouch"){
+           var requestBodyObject=JSON.parse(requestBodyString);
+           var ResponseObject=updateTouch(requestBodyObject);
+           logMessage(ResponseObject,debugFlag);
+           document.write(ResponseObject); 
+    
+    }
+     else if(JSON.parse(requestBodyString).methodName == "getcampaignDetails"){
+          var ResponseObject={}; 
+          ResponseObject.methodName="getcampaignDetails";
+          var metaData=[];
+               var requestBodyObject=JSON.parse(requestBodyString);
+               var metalistdata=getcampaignDetails(requestBodyObject);
+               metaData.push(metalistdata);
+               ResponseObject.metaData=metaData;                           
+             ResponseObject=JSON.stringify(ResponseObject);
+               logMessage(ResponseObject,debugFlag);
+               document.write(ResponseObject);  
+    }
+    else if(JSON.parse(requestBodyString).methodName == "deleteTouch"){
+          var requestBodyObject=JSON.parse(requestBodyString);
+          var ResponseObject=deleteTouch(requestBodyObject);
+          logMessage(ResponseObject,debugFlag);
+          document.write(ResponseObject);
+    }
+     else if(JSON.parse(requestBodyString).methodName == "createSegment"){
+          var requestBodyObject=JSON.parse(requestBodyString);
+          var ResponseObject=createSegment(requestBodyObject);
+          logMessage(ResponseObject,debugFlag);
+          document.write(ResponseObject);
+    }
+    else if(JSON.parse(requestBodyString).methodName == "deleteSegment"){
+          var requestBodyObject=JSON.parse(requestBodyString);
+          var ResponseObject=deleteSegment(requestBodyObject);
+          logMessage(ResponseObject,debugFlag);
+          document.write(ResponseObject);
+    }
+    else if(JSON.parse(requestBodyString).methodName == "createSegmentAssignment"){
+          var requestBodyObject=JSON.parse(requestBodyString);
+          var ResponseObject=createSegmentAssignment(requestBodyObject);
+          logMessage(ResponseObject,debugFlag);
+          document.write(ResponseObject);
+    }
+    else if(JSON.parse(requestBodyString).methodName == "updateSegmentAssignment"){
+          var requestBodyObject=JSON.parse(requestBodyString);
+          var ResponseObject=updateSegmentAssignment(requestBodyObject);
+          logMessage(ResponseObject,debugFlag);
+          document.write(ResponseObject);
+    }
+    else{
+          errorResponse={"MessageID":"300","Message":"Error in request/response payload","Status":"Fail"};         
+          document.write(JSON.stringify(errorResponse)); 
+    }
+    
+}//end of try block
+catch(e){    
+   document.write(e); 
+  }
+
+      
+
+
+%>

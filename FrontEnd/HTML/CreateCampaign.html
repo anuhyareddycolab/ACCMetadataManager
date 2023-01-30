@@ -1,0 +1,3999 @@
+<% loadLibrary("meta:common.js"); if( validateSession(response,request)) return;
+%>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>EmblemHealth</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+<!--
+    <link
+      rel="stylesheet"
+      href="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/font-awesome.min.css"
+    />
+-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap.min.css"
+    crossorigin="anonymous" />
+    <!-- Datepicker CSS -->
+    <!-- <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css"
+      rel="stylesheet"
+    /> -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap-datetimepicker.css"
+    crossorigin="anonymous" />
+    <!-- Datepicker CSS -->
+    <!-- DataTable CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"
+    />
+<!--
+    <link
+      rel="stylesheet"
+      href="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/jquery.dataTables.min.css"
+    />
+-->
+    <!-- DataTable CSS -->
+    <!-- Bootstrap JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>jquery-3.5.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>jquery-ui.min.js"
+      type="text/javascript"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- DataTable JS -->
+
+    <script src="<%=getOption('metaResourceDirectoryDefault')%>jquery.dataTables.min.js"></script>
+    <script src="<%=getOption('metaResourceDirectoryDefault')%>dataTables.select.min.js"></script>
+
+    <!-- DataTable JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Datepicker JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>moment.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script> -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap-datetimepicker.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+
+    <!-- Custom CSS --> 
+<!--
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Style.css" />
+-->
+   
+    <link rel="stylesheet"
+      href="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/CreateCampaignstyle.css"/>
+     <link rel="stylesheet"
+    href="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/Style.css" />
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Header.css" />
+    <script type="text/javascript">
+     
+      $(document).ready(function (e) {
+        $(".calenderImage").datepicker({
+          format: "yyyy-mm-dd",
+          autoclose: true,
+          todayHighlight: true,
+          weekStart: 1,
+          dayNamesMin: [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
+          // dayNamesMin: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        });
+        // moment.updateLocale("en", {
+        //   weekdaysMin: ["S", "M", "T", "W", "T", "F", "S"],
+        // });
+      });
+    
+   
+    
+    </script>
+     <style>
+        .opacityOne{
+            opacity: 1 !important;
+        }
+
+        .selectlanguagediv:after{
+            top: 26px !important;
+        }
+
+        .myText{
+          position: relative;
+          top: 18px;
+          left: -20px;
+          visibility:hidden
+        };
+        
+        </style>
+
+    </head>
+<body>
+
+<header class="header">
+    <%try{document.write(header(request));} catch (err) { return false;}%>
+    </header>
+  <input type="hidden" id="user" name="user" value=<% try{document.write(isApplicationAdministrator() || isCampaignMetaManagers());} catch (err) { return false;} %>>
+  <input type="hidden" id="cmr" name="cmr" value=<% try{document.write(isCampaignMetaReviewer());} catch (err) { return false;} %>>
+  <!--    /*r.Shah Start*/-->
+  <input type="hidden" id="pnm" name="pnm" value=<% try{document.write(isPhoneNumberManagers());} catch (err) { return false;} %>>
+  <!--    /*r.Shah End*/-->
+  
+    
+<main>
+   <div id="loadingCampaign"></div>
+   <div id="createDiv" style="display: none;">
+    <div class="col-lg-12 col-md-12 col-sm-12" id="createMessage" style="display:none;">
+        <%=getOption('metaValidateAccess')%>
+    </div>
+      <div id="createCampaign" style="display: none;">      
+       <div class="row">
+       <div class="col-lg-3 col-md-3" id="backToExistingCampaignDiv" style="display: none;">
+      <a class="backArrow opacityOne" id="backToExistingCampaign"> <img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="backArrow" width="16" height="15" />
+                    <input type="button" name="previous" class="action-button-previous backToExistingCampaign" value="Back to All Campaigns" />
+<!--        previous-->
+                    </a>
+      </div>
+       <div class="col-lg-6 col-md-6 col-md-offset-3 col-sm-12">
+          </div>
+       <div class="col-lg-3 col-md-3"></div>
+      </div>
+    <div class="row" id="viewCampaign-HeadingDiv" style="display: none;">
+          <div class="col-lg-12 col-md-12 col-md-offset-12 col-sm-12 campheading-padding viewCampaign-tablePadding">
+              <h5><b class="campaignformHeading">View Campaign Data</b></h5>
+      </div>
+        </div>    
+      <div class="col-lg-12" id="stepIndicator-HeadingDiv" style="display: none;">  
+        <div class="row">
+          <div class="col-lg-3 col-md-3">       
+       </div>
+          <div class="col-lg-6 col-md-6 col-md-offset-6 col-sm-6 campheading-padding viewCampaign-tablePadding">
+              <center><h5><b class="campaignformHeading">Create a New Campaign</b></h5></center>
+      </div>
+          <div class="col-lg-3 col-md-3"></div>
+        </div>
+           
+      </div>
+    <div class="row" id="stepIndicator">
+    <br>
+          <div class="col-lg-3 col-md-3"></div>
+          <div class="col-md-12 col-md-offset-3 col-sm-12">
+        <div class="row">
+              <div class="col-lg-3 col-md-3"></div>
+              <div class="col-lg-6 col-md-6 col-md-offset-3 col-sm-12 padding" id="campaignBreadCrums">
+            <ul id="progressbar" class="">
+                  <li class="activeProgressKey">. Overview</li>
+                  <li>. Add Campaign Data</li>
+                  <li>. Submit for Approval</li>
+                </ul>
+          </div>
+      <div class="col-lg-3 col-md-3"></div>
+            </div>
+      </div>
+          <div class="col-lg-3 col-md-3"></div>
+        </div>
+    <div class="row"> 
+          
+          <!--    mainHeading-->
+          <div class="col-md-12 col-md-offset-3 col-sm-12 padding" id="campaignForm">
+            <form id="createCampaignform">
+              <fieldset class="multiStepFieldsetContainer formtop" id="Overview" fieldsetIndex="0">
+            <h3 class="createCampaign-subtitle">Let's get started</h3>
+            <h2 class="createCampaign-title"> Please Provide Campaign Overview Information </h2>
+            <div class="row">
+                  <div class="col-lg-12 padding">
+                <input class="form-control"
+                      type="text"
+                      name="campaignName"
+                      id="campaignName"
+                      required
+                    />
+                <span class="form-floating-label">Campaign Name*</span> </div>
+                  <div class="col-lg-12 selectCampaignDates padding">
+                <p class="margin-bottom-0"> Campaign description : </p>
+                <textarea
+                      id="campaignDescription"
+                      name="campaignDescription"
+                      rows="1"
+                      cols="50"
+                    ></textarea>
+              </div>
+                  <div class="col-lg-12 selectdiv touchlabel padding">
+                <p class="margin-bottom-0"> Select Inititaive* : </p>
+                <select
+                      name="initiativeId"
+                      class="form-control"
+                      id="initiativeId"
+                      required
+                      >
+                      <i class="arrow down"></i>
+                      <option value="Select Inititaive" selected="selected"
+                        >Select Inititaive*</option
+                      >
+                    </select>
+              </div>
+                  <div class="col-lg-12 selectdiv touchlabel padding">
+                <p class="margin-bottom-0"> Select Line of Business* : </p>
+                <select
+                      name="lobId"
+                      class="form-control"
+                      id="lobId"
+                      required
+                      >
+                      <i class="arrow down"></i>
+                      <option value="Line of Business" selected="selected"
+                        >Select Line of Business*</option
+                      >
+                    </select>
+              </div>
+                  <div class="col-lg-12 selectdiv touchlabel padding">
+                <p class="margin-bottom-0"> Select Brand* : </p>
+                <select
+                      name="brandId"
+                      class="form-control"
+                      id="brandId"
+                      required
+                      >
+                      <i class="arrow down"></i>
+                      <option value="Select Brand" selected="selected"
+                        >Select Brand*</option
+                      >
+                    </select>
+              </div>
+                  <div class="col-lg-12 margin-bottom-10 padding"> <span class="selectCampaignDates"
+                      >Select Campaigns Dates :</span
+                    > </div>
+                  <div class="col-lg-12 padding">
+                <div class="row">
+                      <div class="col-lg-6 touchlabel padding-left">
+                    <p class="margin-bottom-0"> Start Date* : </p>
+                    <input
+                          name="campaignStartDate"
+                          type="text"
+                          class="form-control calenderImage"
+                          id="startDate"
+                          placeholder="Start Date*"
+                          required
+                        />
+                  </div>
+                      <div id="errorCampLesserEndDate" class="errorCampLesserEndDate col-lg-6 touchlabel padding-right">
+                    <p class="margin-bottom-0"> End Date* : </p>
+                    <input
+                          name="campaignEndDate"
+                          type="text"
+                          class="form-control calenderImage"
+                          id="endDate"
+                          placeholder="End Date*"
+                        />
+                  </div>
+                    </div>
+              </div>
+                  <div class="col-lg-12 campaignTemplate selectCampaignDates padding">
+                <p> Will you need a campaign template for this Campaign ? </p>
+                <input
+                      type="radio"
+                      id="campaigntemplateYes"
+                      name="campaignTemplate"
+                      value="1"
+                    />
+                <label>Yes</label>
+                <br />
+                <input
+                      type="radio"
+                      id="campaigntemplateNo"
+                      name="campaignTemplate"
+                      value="0"
+                      checked
+                    />
+                <label>No</label>
+              </div>
+                </div>
+            <input type="button" name="next" class="next btn button-login saveandContinue" id="step1_Next" value="Save and Continue" />
+            <!--            <button type="button" name="next" class="next btn button-login saveandContinue" id="step1_Next"> Save and Continue </button>-->
+          </fieldset>
+              <fieldset class="multiStepFieldsetContainer" id="addCampaign" fieldsetIndex="1" style="padding-bottom: 0px !important;">
+            <div class="row ">
+                  <div class="col-lg-12 table viewCampaign-tablePadding" style="margin:0px;">
+                    <table style="width: 100%;" class="display">
+                    </table>
+              </div>
+                </div>
+            <div class="row addcampaignbuttonPadding">
+                  <div class="col-lg-4 padding"><a class="backArrow opacityOne" id="step2_Previous"> <img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="backArrow" width="16" height="15" />
+                    <input type="button" name="previous" class="action-button-previous step2_Previous" value="Edit Campaign Overview" /><br>
+<!--.previous-->
+                    </a> </div>
+                  <div class="col-lg-2"></div>
+                  <div class="col-lg-6">
+                <div class="row">
+                      <div class="col-lg-6">
+                    <input type="button" name="next" class="next action-button" id="step2_Next" value="Create New Touch+" />
+                  </div>
+                      <div class="col-lg-6">
+                    <input type="button" name="next" class="next action-button displayNone" id="step2_Submit" value="Submit Campaign for Review" />
+                  </div>
+                    </div>
+              </div>
+                </div>
+          <div class="row padding exportCampaign"><div class="col-lg-5 padding"><input type="button" name="next" class="btn btn-outline-secondary importCampaignMetaData" id="importCampaignMetaData" style="margin-top: 10px;" title="Work In Progress" value="Import Campaign Data from Excel">&nbsp;&nbsp;&nbsp;<a style="position: relative;top: 6px;" href="#">Download .csv template</a></div><div class="col-lg-3 padding"></div><div class="col-lg-4 padding"><input type="button" name="next" class="next action-button float-right" id="exportCampaignMetaData" title="Work In Progress" style="padding: 10px 30px;" value="Export Campaign MetaData"></div></div>
+          </fieldset>
+              <fieldset class="multiStepFieldsetContainer formtop" id="CreateTouchMultiStepForm" fieldsetIndex="1">
+            <div class="row " id="createTouchForm">
+                  <div class="col-lg-12 padding">
+                <fieldset class="CreateTouchMultiStepForm-fieldset" id="CreateTouchMultiStepForm_0">
+                      <h3 class="touchOverview-subtitle"> [Campaign Name] > Touch Overview </h3>
+                      <h2 class="touchOverview-title"> Create a New Touch for [Campaign Name] </h2>
+                      <div class="row">
+                    <div class="col-lg-12 padding">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="campaignId"
+                            id="campaignId"
+                            hidden
+                          />
+                        </div>
+                    <div class="col-lg-12 padding">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="touchName"
+                            id="touchName"
+                            required
+                          />
+                          <span class="form-floating-label">Touch Name*</span> </div>
+                    <div class="col-lg-12 touchlabel padding">
+                          <p class="margin-bottom-0"> Touch Description : </p>
+                          <textarea
+                            id="touchDescription"
+                            name="touchDescription"
+                            rows="1"
+                          cols="50"
+                          ></textarea>
+                        </div>
+                    <div class="col-lg-12 selectdiv touchlabel padding">
+                          <p class="margin-bottom-0"> Select Channel* : </p>
+                          <select
+                            name="channelId"
+                            class="form-control"
+                            id="addChannel"
+                            required
+                            >
+                        <i class="arrow down"></i>
+                        <option value="Select Channel" selected="selected"
+                              >Select Channel*</option
+                            >
+                      </select>
+                        </div>
+                    <div class="col-lg-12 margin-bottom-10 touchlabel padding"> <span class="selectCampaignDates"
+                            >Select Touch Dates :</span
+                          ><br />
+                        </div>
+
+                        <div class="col-lg-12 padding">
+                            <div class="row">
+                          <div class="col-lg-6 touchlabel padding-left">
+                                <p class="margin-bottom-0"> Start Date*: </p>
+                                <input
+                                  name="touchStartDate"
+                                  type="text"
+                                  class="form-control calenderImage"
+                                  id="touchStartDate"
+                                  placeholder="Start Date*"
+                                />
+                              </div>
+                          <div class="col-lg-6 touchlabel padding-right" id="errorTouchLesserEndDate">
+                                <p class="margin-bottom-0"> End Date*: </p>
+                                <input
+                                  name="touchEndDate"
+                                  type="text"
+                                  class="form-control calenderImage"
+                                  id="touchEndDate"
+                                  placeholder="End Date*"
+                                />
+                              </div>
+                        </div>
+                          </div>
+
+                    <div class="col-lg-12 padding">
+                          <div class="row">
+                        <div class="col-lg-6 touchlabel padding-left">
+                              <p class="margin-bottom-0"> Mail File Due Date: </p>
+                              <input
+                                name="mailFileDueDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="mailFileDueDate"
+                                placeholder="Mail File Due Date"
+                              />
+                            </div>
+                        <div class="col-lg-6 touchlabel padding-right">
+                              <p class="margin-bottom-0"> Estimated Drop Date: </p>
+                              <input
+                                name="estimatedDropDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="estimatedDropDate"
+                                placeholder="Estimated Drop Date"
+                              />
+                            </div>
+                      </div>
+                        </div>
+                    
+                    <div class="col-lg-12 touchlabel padding">
+                          <p> Would you like to create segments for this Touch? </p>
+                          <input
+                            type="radio"
+                            id="segmentYes"
+                            name="haveSegments"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label>
+                          <br />
+                          <input
+                            type="radio"
+                            id="segmentNo"
+                            name="haveSegments"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                    <div class="col-lg-12 touchlabel padding" id="phoneNumberDiv">
+                          <p> Will you need  Phone Number(s) for this Touch? </p>
+                          <input
+                            type="radio"
+                            id="PhoneNumberYes"
+                            name="havePhoneAssignments"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label>
+                          <br />
+                          <input
+                            type="radio"
+                            id="PhoneNumberNo"
+                            name="havePhoneAssignments"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                    <div
+                          class="col-lg-12 touchlabel padding"
+                          id="languageDiv" style="display: none;"
+                        >
+                          <p>  </p>
+                          <input
+                            type="radio"
+                            id="languageYes"
+                            name="haveLanguage"
+                            value="1"
+               checked
+                          />
+                          <label for="age1">Yes</label>
+                          <br />
+                          <input
+                            type="radio"
+                            id="languageNo"
+                            name="haveLanguage"
+                            value="0"
+                            
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                    <div
+                          class="col-lg-12 touchlabel padding"
+                          id="urlAssignmentsDiv"
+                        >
+                          <p> Would you need Url Assignments for this Touch? </p>
+                          <input
+                            type="radio"
+                            id="urlAssignmentsYes"
+                            name="haveUrlAssignments"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label>
+                          <br />
+                          <input
+                            type="radio"
+                            id="urlAssignmentsNo"
+                            name="haveUrlAssignments"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                    <div
+                          class="col-lg-12 touchlabel padding"
+                          id="operationAssignedDiv"
+                        >
+                          <p> Will you like to assign Operation for this Touch? </p>
+                          <input
+                            type="radio"
+                            id="operationAssignedYes"
+                            name="haveOperationAssigned"
+                            value="1"
+                          />
+                          <label>Yes</label>
+                          <br />
+                          <input
+                            type="radio"
+                            id="operationAssignedNo"
+                            name="haveOperationAssigned"
+                            value="0"
+                            checked
+                          />
+                          <label >No</label>
+                        </div>
+                    <div class="col-lg-12 padding">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="campaignWorkflowTemplate"
+                          id="campaignWorkflowTemplate"
+                            hidden
+                          />
+                        </div>
+                  </div>
+                      <input type="button" name="next" class="next action-button float-right" id="tab1_Next"
+                                    value="Continue" />
+                    </fieldset>
+                <fieldset class="CreateTouchMultiStepForm-fieldset" id="CreateTouchMultiStepForm_1">
+                      <h3 class="segment-subtitle"> [Campaign Name] › Touch Overview › Segments </h3>
+                      <h2 class="segment-title"> Create Segments for this Touch: [Touch] </h2>
+                      <div class="row">
+                    <div class="col-lg-12 padding">
+                          <div class="form-inline">
+                        <input
+                    class="form-control segmentInput col-10"
+                    type="text"
+                    name="Segments"
+                    id="segmentInput"
+                  />
+                       <!-- harinath 11-05-2020 Start -->
+                        <button id="addSegments"> Add + </button><span id="tab2ContinueError"></span><span id="duplicateSegmentsError"></span>
+<!-- harinath 11-05-2020 End -->
+                      </div>
+                          <br />
+                          <p class="segmentlabel"> Your Segments </p>
+                          <ul id="segmentlist" class="segmentlist">
+                      </ul>
+                        </div>
+                  </div>
+                      <a class="backArrow" id="tab2_previous"><img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="Back" width="16" height="15" />
+                  <input type="button" name="previous" class="action-button-previous tab2_previous" value="Back" />
+<!--              previous-->
+                  </a>
+                      <input type="button" name="next" class="next action-button" id="tab2_Next"
+                                    value="Continue" />
+                    </fieldset>
+                <fieldset class="CreateTouchMultiStepForm-fieldset" id="CreateTouchMultiStepForm_2">
+                      <h3 class="language-subtitle"> [Campaign Name] › Touch Overview › Segments › Segment Data </h3>
+                      <h2 class="language-title"> Select Language for your Touch or Segment </h2>
+                      <div class="row">
+                    <div class="col-lg-12 selectdiv padding">
+                          <p class="margin-bottom-0"> Select a lanugage for your touch: </p>
+                          <select
+                            name="languageTouch"
+                            class="form-control"
+                            id="languageTouch"
+                            required
+                            >
+                        <i class="arrow down"></i>
+                        <option value="Language" selected="selected"
+                              >[Touch] Language*</option
+                            >
+                      </select>
+                        </div>
+                    <div class="col-lg-12 padding orDiv">
+                          <center>
+                        <span class="or">-OR-</span>
+                      </center>
+                        </div>
+                    <br />
+                    <br />
+                    <div class="col-lg-12 padding" id="createSegmentLanguage">
+                          <p class="Select-a-phone-number">Select a language for your Segments</p>
+                        </div>
+                  </div>
+                      <a class="backArrow" id="tab3_previous"><img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="Back" width="16" height="15" />
+                  <input type="button" name="previous" class="action-button-previous tab3_previous" value="Back" />
+<!--              previous-->
+                  </a>
+                      <input type="button" name="next" class="next action-button" id="tab3_Next"
+                                    value="Continue" />
+                    </fieldset>
+                <fieldset class="CreateTouchMultiStepForm-fieldset" id="CreateTouchMultiStepForm_3">
+                      <h3 class="phoneNumber-subtitle"> [Campaign Name] › Touch Overview › Segments › Segment Data </h3>
+                      <h2 class="phoneNumber-title"> Request Phone Numbers by Touch or Segment </h2>
+                      <div class="row">
+                    <div class="col-lg-12 phoneNumberselectdiv padding">
+                          <select
+                            name="phoneNumberTouch"
+                            class="form-control"
+                            id="phoneNumberTouch"
+                            required
+                            >
+                        <i class="arrow down"></i>
+                        <option value="PhoneNumber" selected="selected"
+                              >[Touch] Phone Number*</option>
+                      </select>
+                        </div>
+                    <div class="col-lg-12 padding orDiv">
+                          <center>
+                        <span class="or">-OR-</span>
+                      </center>
+                        </div>
+                    <br />
+                    <br />
+                    <div class="col-lg-12 padding" id="createSegmentPhoneNo">
+                          <p class="Select-a-phone-number">Select a phone number  for your Segments</p>
+                        </div>
+                  </div>
+                      <a class="backArrow" id="tab4_previous"><img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="Back" width="16" height="15" />
+                  <input type="button" name="previous" class="action-button-previous tab4_previous"
+                                     value="Back" />
+<!--              previous-->
+                  </a>
+                      <input type="submit" name="" class="submit action-button" value="Continue" id="tab4_Next" />
+                    </fieldset>
+                <fieldset class="CreateTouchMultiStepForm-fieldset" id="CreateTouchMultiStepForm_4">
+                      <h3 class="url-subtitle"> [Campaign Name] › Touch Overview › Segments › Segment Data </h3>
+                      <h2 class="url-title"> Request Url by Touch or Segment </h2>
+                      <div id="URLDataTable">
+                    <div id="createTouchUrlLink">
+                          <input class="createTouchUrlLink_inputValue" id="touchUrlLink" type="text" placeholder="Enter Touch URL">
+                        </div>
+                    <div class="col-lg-12 padding orDiv">
+                          <center>
+                        <span class="or">-OR-</span>
+                      </center>
+                        </div>
+                    <br />
+                    <br />
+                    <div id="createSegmentUrlLink" >
+                          <p class="Select-a-phone-number">Enter url for your Segments</p>
+                        </div>
+                  </div>
+                      <a class="backArrow" id="tab5_previous"><img src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/back-arrow.png" alt="Back" width="16" height="15" />
+                  <input type="button" name="previous" class="action-button-previous tab5_previous"
+                                     value="Back" />
+<!--              previous-->
+                  </a>
+                      <input type="button" name="" class="action-button" value="Save" id="tab5_Next" />
+                    </fieldset>
+              </div>
+                </div>
+          </fieldset>
+              <fieldset class="multiStepFieldsetContainer formtop" id="submitForApproval" fieldsetIndex="2">
+            <h2 class="fs-title" id="languageDetails">Language Details</h2>
+            <div id="languageDataTable"></div>
+            <input type="button" name="previous" class="action-button-previous" id="step3_Previous"
+                        value="Back" />
+<!--          previous-->
+            <input type="button" name="next" class="next action-button" id="step3_Next" value="Continue" />
+          </fieldset>
+            </form>           
+          </div>
+      
+        </div>
+  </div>
+  </div>
+  <div id="existingDiv" style="display: none;">
+    <div class="col-lg-12 col-md-12 col-sm-12" id="existingMessage" style="display:none;">
+        <%=getOption('metaValidateAccess')%>
+    </div>
+      <div id="existingCampaign" style="display: none;">
+    <div class="container-fluid" id="campaignDetailsTable">
+          <div class="viewCampaignheader">Find an Existing Campaign</div>
+          <table style="width: 100%;" id="existingCampaignTable" class="listDisplay">
+      </table>
+    
+        </div>
+      <div class="row padding exportCampaign"><div class="col-lg-4 padding"></div><div class="col-lg-4 padding"></div><div class="col-lg-4 padding"><input type="button" name="next" class="next action-button float-right" id="exportCampaign" title="Work In Progress" value="Export Campaign"></div></div>
+  </div>
+  </div>
+      
+      
+  
+  
+      
+    </main>
+<footer> </footer>
+<script src="<%=getOption('metaResourceDirectoryDefault')%>Index.js"></script> 
+<script src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/CreateCampaignIndex.js"></script> 
+<script type="text/javascript">
+  
+  var existingCampaignId,stepFormCreateSegmentRadio,stepFormCreatePhoneNumber,stepFormCreateUrlAssignment,stepFormOperationAssignment,noSegmentGetLanguage,noSegmentGetPhoneId,noSegmentGetUrl,campaignTouchDetail ;
+  var arrayMultipleSegmentNames = [],arraySegAssignJSON =[];
+  var segmentResponseObject,arrayPushSegmentLanguageID,arrayPushSegmentPhoneID,arrayPushSegmentURL,segAssignJson,segmentCollectionJson;
+  
+  var createCampaigndata,formData,createTouchResponseObject,responseTouchObject,createcampaignResponseObj,updatecampaignResponseObj,responseEditTouchObject,responsePhoneObject,pageType;
+  var createTouchObject,createSegmentObject,updateTouchObject,isSegmentRadioNoChecked;
+  var formFlag = false,backtocampaignform = false,radioSelectionFlag,backtoTouchform = false,touchFormFlag = false;
+  var debugFlag=true;
+  var isSegnameNameUnique=true,isSegLanguageSelected = false, isSegPhoneIdSelected = false, isSegUrlSelected = false;  
+  
+  var userRoleflag,cmrRoleFlag,pnmRoleFlag;
+  //<!-- harinath 11-05-2020 Start -->
+  var isTouchFormFilled=false; 
+  var touchFormValidationArray;
+  //<!-- harinath 11-05-2020 End --> 
+  
+  //<!-- harinath 12-05-2020 Start -->
+  var isCampFormFilled = false;
+  var campaignFormValidationArray
+  //<!-- harinath 12-05-2020 End -->
+
+   //<!-- harinath 13-05-2020 Start -->
+   var isCampaignTypeEdit = false; //Type Create  is default
+  
+ 
+  //<!-- harinath 13-05-2020 End -->
+
+  
+  function GetParameterValues(param)
+  {
+    var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < url.length; i++) {
+      var urlparam = url[i].split('=');
+      if (urlparam[0] == param) {
+        return urlparam[1];
+      }
+    }  
+  }  
+  
+  document.onreadystatechange = function() {   
+    if (document.readyState !== "complete") { 
+      $("#main").css("display","none");
+      $("#header").css("display","none");
+//      $("#loader").css("display","block");
+    loader($("#loadingCampaign").attr("id"));
+    $("#loadingCampaign").css("display","block");
+    }
+    else
+    {
+    pageType = GetParameterValues('type');    
+    $("#loader").css("display","none");
+    $("#loadingCampaign").css("display","none !important");
+      $("#main").css("display","block");
+      $("#header").css("display","block");  
+      userRoleflag = $("#user").val();
+      cmrRoleFlag = $("#cmr").val();
+      pnmRoleFlag = $("#pnm").val();
+    
+    if(userRoleflag == "true")
+    {
+      if(pageType == "create")
+      {     
+      $(".campaignTemplate").removeClass("disabled");
+      $(".campaignTemplate").addClass("enabled"); 
+      $("#createDiv").css("display","block");
+      $("#createCampaign").css("display","block");
+      $("#existingDiv").css("display","none");
+      $("#stepIndicator-HeadingDiv").css("display","block");
+      }
+      else
+      {
+      $("#createDiv").css("display","none");
+      $("#existingDiv").css("display","block");
+      $("#existingCampaign").css("display","block");
+      $("#stepIndicator-HeadingDiv").css("display","none");  
+      }      
+    }
+    else if(cmrRoleFlag == "true" || pnmRoleFlag == "true")
+    {
+      if(pageType == "create")
+      {        
+        $("#createDiv").css("display","block");
+        $("#createMessage").css("display","block");
+        $("#existingDiv").css("display","none");     
+    $("#stepIndicator-HeadingDiv").css("display","block");  
+      }
+      else
+      {
+        $("#createDiv").css("display","none");
+        $("#existingDiv").css("display","block");
+        $("#existingCampaign").css("display","block"); 
+    $("#stepIndicator-HeadingDiv").css("display","none"); 
+      }      
+    }    
+    } 
+  } 
+  
+  function bindingcampaignTouchDetail(campaignTouchDetail)
+  {
+    $(".display").empty();
+  //  var touchField = "Touch Name,Channel,Touch Date,Unique ID,Segment,Phone #,URL,Lang,Status,Action";
+    var touchField = '<%=getOption("metaTouchTableHeaderVariable")%>';
+    var touchFieldData = [];
+        touchFieldData = touchField.split(",");
+        var table = $("<table id='campaignDetailTable' class='display nowrap' width='100%'>");
+        var th = $("<thead></thead>");
+        var tr = $("<tr>");
+        //var tr1 = $("</tr>");
+        var keys = 0;
+        for (var j = 0; j < touchFieldData.length; j++)
+        {
+      var header = touchFieldData[j];
+      if(header == "Last Modified")  
+      {
+      tr.append("<th class='viewCampaigntableheader' id=" + header + " style='display:none;'><span>" + header + "</span></th>");
+      }
+          else if(header == "Action")
+          {
+              tr.append("<th class='viewCampaigntableheader' id=" + header + "><span style='visibility:hidden'>" + header + "</span></th>");
+          }
+      else if(header == "Delete")
+      {
+          tr.append("<th class='viewCampaigntableheader' id=" + header + "><span style='visibility:hidden'>" + header + "</span></th>");
+      }
+          else
+          {
+              tr.append("<th class='viewCampaigntableheader' id=" + header + ">" + header + "</th>");
+          }
+    }
+    tr.append("</tr>");
+    th.append(tr);
+        table.append(th);
+        var tbody = $('<tbody></tbody>');
+        var touchData = {};  
+      touchData = campaignTouchDetail.metaData[0].campaign_collection[0].touch_collection;
+        var startdate, endDate = "";
+        var flag;
+
+    if(campaignTouchDetail.metaData[0].campaign_collection[0].touch_collection != undefined)
+    {
+        if(touchData.length != undefined)
+    {
+          for(var i=0; i < touchData.length; i++)
+      {
+      var tr = $("<tr>");
+      flag = false;
+      for(var z = 0; z < touchFieldData.length; z++)
+      {
+        for(var j in touchData[i].touch)
+        {
+          if(touchFieldData[z] == "Touch Name" && j == "touchName")
+          {
+            tr.append('<td>'+touchData[i].touch.touchName+'</td>');
+          }
+          else if(touchFieldData[z] == "Channel" && j == "channelId")
+          {
+            tr.append('<td>'+touchData[i].touch.channelName+'</td>');
+          }              
+          else if(touchFieldData[z] == "Touch Date" && j == "touchEndDate")
+          {
+            endDate = touchData[i].touch.touchEndDate;
+          }
+          else if(touchFieldData[z] == "Touch Date" && j == "touchStartDate" )
+          {
+            startdate = touchData[i].touch.touchStartDate;
+            tr.append('<td>'+startdate+' - '+ endDate + '</td>');
+            flag = true;
+          }
+      else if(touchFieldData[z] == "Last Modified" && j == "lastModified")
+          {
+            tr.append('<td style="display:none;">'+touchData[i].touch.lastModified+'</td>');
+          } 
+        }
+        if(flag == true)
+        {
+          var table2 = $("<td><table id='segment' width='100%' cellpadding='0' cellspacing='0' border='0'>");
+          if(touchData[i].segment_collection != undefined)
+          {
+            for( var k=0; k<touchData[i].segment_collection.length; k++)
+            {
+              for(var n in touchData[i].segment_collection[k].segment)
+              {
+                    if(touchFieldData[z] == "Unique ID" && n == "segmentCode" && touchData[i].segment_collection[k].segment.isMarkDeleted != "1" )
+                    {
+                      tr2 = $("<tr>");
+                      tr2.append('<td>'+touchData[i].segment_collection[k].segment.segmentCode+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "Segment" && n == "segmentName" && touchData[i].segment_collection[k].segment.isMarkDeleted != "1")
+                    {
+                      tr2 = $("<tr>");
+                      tr2.append('<td>'+touchData[i].segment_collection[k].segment.segmentName+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                  }
+              if(touchData[i].segment_collection[k].segmentAssignment_collection != undefined)
+              {
+                for(var p = 0; p<touchData[i].segment_collection[k].segmentAssignment_collection.length; p++)
+                {
+                  for(var l in touchData[i].segment_collection[k].segmentAssignment_collection[p].segmentAssignment)
+                  {
+                    if(touchFieldData[z] == "Phone #" && l == "phoneNumberId")
+                    {
+                      tr2 = $("<tr>");               tr2.append('<td>'+touchData[i].segment_collection[k].segmentAssignment_collection[p].segmentAssignment.phoneNumber+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "URL" && l == "urlLink")
+                    {
+
+                      tr2 = $("<tr>");                        tr2.append('<td>'+touchData[i].segment_collection[k].segmentAssignment_collection[p].segmentAssignment.urlLink+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "Lang" && l == "languageId")
+                    {
+                      tr2 = $("<tr>");                      tr2.append('<td>'+touchData[i].segment_collection[k].segmentAssignment_collection[p].segmentAssignment.languageName+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "Status" && l == "metaStatus")
+                    {
+                      tr2 = $("<tr>");                      tr2.append('<td>'+touchData[i].segment_collection[k].segmentAssignment_collection[p].segmentAssignment.metaStatus+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                  }
+                }
+              }
+              else
+              {
+                if(touchFieldData[z] == "Phone #" || touchFieldData[z] == "URL" || touchFieldData[z] == "Lang" || touchFieldData[z] == "Status")
+                {
+                  tr2 = $("<tr>");
+                  tr2.append('<td></td>');
+                  tr2.append("</tr>");
+                  table2.append(tr2);
+                  tr.append(table2);
+                }                    
+              }  
+            }
+          }  
+          else
+          {
+            if(touchFieldData[z] == "Unique ID" || touchFieldData[z] == "Segment" || touchFieldData[z] == "Phone #" || touchFieldData[z] == "URL" || touchFieldData[z] == "Lang" || touchFieldData[z] == "Status")
+            {
+              tr2 = $("<tr>");
+              tr2.append('<td></td>');
+              tr2.append("</tr>");
+              table2.append(tr2);
+              tr.append(table2);
+            }
+          }
+        }
+        for(var j in touchData[i].touch)
+        {
+          if(touchFieldData[z] == "Action" && j == "id")
+          {        
+            // tr.append('<td><a class="viewCampaignLink" id='+touchData[i].touch.id+' onclick="editTouch('+touchData[i].touch.id+','+touchData[i].touch.campaignId+');"><img   class="" src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-edit-purple-20.png"/></a></td>');
+
+            tr.append('<td><a class="viewCampaignLink editTouchIconImg" onclick="workInProgress('+i+')"><img class=""   src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-edit-purple-20.png"/></a><span class="myText" id="myText_'+i+'">Work in Progress</span></td>');
+            
+          } 
+      else if(touchFieldData[z] == "Delete" && j == "operationId")
+      {        
+        tr.append('<td><a class="viewCampaignLink" onclick="deleteTouch('+touchData[i].touch.id+','+touchData[i].touch.campaignId+');"><img class=""   src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png"/></a></td>');
+      }  
+        }
+        tbody.append(tr);
+      }
+    }
+      }
+    else
+    {
+        var tr = $("<tr>");
+        flag = false;
+        for(var z = 0; z < touchFieldData.length; z++)
+        {
+          for(var j in touchData.touch)
+          {
+            if(touchFieldData[z] == "Touch Name" && j == "touchName")
+            {
+              tr.append('<td>'+touchData.touch.touchName+'</td>');
+            }
+            else if(touchFieldData[z] == "Channel" && j == "channelId")
+            {
+              tr.append('<td>'+touchData.touch.channelName+'</td>');
+            }
+            else if(touchFieldData[z] == "Touch Date" && j == "touchEndDate")
+            {
+              endDate = touchData.touch.touchEndDate;
+            }
+            else if(touchFieldData[z] == "Touch Date" && j == "touchStartDate" )
+            {
+              startdate = touchData.touch.touchStartDate;       
+                tr.append('<td>'+startdate+' - '+ endDate + '</td>');
+            flag = true;
+            }
+       else if(touchFieldData[z] == "Last Modified" && j == "lastModified")
+            {
+              tr.append('<td style="display:none;">'+touchData.touch.lastModified+'</td>');
+            }
+          }
+
+          if(flag == true)
+          {
+            if(touchData.segment_collection != undefined)
+            {
+              for(var n in touchData.segment_collection.segment)
+              {
+                var table2 = $("<td><table id='segment' width='100%' cellpadding='0' cellspacing='0' border='0'>");
+                if(touchFieldData[z] == "Unique ID" && n == "segmentCode")
+                {
+                  tr2 = $("<tr>");
+                  tr2.append('<td>'+touchData.segment_collection.segment.segmentCode+'</td>');
+                  tr2.append("</tr>");
+                  table2.append(tr2);
+                  tr.append(table2);
+                }
+                else if(touchFieldData[z] == "Segment" && n == "segmentName")
+                {
+                  tr2 = $("<tr>");
+                  tr2.append('<td>'+touchData.segment_collection.segment.segmentName+'</td>');
+                  tr2.append("</tr>");
+                  table2.append(tr2);
+                  tr.append(table2);
+                }
+                if(touchData.segment_collection.segmentAssignment_collection != undefined)
+                  {
+                  for(var l in touchData.segment_collection.segmentAssignment_collection.segmentAssignment)
+                  {
+                    if(touchFieldData[z] == "Phone #" && l == "phoneNumberId")
+                    {
+                    tr2 = $("<tr>");                    tr2.append('<td>'+touchData.segment_collection.segmentAssignment_collection.segmentAssignment.phoneNumber+'</td>');
+                    tr2.append("</tr>");
+                    table2.append(tr2);
+                    tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "URL" && l == "urlLink")
+                    {
+                    tr2 = $("<tr>");
+                    tr2.append('<td>'+touchData.segment_collection.segmentAssignment_collection.segmentAssignment.urlLink+'</td>');
+                    tr2.append("</tr>");
+                    table2.append(tr2);
+                    tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "Lang" && l == "languageId")
+                    {
+                      tr2 = $("<tr>");                      tr2.append('<td>'+touchData.segment_collection.segmentAssignment_collection.segmentAssignment.languageName+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    }
+                    else if(touchFieldData[z] == "Status" && l == "metaStatus")
+                    {
+                      tr2 = $("<tr>");                      tr2.append('<td>'+touchData.segment_collection.segmentAssignment_collection.segmentAssignment.metaStatus+'</td>');
+                      tr2.append("</tr>");
+                      table2.append(tr2);
+                      tr.append(table2);
+                    } 
+                  }
+                  }
+                  else
+                  {
+                  if(touchFieldData[z] == "Phone #" || touchFieldData[z] == "URL" || touchFieldData[z] == "Lang" || touchFieldData[z] == "Status")
+                  {
+                    tr2 = $("<tr>");
+                    tr2.append('<td></td>');
+                    tr2.append("</tr>");
+                    table2.append(tr2);
+                    tr.append(table2);
+                  }
+                  }
+              }
+            }
+            else
+            {
+              if(touchFieldData[z] == "Unique ID" || touchFieldData[z] == "Segment" || touchFieldData[z] == "Phone #" || touchFieldData[z] == "URL" || touchFieldData[z] == "Lang" || touchFieldData[z] == "Status")
+              {
+                tr2 = $("<tr>");
+                tr2.append('<td></td>');
+                tr2.append("</tr>");
+                table2.append(tr2);
+                tr.append(table2);
+              }
+            }
+             
+              
+            }
+      for(var j in touchData.touch)
+          {
+      if(touchFieldData[z] == "Action" && j == "id")
+      {        
+        // tr.append('<td><a class="viewCampaignLink" id='+touchData.touch.id+' onclick="editTouch('+touchData.touch.id+','+touchData.touch.campaignId+');"><img class=""   src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-edit-purple-20.png"/></a></td>');
+        tr.append('<td><a class="viewCampaignLink editTouchIconImg" onclick="workInProgress('+i+')"><img class=""   src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-edit-purple-20.png"/></a><span class="myText" id="myText_'+i+'">Work in Progress</span></td>');
+      } 
+    else if(touchFieldData[z] == "Delete" && j == "operationId")
+        {        
+        tr.append('<td><a class="viewCampaignLink" onclick="deleteTouch('+touchData.touch.id+','+touchData.touch.campaignId+');"><img class=""   src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png"/></a></td>');
+        }      
+      }
+            tbody.append(tr);
+          }
+      }
+    }
+    else
+        {
+          var tr = $("<tr>");
+           for(var z = 0; z < touchFieldData.length; z++)
+           {
+         if(touchFieldData[z] == "Touch Name" )
+        {
+          tr.append('<td></td>');
+        }
+        else if(touchFieldData[z] == "Channel")
+        {
+          tr.append('<td></td>');
+        }
+        else if(touchFieldData[z] == "Touch Date"  )
+        {
+          tr.append('<td></td>');
+        }
+    else if(touchFieldData[z] == "Last Modified"  )
+        {
+          tr.append('<td style="display:none;"></td>');
+        }     
+        else if(touchFieldData[z] == "Unique ID")
+        {
+          tr.append('<td></td>');
+        }
+        else if(touchFieldData[z] == "Segment" )
+        {
+          tr.append('<td></td>');
+        }
+        else if(touchFieldData[z] == "Phone #" )
+        {
+          tr.append('<td></td>');
+        }
+        else if(touchFieldData[z] == "URL" )
+        {
+           tr.append('<td></td>');
+        }
+         else if(touchFieldData[z] == "Lang" )
+        {
+           tr.append('<td></td>');
+        }
+         else if(touchFieldData[z] == "Status" )
+        {
+           tr.append('<td></td>');
+        }
+         else if(touchFieldData[z] == "Action" )
+        {
+           tr.append('<td></td>');
+        }
+      else if(touchFieldData[z] == "Delete" )
+        {
+           tr.append('<td></td>');
+        }
+       }
+          tbody.append(tr);
+      }
+      table.append(tbody);
+      $(".display").append(table);
+      $("#campaignDetailTable").DataTable({
+        dom: "Bfrtip",
+        paging: true,
+        language: { search: "" },
+        pageLength: 10,
+        searching: true,
+        select:true,
+        order: [[ 3, "desc" ]],
+          columnDefs: [{
+          targets: [10,11],
+          orderable: false
+       }],
+      oSearch: { "bSmart": false, "bRegex": true }
+      });
+      $("#campaignDetailTable_length").css("display","none");
+      $("#campaignDetailTable_info").css("display","none");
+      $("#filter").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#campaignDetailsTable tbody tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+    $("#details").empty();
+      $("<div class='details' id='details'><div class='col-lg-12' style='background:#343741;color:#fff;padding: 10px;font-size: .875rem;'><div class='row' style='width:100%;'><div class='col-lg-6'><span style='font-size:1rem;'>" +campaignTouchDetail.metaData[0].campaign_collection[0].campaign.initiativeName + " : " + campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+ "</span><br><span style='font-size:0.75rem;'><b>Brand</b> : " + campaignTouchDetail.metaData[0].campaign_collection[0].campaign.brandName+ "&nbsp;&nbsp;&nbsp;&nbsp;<b>LOB</b> : "+ campaignTouchDetail.metaData[0].campaign_collection[0].campaign.lobName+ "</span></div><div class='col-lg-6' style='text-align:right;'>Campaign Dates : "+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignStartDate+" - "+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignendDate+"</div></div></div></div>").insertAfter("#campaignDetailTable_filter");
+    
+    
+    if(pageType == "create")
+    {
+    $(".ViewCampaignDataHeaderText").empty();
+    }
+    else
+   {     
+     $("#campaignDetailTable_filter").append('<p class="ViewCampaignDataHeaderText"><%=getOption('metaViewCampaignDataHeaderText')%></p>');
+   }
+
+      $("#campaignDetailTable_filter").append('<img class="searchIcon" src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/search-icon.PNG" style="height:2rem;">');
+    $("input[aria-controls='campaignDetailTable']").attr("placeholder","Search");
+    
+      $("#step2_Previous").css("display","block");
+     if(userRoleflag == "true")
+   {
+     $("#step2_Next").css("display","inline-block");
+   }
+    else
+      {
+      $("#step2_Next").css("display","none");
+      }
+    
+//    $("#addCampaign").append('<div class="row padding addCampaign-bottom-div"><div class="col-lg-5 padding"><input type="button" name="next" class="btn btn-outline-secondary importCampaignMetaData" id="importCampaignMetaData" title="Work In Progress" value="Import Campaign Data from Excel">&nbsp;&nbsp;&nbsp;<a href="#">Download .csv template</a></div><div class="col-lg-3 padding"></div><div class="col-lg-4 padding"><input type="button" name="next" class="next action-button float-right" id="exportCampaignMetaData" title="Work In Progress" value="Export Campaign MetaData"></div></div>');
+    
+    $("#exportCampaignMetaData").on("click",function(e){
+     e.preventDefault();
+     exportThisWithParameter($("#campaignDetailTable").attr("id"), 'Campaign_Touch_Table')
+    });
+    
+    
+    }
+  
+  function dropdownbinding()  
+  {
+    
+            $("#initiativeId").empty();
+            $("#initiativeId").append(
+            "<option value='Select Inititaive' selected='selected'>Select Inititaive*</option>"
+            );
+            $("#lobId").empty();
+            $("#lobId").append(
+              "<option value='Line of Business' selected='selected'>Selet Line of Business*</option>"
+            );
+            $("#brandId").empty();
+            $("#brandId").append(
+              "<option value='Select Brand' selected='selected'>Select Brand</option>"
+            );
+        for (var i = 0; i < campaignData.metaData.length; i++) {
+        for (var j = 0; j < campaignData.metaData[i].data.length; j++) {        
+          if (campaignData.metaData[i].name == "initiative") {
+            $("#initiativeId").append(
+              $("<option>")
+              .text(campaignData.metaData[i].data[j].Name)
+              .attr("value", campaignData.metaData[i].data[j].ID)
+            );
+          } else if (campaignData.metaData[i].name == "lineOfBusiness") {
+            $("#lobId").append(
+              $("<option>")
+              .text(campaignData.metaData[i].data[j].Name)
+              .attr("value", campaignData.metaData[i].data[j].ID)
+            );
+          } else if (campaignData.metaData[i].name == "brand") {
+            $("#brandId").append(
+              $("<option>")
+              .text(campaignData.metaData[i].data[j].Name)
+              .attr("value", campaignData.metaData[i].data[j].ID)
+            );
+          }
+        }
+      }
+      }
+  
+  function viewCampaignTouchDetails(campaignResponseObj)
+  {
+    var id ;
+    if($.type(campaignResponseObj) == 'string' || $.type(campaignResponseObj) === 'number' )
+    {
+      id = campaignResponseObj;
+    }
+    else
+    {
+      id = campaignResponseObj.data.campaignId;
+    }      
+    getcampaignDetailsRequestObject = {
+      "methodName":"getcampaignDetails",
+      "data":{
+        "campaignId": id
+      }
+    };
+    $.ajax({
+      type: "POST",
+//    async: "false",
+      url:
+      "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(getcampaignDetailsRequestObject),
+      success: function (data) {      
+        campaignTouchDetail = data;      
+        bindingcampaignTouchDetail(campaignTouchDetail);
+      },
+      error: function (response) {
+        alert("error");
+      },
+    });
+  }
+  
+  function progressBarFunctionality(passIndex) 
+  {
+        $('#progressbar li').each(function () {
+            consoleLog(this,debugFlag);
+            consoleLog(passIndex,debugFlag);
+            $(this).removeClass('activeProgressKey');
+            $("#progressbar li").eq(passIndex).addClass('activeProgressKey')
+        });
+
+    }
+    
+  function bindingCampaignList(campaignDetails)
+      {
+        $(".listDisplay").empty();
+       // var touchField = "Campaign Name,Initiative,Line of Business,Brand,Campaign Dates,Unique ID,Action";
+    var touchField = '<%=getOption("metaCampaignListTableHeaderVariable")%>';
+        var touchFieldData = [];
+        touchFieldData = touchField.split(",");
+        var table = $("<table id='campaignsListTable' class='display nowrap' width='100%'>");
+        var th = $("<thead></thead>");
+        var tr = $("<tr>");
+        //var tr1 = $("</tr>");
+        var keys = 0;
+        for (var j = 0; j < touchFieldData.length; j++)
+        {
+          var header = touchFieldData[j];
+          if(header == "Last Modified")
+          {
+            tr.append("<th class='viewCampaigntableheader' id=" + header + " style='display:none;'><span>" + header + "</span></th>");
+          }  
+          else if(header == "Action")
+          {
+            tr.append("<th class='viewCampaigntableheader' id=" + header + "><span style='visibility:hidden'>" + header + "</span></th>");
+          }        
+          else
+          {
+            tr.append("<th class='viewCampaigntableheader' id=" + header + ">" + header + "</th>");
+          }
+        }
+        tr.append("</tr>");
+        th.append(tr);
+        table.append(th);
+        var tbody = $('<tbody></tbody>');
+        var touchData = {};
+        touchData = campaignDetails.metaData[0].multiCampaigns.campaign_collection;
+        console.log(JSON.stringify(touchData));
+        var startDate, endDate = "";
+          var count = 0;
+        if(campaignDetails.metaData[0].multiCampaigns.campaign_collection != undefined)
+        {
+          if(touchData.length != undefined)
+          {
+            for(var i=0; i < touchData.length; i++)
+            {
+              var tr = $("<tr>");
+              for(var z = 0; z < touchFieldData.length; z++)
+              {
+                for(var j in touchData[i].campaign)
+                {
+                  if(touchFieldData[z] == "Campaign Name" && j == "campaignName")
+                  {
+                    tr.append('<td>'+touchData[i].campaign.campaignName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Initiative" && j == "initiativeName")
+                  {
+                    tr.append('<td>'+touchData[i].campaign.initiativeName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Line of Business" && j == "lobName")
+                  {
+                    tr.append('<td>'+touchData[i].campaign.lobName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Brand" && j == "brandName" )
+                  {
+                    tr.append('<td>'+touchData[i].campaign.brandName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "" && j == "touchStartDate" )
+                  {
+                    tr.append('<td>'+touchData[i].campaign.lobName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Campaign Dates" && j == "campaignStartDate")
+                  {
+                    startDate = touchData[i].campaign.campaignStartDate;
+                  }
+                  else if(touchFieldData[z] == "Campaign Dates" && j == "campaignendDate" )
+                  {
+                    endDate = touchData[i].campaign.campaignendDate;
+                    if(startDate!= "" )
+                    {
+                      tr.append('<td>'+startDate+' - '+ endDate + '</td>');
+                    }
+                  }
+                  else if(touchFieldData[z] == "Unique ID" && j == "id" )
+                  {
+                    tr.append('<td>'+touchData[i].campaign.id+'</td>');
+                  }
+          else if(touchFieldData[z] == "Last Modified" && j == "lastModified" )
+                  {
+                    tr.append('<td style="display:none;">'+touchData[i].campaign.lastModified+'</td>');
+                  }  
+                  else if(touchFieldData[z] == "Action" && j == "operationtemplateId")
+                  {
+                    tr.append('<td><a class="viewCampaignLink" id='+touchData[i].campaign.id+' onclick="viewCampaign('+touchData[i].campaign.id+');">View Campaigns > </a></td>');
+                  }
+                }
+                tbody.append(tr);
+              }
+              count = i+1;
+            }
+          }
+          else
+          {
+            var tr = $("<tr>");
+            flag = false;
+            for(var z = 0; z < touchFieldData.length; z++)
+            {
+              for(var j in touchData.campaign)
+              {
+                if(touchFieldData[z] == "Campaign Name" && j == "campaignName")
+                  {
+                    tr.append('<td>'+touchData.campaign.campaignName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Initiative" && j == "initiativeName")
+                  {
+                    tr.append('<td>'+touchData.campaign.initiativeName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Line of Business" && j == "lobName")
+                  {
+                    tr.append('<td>'+touchData.campaign.lobName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Brand" && j == "brandName" )
+                  {
+                    tr.append('<td>'+touchData.campaign.brandName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "" && j == "touchStartDate" )
+                  {
+                    tr.append('<td>'+touchData.campaign.lobName+'</td>');
+                  }
+                  else if(touchFieldData[z] == "Campaign Dates" && j == "campaignStartDate")
+                  {
+                    startDate = touchData.campaign.campaignStartDate;
+                  }
+                  else if(touchFieldData[z] == "Campaign Dates" && j == "campaignendDate" )
+                  {
+                    endDate = touchData.campaign.campaignendDate;
+                    if(startDate!= "")
+                    {
+                      tr.append('<td>'+startDate+' - '+ endDate + '</td>');
+                    }
+                  }
+                  else if(touchFieldData[z] == "Unique ID" && j == "id" )
+                  {
+                    tr.append('<td>'+touchData.campaign.id+'</td>');
+                  }
+          else if(touchFieldData[z] == "Last Modified" && j == "lastModified" )
+                  {
+                    tr.append('<td style="display:none;">'+touchData.campaign.lastModified+'</td>');
+                  }  
+                  else if(touchFieldData[z] == "Action" && j == "operationtemplateId")
+                  {
+                    tr.append('<td><a class="viewCampaignLink" id='+touchData[i].campaign.id+' href="viewCampaign('+touchData[i].campaign.id+');">View Campaigns > </a></td>');
+                  }
+              }
+              tbody.append(tr);
+            }
+            count = i+1;
+          }
+        }
+        table.append(tbody);    
+        $(".listDisplay").append(table);
+        $("#campaignsListTable").DataTable({
+          select: true,
+      language: { search: "" },
+       order: [[ 6, "desc" ]],
+          columnDefs: [{
+          targets: [7],
+          orderable: false
+       }],
+      oSearch: { "bSmart": false, "bRegex": true }
+
+        });
+        $("#campaignsListTable_length").css("display","none");
+        $("#campaignsListTable_info").css("display","none");
+        $("#filter").on("keyup", function () {
+          var value = $(this).val().toLowerCase();
+          $("#campaignsListTable tbody tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+          });
+        });
+
+        $("<div class='details' id='details'><div class='col-lg-12' style='background:#343741;color:#fff;padding: 10px;font-size: .875rem;'><div class='row'><div class='col-lg-12 padding'>Explore Existing Campaigns ("+count+")</div></div></div></div>").insertAfter("#campaignsListTable_filter");
+//        $("#existingCampaign").append('<div class="row padding exportCampaign"><div class="col-lg-4 padding"></div><div class="col-lg-4 padding"></div><div class="col-lg-4 padding"><input type="button" name="next" class="next action-button float-right" id="exportCampaign" title="Work In Progress" value="Export Campaign"></div></div>');
+      
+    $("#campaignsListTable_filter").append('<img class="searchIcon" src="http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/search-icon.PNG" style="height:2rem;">');
+    $("input[aria-controls='campaignsListTable']").attr("placeholder","Search");
+      
+//      $("#exportCampaign").on("click",function(e){
+//        e.preventDefault();
+//        var items = [];
+//        items.push($("#campaignsListTable").attr('id'));
+//        var sheetName = ['Existing Campaigns'];
+//        var d = new Date();
+//        var day = d.getDate();
+//        var month = d.getMonth();
+//        var year = d.getFullYear();
+////        var hours = d.getHours();
+////        var min = d.getMinutes();
+////        var sec = d.getSeconds();       
+//        var fileName= "Existing_Campaigns_"+year+"-"+month+"-"+day+".xls";
+//        TableToCSV();
+//        //tablesToExcel(items, sheetName, fileName, 'Excel');
+//      });
+      
+      }
+  
+  function displayOverview() {
+    $('.multiStepFieldsetContainer').hide();
+        $('#Overview').show();
+    var getOverviewIndex = $('#Overview').attr('fieldsetIndex');
+        progressBarFunctionality(getOverviewIndex);
+    };
+
+    function displayAddCampaignData() {
+        $('.multiStepFieldsetContainer').hide();
+        $('#addCampaign').show();
+        var getAddCampaignIndex = $('#addCampaign').attr('fieldsetIndex');
+        progressBarFunctionality(getAddCampaignIndex);
+    };
+
+    function displaySubmitForApproval() {
+        $('.multiStepFieldsetContainer').hide();
+        $('#submitForApproval').show();
+    
+     var getSubmitForApproval = $('#submitForApproval').attr('fieldsetIndex');
+        progressBarFunctionality(getSubmitForApproval);
+    };
+
+    function displayCreatTouchStepForm() {
+
+        $('.multiStepFieldsetContainer').hide();
+        $('#CreateTouchMultiStepForm').show();
+    var getCreateTouchMultiStepForm = $('#CreateTouchMultiStepForm').attr('fieldsetIndex');
+        progressBarFunctionality(getCreateTouchMultiStepForm);
+    }
+  var responsePhoneNumberObject;
+  function getPhoneNumberDetails()
+  {
+    var phoneNumberObject = {
+        "methodName": "getPhoneDetails",
+          "data": {}
+     } 
+     $.ajax({
+       type: "POST",
+//     async: "false",
+       url:
+       "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+       contentType: "application/json",
+       dataType: "json",
+       data: JSON.stringify(phoneNumberObject),
+       success: function (response) {  
+         responsePhoneNumberObject = response;        
+       },
+      error: function (response) {
+        alert("error");
+      },
+    });
+  }
+  
+  getPhoneNumberDetails();  
+  function displayandEditTouchStepForm(responseEditTouchObject)
+  {
+    
+    for (var i = 0; i < campaignData.metaData.length; i++) {                        
+      for (var j = 0; j < campaignData.metaData[i].data.length; j++) {  
+        if (campaignData.metaData[i].name == "channel") {
+          $("#addChannel").append(
+            $("<option>")
+            .text(campaignData.metaData[i].data[j].Name)
+            .attr("value", campaignData.metaData[i].data[j].ID)
+          );
+        }      
+      }
+    }    
+    for(k=0;k<campaignData.metaData[2].data.length;k++)
+    {
+      $("#languageTouch").append(
+        $("<option>")
+        .text(campaignData.metaData[2].data[k].Name)
+        .attr("value", campaignData.metaData[2].data[k].ID)
+      );
+    }    
+    for(p=0;p<responsePhoneNumberObject.data.length;p++)
+    {
+      $("#phoneNumberTouch").append(
+        $("<option>")
+        .text(responsePhoneNumberObject.data[p].PhoneNumber)
+        .attr("value", responsePhoneNumberObject.data[p].PhoneId)
+      );
+    }
+
+    $("#phoneNumberTouch option").eq(0).text('['+responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchName+'] Phone Number');
+        //responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchName
+    $("#campaignWorkflowTemplate").val(responseEditTouchObject.metaData[0].campaign_collection[0].campaign.operationtemplateId);
+    $(".touchOverview-subtitle").text(""+responseEditTouchObject.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview");
+    $(".touchOverview-title").text("Create a New Touch for "+responseEditTouchObject.metaData[0].campaign_collection[0].campaign.campaignName);
+    $("#campaignId").val(responseEditTouchObject.metaData[0].campaign_collection[0].campaign.id);  
+    $("#touchName").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchName);
+    $("#touchDescription").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchDescription);
+    $("#addChannel").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.channelId);
+    $("#mailFileDueDate").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.mailFileDueDate);
+    $("#estimatedDropDate").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.estimatedDropDate);
+    $("#touchStartDate").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchStartDate);
+    $("#touchEndDate").val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchEndDate);
+    if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.haveSegments == "0")
+    {
+      $("#segmentYes").prop("checked", false);    
+      $("#segmentNo").prop("checked", true);
+    }
+    else
+    {        
+      $("#segmentYes").prop("checked", true);
+      $("#segmentNo").prop("checked", false);  
+    }
+    if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.havePhoneAssignments == "0")
+    {
+      $("#PhoneNumberYes").prop("checked", false);    
+      $("#PhoneNumberNo").prop("checked", true);
+    }
+    else
+    {        
+      $("#PhoneNumberYes").prop("checked", true);
+      $("#PhoneNumberNo").prop("checked", false);  
+    }
+    if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.haveUrlAssignments == "0")
+    {
+      $("#urlAssignmentsYes").prop("checked", false);    
+      $("#urlAssignmentsNo").prop("checked", true);
+    }
+    else
+    {        
+      $("#urlAssignmentsYes").prop("checked", true);
+      $("#urlAssignmentsNo").prop("checked", false);  
+    }
+    if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.haveOperationAssigned == "0")
+    {
+      $("#operationAssignedYes").prop("checked", false);    
+      $("#operationAssignedNo").prop("checked", true);
+    }
+    else
+    {        
+      $("#operationAssignedYes").prop("checked", true);
+      $("#operationAssignedNo").prop("checked", false);  
+    }
+    var etGetSegJsonData = {segmentId: 0, touchId: "", segmentName: "", segmentCode: ""};
+
+    if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection !=undefined)
+    {
+      for(var i=0; i<responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection.length;i++)
+      {
+        if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.phoneNumberId == "0" || responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.phoneNumberId == ""){
+          responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.phoneNumberId = "";
+         };
+
+         arrayMultipleSegmentNames.push(etGetSegJsonData);
+         arrayPushSegmentLanguageID.push(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.languageId);
+         arrayPushSegmentPhoneID.push(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.phoneNumberId);
+         arrayPushSegmentURL.push(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.urlLink);
+
+        $("#segmentlist").append(
+          "<li id=" + responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[0].segment.touchId + " class='li'>" +
+          responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[0].segment.segmentName +
+          "<img class='segmentTrashImg' src='http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png' /><hr class='hr'/></li>"
+        );
+        
+        if(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection != undefined)
+        {                        
+          $('#createSegmentLanguage').append('<div class="col-lg-12 selectlanguagediv padding"><div class = "segLangLabelName">'+arrayMultipleSegmentNames[i].segmentName+'</div><select class="form-control segmentLanguageClass" id="seglanguage_' + i + '">  <option id="0" data-index = "Select Language*">['+arrayMultipleSegmentNames[i].segmentName+'] Language</option></select></div>');
+
+          for( var l=0;l<campaignData.metaData[2].data.length;l++)
+          {                            
+            $('#seglanguage_'+i).append('<option id="'+campaignData.metaData[2].data[l].ID+'">'+campaignData.metaData[2].data[l].Name+'</option>');   
+          }
+          $('#seglanguage_'+i).val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.languageName);
+          
+          $('#createSegmentPhoneNo').append('<div class="col-lg-12 selectlanguagediv padding"><select class="form-control segmentPhoneClass" id="segphone_' + i + '">  <option id="0">Select Phone Number*</option></select></div>');
+          for(var n=0; n<responsePhoneNumberObject.data.length; n++)
+          {
+            $('#segphone_'+i).append('<option id="'+responsePhoneNumberObject.data[n].PhoneId+'">'+responsePhoneNumberObject.data[n].PhoneNumber+'</option>');
+          }          
+          $('#segphone_'+i).val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.phoneNumber);    
+          
+          $("#createSegmentUrlLink").append("<input type='text' class='segURL_textbox' id='segurl_" + i + "' placeholder='Segment URL " + i + "'>");  
+          $('#segurl_'+i).val(responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].segment_collection[i].segmentAssignment_collection[0].segmentAssignment.urlLink);
+          
+          
+        }
+        
+        
+        
+      }        
+    }      
+    
+    
+  }
+  
+  function editTouch(editTouchId,editCampaginId)
+  {
+      if(isCampaignTypeEdit){
+        //Create
+      }else{
+          //false
+      }
+  
+    var editTouchObject = { 
+      methodName:"getcampaignDetails",
+      data:{
+      campaignId: editCampaginId,
+      touchId: editTouchId
+      }
+    }
+
+    $.ajax({
+        type: "POST",
+//    async: "false",
+      url:
+      "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(editTouchObject),
+      success: function (response) {        
+        //        alert(JSON.stringify(response)); 
+        //if(qType == "edit"){           
+        // viewCampaignTouchDetails(existingCampaignId);           
+        //} 
+        //else{           
+        //viewCampaignTouchDetails(createcampaignResponseObj.data.campaignId);
+        //} 
+        resetTouchForm();
+        responseEditTouchObject = response;       
+        displayCreatTouchStepForm();
+        $("#CreateTouchMultiStepForm_0").css("display","block");
+        displayandEditTouchStepForm(responseEditTouchObject);
+        $("#tab1_Next").val("Continue");
+    $("#backToExistingCampaignDiv").css("display","none"); 
+    $("#viewCampaign-HeadingDiv").css("display","none");
+    $("#stepIndicator-HeadingDiv").css("display","block");
+    $("#stepIndicator").css("display","block");
+      },
+      error: function (response) {
+        alert("error");
+      },
+    });
+  }
+  
+  function deleteTouch(deleteTouchId,deleteCampaginId)
+  {
+    var deleteTouchObject = { 
+      methodName:"deleteTouch",
+      data:{
+        touchId: deleteTouchId
+      }
+    }
+    
+     $.ajax({
+       type: "POST",
+//     async: "false",
+       url:
+       "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+       contentType: "application/json",
+       dataType: "json",
+       data: JSON.stringify(deleteTouchObject),
+       success: function (response) {        
+         //resetTouchForm();
+         responseDeleteTouchObject = response;   
+          viewCampaignTouchDetails(deleteCampaginId);
+         
+      },
+      error: function (response) {
+        alert("error");
+      },
+    });
+  }
+    
+  
+  function viewCampaign(id)
+  {
+    //alert(id + " id");
+  
+    $("#step2_Previous").css("display","none");
+    $("#step2_Next").css("display","none");
+    existingCampaignId = id;
+    $("#existingCampaign").css("display","none");
+    
+    displayAddCampaignData();
+    viewCampaignTouchDetails(id);
+    $("#stepIndicator").css("display","none");
+  $("#createDiv").css("display","block");  
+    $("#createCampaign").css("display","block");
+    $("#backToExistingCampaignDiv").css("display","block");
+    $("#viewCampaign-HeadingDiv").css("display","block");
+  }
+    
+  function findAndRemove(array, property, value) 
+  {
+    array.forEach(function (result, index) {
+      if (result[property] === value) {
+        array.splice(index, 1);
+      }
+    });
+    // console.log(array);
+  }
+  
+  function resetTouchForm()
+  {
+    $("#touchName").val('');
+    $("#touchDescription").val('');
+    $("#touchDescription").val('');
+    $('#addChannel').prop('selectedIndex',0);
+    $("#mailFileDueDate").val("");
+    $("#estimatedDropDate").val("");
+    $("#touchStartDate").val("");
+    $("#touchEndDate").val("");
+    $('#segmentYes').prop('checked', false);
+    $('#segmentNo').prop('checked', true);    
+    $('#PhoneNumberYes').prop('checked', false);
+    $('#PhoneNumberNo').prop('checked', true);    
+    $('#languageYes').prop('checked', false);
+    $('#languageNo').prop('checked', true);    
+    $('#urlAssignmentsYes').prop('checked', false);
+    $('#urlAssignmentsNo').prop('checked', true);    
+    $('#operationAssignedYes').prop('checked', false);
+    $('#operationAssignedNo').prop('checked', true);
+    $("#segmentInput").val('');
+    $("#segmentlist").empty();
+  $('#languageTouch').empty();
+  $('#languageTouch').append('<i class="arrow down"></i><option value="Language" selected="selected">[Touch] Language*</option>');
+//    $('#languageTouch').prop('selectedIndex',0);
+    $("#createSegmentLanguage").empty();  
+  $("#createSegmentLanguage").append('<p class="Select-a-phone-number">Select a language for your Segments</p>');
+  $('#phoneNumberTouch').empty();
+  $('#phoneNumberTouch').append('<i class="arrow down"></i><option value="PhoneNumber" selected="selected">[Touch] Phone Number*</option>');
+//    $('#phoneNumberTouch').prop('selectedIndex',0);
+    $("#createSegmentPhoneNo").empty();
+  //$("#createSegmentLanguage").append('<p class="Select-a-phone-number">Select a phone number  for your Segments</p>');
+  //<!-- harinath 11-05-2020 Start -->
+    $("#createSegmentPhoneNo").append('<p class="Select-a-phone-number">Select a phone number  for your Segments</p>');
+//<!-- harinath 11-05-2020 End -->  
+    $("#touchUrlLink").val('');
+    $("#createSegmentUrlLink").empty();
+  $("#createSegmentUrlLink").append('<p class="Select-a-phone-number">Enter url for your Segments</p>'); 
+    arrayMultipleSegmentNames = [];
+    arraySegAssignJSON = [];
+        arrayPushSegmentLanguageID = []
+        arrayPushSegmentPhoneID = []
+        arrayPushSegmentURL = [];
+        noSegmentGetLanguage = "";
+        noSegmentGetPhoneId = "";
+        noSegmentGetUrl = "";
+    segmentCollectionJson = {};
+    segAssignJson = {};
+    
+    //<!-- harinath 11-05-2020 Start -->
+    isSegmentRadioNoChecked ="";
+    isSegnameNameUnique=true;
+    isSegLanguageSelected = false;
+     isSegPhoneIdSelected = false;
+      isSegUrlSelected = false; 
+
+      $("#tab2ContinueError").popover("hide");  
+$("#tab2ContinueError").removeClass("invalid");  
+$("#duplicateSegmentsError").popover("hide");  
+$("#segmentInput").removeClass("invalid");  
+$("#addSegments").popover("hide");  
+$("#addSegments").removeClass("invalid"); 
+$("#languageTouch").popover("hide");
+$("#languageTouch").removeClass("invalid");
+$("#phoneNumberTouch").popover("hide");
+$("#phoneNumberTouch").removeClass("invalid");
+$("#touchUrlLink").removeClass("invalid");
+$("#touchUrlLink").popover("hide");
+
+
+var segURL_textbox = $('.segURL_textbox');
+for(i=0;i<segURL_textbox.length;i++)
+{
+var getSegmentUrlID = $('#segurl_'+i).attr('id');
+$('#'+getSegmentUrlID).popover("hide");
+$('#'+getSegmentUrlID).removeClass("invalid");
+
+
+};
+
+
+var segmentPhoneClass = $('.segmentPhoneClass');
+for(i=0;i<segmentPhoneClass.length;i++)
+{
+var getSegmentID = $('#segphone_'+i).attr('id');
+$('#'+getSegmentID).popover("hide");
+$('#'+getSegmentID).removeClass("invalid");
+
+} 
+
+var segmentLanguageClass = $('.segmentLanguageClass');
+for(i=0;i<segmentLanguageClass.length;i++)
+{
+var getSegmentID = $('#seglanguage_'+i).attr('id');
+$('#'+getSegmentID).popover("hide");
+$('#'+getSegmentID).removeClass("invalid");
+
+} 
+
+//<!-- harinath 11-05-2020 End -->
+    
+  }
+  
+  function createDynamicSegmentURL() 
+  {
+        $("#CreateTouchMultiStepForm_4").show();
+        var getSegmentListLength = arrayMultipleSegmentNames.length;
+       // arrayPushSegmentURL = [getSegmentListLength];
+        for (i = 0; i < getSegmentListLength; i++) {
+            
+            $("#createSegmentUrlLink").append('<div class="col-lg-12 selectlanguagediv padding"><div class="segURLLabelName">'+arrayMultipleSegmentNames[i].segmentName+'</div><input type="text" class="segURL_textbox" id="segurl_'+i+'" placeholder="['+arrayMultipleSegmentNames[i].segmentName+'] URL"></div>');
+
+           
+        };
+        $(".createTouchUrlLink_inputValue").attr('placeholder','['+createTouchResponseObject.data.touchName+'] URL')
+        $(".segURL_textbox").keyup(function () {
+            var getSelectedIndex = $(this).attr('id').split('_')
+            var getUrlInputData = $(this).val();
+            arrayPushSegmentURL[getSelectedIndex[1]] = getUrlInputData
+        });
+    }
+  
+  function createJSONforSegYes() 
+  {
+    for (i = 0; i < arrayMultipleSegmentNames.length; i++) {
+
+            if (arrayPushSegmentLanguageID[i] == undefined) {
+                arrayPushSegmentLanguageID[i] = ""
+            }
+            if (arrayPushSegmentPhoneID[i] == undefined) {
+                arrayPushSegmentPhoneID[i] = ""
+            }
+            if (arrayPushSegmentURL[i] == undefined) {
+                arrayPushSegmentURL[i] = ""
+            }
+
+            segAssignJson = {
+                "segmentId": arrayMultipleSegmentNames[i].segmentId,
+                "segmentLanguageId": arrayPushSegmentLanguageID[i],
+                "segmentPhoneNumberId": arrayPushSegmentPhoneID[i],
+                "urlLink": arrayPushSegmentURL[i]
+            };
+            arraySegAssignJSON.push(segAssignJson);
+        }
+    }
+  
+  function createJSONforSegNO() 
+  {
+    if (noSegmentGetLanguage == undefined || noSegmentGetLanguage == '') {
+            noSegmentGetLanguage = "";
+        };
+
+        if (noSegmentGetPhoneId == undefined || noSegmentGetPhoneId == '') {
+            noSegmentGetPhoneId = "";
+        };
+
+        if (noSegmentGetUrl == undefined || noSegmentGetUrl == "") {
+            noSegmentGetUrl = "";
+        };
+
+
+        segAssignJson = {
+            "segmentId": createTouchResponseObject.data.segmentId,
+            "segmentLanguageId": noSegmentGetLanguage,
+            "segmentPhoneNumberId": noSegmentGetPhoneId,
+            "urlLink": noSegmentGetUrl
+        };
+        arraySegAssignJSON.push(segAssignJson);
+    }
+  
+  function createsegmentCollectionJson()
+  {
+    segmentCollectionJson = {
+      "methodName": "createSegmentAssignment",
+      "data": {
+          
+        "createSegment": createTouchResponseObject.data.haveSegments,
+        "createPhoneNumber": createTouchResponseObject.data.havePhoneAssignments,
+        "createUrl": createTouchResponseObject.data.haveUrlAssignments,
+        "segmentsAssignment": arraySegAssignJSON
+      }
+    }
+    console.log(segmentCollectionJson);
+    
+    var qType = GetParameterValues('type');                                     
+//    <!-- checking queryParameter type when we are binding touch data to data tables -->
+    $.ajax({
+      type: "POST",
+//    async: "false",  
+      url:
+      "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(segmentCollectionJson),
+      success: function (response) {        
+        alert(JSON.stringify(response));       
+         if(qType == "edit"){           
+            viewCampaignTouchDetails(existingCampaignId);           
+           } 
+           else{           
+           viewCampaignTouchDetails(createcampaignResponseObj.data.campaignId);
+           }      
+        resetTouchForm();
+      
+        $(".CreateTouchMultiStepForm-fieldset").css("display","none");
+     if(pageType == "create")
+    {
+      $("#backToExistingCampaignDiv").css("display","none");
+      $("#viewCampaign-HeadingDiv").css("display","none");
+      $("#stepIndicator-HeadingDiv").css("display","block");
+      $("#stepIndicator").css("display","block");
+
+    }
+    else
+    {
+      $("#stepIndicator-HeadingDiv").css("display","none");
+      $("#stepIndicator").css("display","none");
+      $("#viewCampaign-HeadingDiv").css("display","block");
+      $("#backToExistingCampaignDiv").css("display","block");
+    }  
+      
+      },
+      error: function (response) {
+        alert("error");
+      },
+    });
+  }
+  
+  function radioSelectionFlag_110_010()
+  {
+      if (radioSelectionFlag == "110" || radioSelectionFlag == "010") 
+    {
+      if (radioSelectionFlag == "010") 
+      {
+        createJSONforSegNO();
+      }
+      createJSONforSegYes();
+      createsegmentCollectionJson();
+      $('.CreateTouchMultiStepForm-fieldset').hide();
+      $('.multiStepFieldsetContainer').hide();
+      $("#addCampaign").show();
+      $("#step2_Submit").removeClass("displayNone");
+      
+
+      //<!-- harinath 11-05-2020 Start -->
+      isSegPhoneIdSelected = false;
+           noSegmentGetPhoneId = ""; 
+            $("#phoneNumberTouch").popover("hide");
+            $("#phoneNumberTouch").removeClass("invalid");
+            //<!-- harinath 11-05-2020 End -->
+    }
+}
+
+  function tab5_Click_Action()
+  {
+
+    $('.CreateTouchMultiStepForm-fieldset').hide();
+    $('.multiStepFieldsetContainer').hide();
+    $("#addCampaign").show();
+    $("#step2_Submit").removeClass("displayNone");
+    noSegmentGetUrl = $(".createTouchUrlLink_inputValue").val();
+    if (radioSelectionFlag == "001" || radioSelectionFlag == "011" || radioSelectionFlag == "010" || radioSelectionFlag == "000") 
+    {
+      createJSONforSegNO();
+    } 
+    else 
+    {
+      createJSONforSegYes();
+      isSegPhoneIdSelected = false;
+    }
+    createsegmentCollectionJson();
+         //<!-- harinath 11-05-2020 Start -->
+    isSegPhoneIdSelected = false;
+    $("#touchUrlLink").removeClass("invalid");
+    $("#touchUrlLink").popover("hide");
+
+//<!-- harinath 11-05-2020 End -->          
+  }
+  
+  //<!-- harinath 11-05-2020 Start -->
+
+
+  function touchFormValidationFunction(){
+    
+    touchFormValidationArray = new Array(4);
+      for(i=0;i<touchFormValidationArray.length;i++){
+        touchFormValidationArray[i] = false;
+      };
+
+      var getTouchFormTouchName = $("#touchName").val();
+      var getTouchFormChannelName = $("#addChannel").val();
+      var getTouchFormStartDate = $("#touchStartDate").val();
+      var getTouchFormEndDate = $("#touchEndDate").val();
+      var getTouchFormHaveSegments = $('input[name="haveSegments"]:checked').val();
+      var getTouchFormHavePhone = $('input[name="havePhoneAssignments"]:checked').val();
+      var getTouchFormHaveUrl = $('input[name="haveUrlAssignments"]:checked').val();
+      var getTouchFormHaveOperation = $('input[name="haveOperationAssigned"]:checked').val();  
+
+
+      var compareTouchStartDate = new Date($("#touchStartDate").val());
+      var compareTouchEndDate = new Date ($("#touchEndDate").val());
+
+
+      if(getTouchFormTouchName ==""){
+        var content = "Touch Name cannot be empty !";      
+        popover(
+          $("#touchName").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#touchName").addClass("invalid"); 
+      }else{
+        touchFormValidationArray[0] = true;
+        $("#touchName").removeClass("invalid");
+        $("#touchName").popover("hide");
+      };
+
+
+    
+
+      
+      if(getTouchFormChannelName =="" || getTouchFormChannelName == "Select Channel"){
+        var content = "Channel cannot be empty !";      
+        popover(
+          $("#addChannel").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#addChannel").addClass("invalid"); 
+      }else{
+        touchFormValidationArray[1] = true;
+        $("#addChannel").removeClass("invalid");
+        $("#addChannel").popover("hide");
+      };
+
+
+    
+
+      if(getTouchFormStartDate  ==""){
+        var content = "Enter Start Date !";      
+        popover(
+          $("#touchStartDate").attr("id"),
+          "manual",
+          "left",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#touchStartDate").addClass("invalid"); 
+      }else{
+        touchFormValidationArray[2] = true;
+        $("#touchStartDate").removeClass("invalid");
+        $("#touchStartDate").popover("hide");
+      };
+
+
+
+      if(getTouchFormEndDate  ==""){
+        var content = "Enter End date!";      
+        popover(
+          $("#touchEndDate").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#touchEndDate").addClass("invalid"); 
+        $("#errorTouchLesserEndDate").popover("hide");
+        touchFormValidationArray[3] = false;
+
+      }else{
+        
+        $("#touchEndDate").removeClass("invalid");
+        $("#touchEndDate").popover("hide");
+
+        if(compareTouchStartDate <= compareTouchEndDate){
+                $("#touchEndDate").removeClass("invalid");
+                $("#errorTouchLesserEndDate").popover("hide");
+                touchFormValidationArray[3] = true;
+            }else{
+                var content = "End Date should not be lesser!";      
+                popover(
+                $("#errorTouchLesserEndDate").attr("id"),
+                "manual",
+                "right",
+                content,
+                popoverTemplate(content)
+                );  
+                $("#touchEndDate").addClass("invalid");
+                touchFormValidationArray[3] = false;
+            }
+      };
+     
+     
+
+
+      for(j=0;j<touchFormValidationArray.length;j++){
+        if(touchFormValidationArray[j] == false){
+          isTouchFormFilled = false;
+          break;
+        }else{
+          isTouchFormFilled = true;
+        }
+      }
+  };
+
+  //<!-- harinath 11-05-2020 End -->
+
+//<!-- harinath 12-05-2020 Start -->
+  function campaignFormValidationfunction(){
+    campaignFormValidationArray = new Array(5);
+      for(i=0;i<campaignFormValidationArray.length;i++){
+        campaignFormValidationArray[i] = false;
+      };
+
+
+      var getCampFormCampName = $("#campaignName").val();
+      var getCampFormInitiativeName = $("#initiativeId").val();
+      var getCampFormLOB = $("#lobId").val();
+      var getCampFormBrand = $("#brandId").val();
+      var getCampFormStartDate = $("#startDate").val();
+      var getCampFormEndDate = $("#endDate").val();
+
+
+      var compareCampStartDate = new Date($("#startDate").val());
+      var compareCampEndDate = new Date ($("#endDate").val());
+
+
+      if(getCampFormCampName ==""){
+        var content = "Campaign Name cannot be empty!";      
+        popover(
+          $("#campaignName").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#campaignName").addClass("invalid"); 
+      }else{
+        campaignFormValidationArray[0] = true;
+        $("#campaignName").removeClass("invalid");
+        $("#campaignName").popover("hide");
+      };
+
+
+
+      if(getCampFormInitiativeName =="" || getCampFormInitiativeName == "Select Inititaive"){
+        var content = "Initiative cannot be empty!";      
+        popover(
+          $("#initiativeId").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#initiativeId").addClass("invalid"); 
+      }else{
+        campaignFormValidationArray[1] = true;
+        $("#initiativeId").removeClass("invalid");
+        $("#initiativeId").popover("hide");
+      };
+
+      if(getCampFormLOB =="" || getCampFormLOB == "Line of Business"){
+        var content = "LOB cannot be empty!";      
+        popover(
+          $("#lobId").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#lobId").addClass("invalid"); 
+      }else{
+        campaignFormValidationArray[2] = true;
+        $("#lobId").removeClass("invalid");
+        $("#lobId").popover("hide");
+      };
+
+      if(getCampFormBrand =="" || getCampFormBrand == "Select Brand"){
+        var content = "Brand cannot be empty!";      
+        popover(
+          $("#brandId").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#brandId").addClass("invalid"); 
+      }else{
+        campaignFormValidationArray[3] = true;
+        $("#brandId").removeClass("invalid");
+        $("#brandId").popover("hide");
+      };
+
+      if(getCampFormStartDate  ==""){
+        var content = "Enter Start Date!";      
+        popover(
+          $("#startDate").attr("id"),
+          "manual",
+          "left",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#startDate").addClass("invalid"); 
+      }else{
+        campaignFormValidationArray[4] = true;
+        $("#startDate").removeClass("invalid");
+        $("#startDate").popover("hide");
+      };
+
+
+
+      if(getCampFormEndDate  ==""){
+        var content = "Enter End Date!";      
+        popover(
+          $("#endDate").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#endDate").addClass("invalid"); 
+       
+                $("#errorCampLesserEndDate").popover("hide");
+        campaignFormValidationArray[5] = false;
+      }else{
+        
+        $("#endDate").removeClass("invalid");
+        $("#endDate").popover("hide");
+
+                if(compareCampStartDate <= compareCampEndDate){
+                $("#endDate").removeClass("invalid");
+                $("#errorCampLesserEndDate").popover("hide");
+                campaignFormValidationArray[5] = true;
+            }else{
+                var content = "End Date should not be lesser!";      
+                popover(
+                $("#errorCampLesserEndDate").attr("id"),
+                "manual",
+                "right",
+                content,
+                popoverTemplate(content)
+                );  
+                $("#endDate").addClass("invalid");
+                campaignFormValidationArray[5] = false;
+            }
+            
+      };
+
+
+     
+      
+
+      for(j=0;j<campaignFormValidationArray.length;j++){
+        if(campaignFormValidationArray[j] == false){
+            isCampFormFilled = false;
+          break;
+        }else{
+            isCampFormFilled = true;
+        }
+      }
+
+
+
+
+  }
+  //<!-- harinath 12-05-2020 End -->
+  function consoleLog(message,debugFlag)
+  {
+    if(debugFlag == true)
+    {
+      console.log(message);
+    }    
+  }
+  
+  function isEditCampaign(type)
+  {
+    if(type == "edit")
+    {
+      return true;    
+    }
+    else{
+      return false;
+    }
+  }
+  
+  function popoverTemplate(content)
+  {
+    var templateObject = '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="    <%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>'+content+'</em></p></div></div></div>';
+    
+    return templateObject;
+  }
+  
+  function getcampaignDetailsFunction()
+ {
+   var requestBodyObject = {
+        "methodName":"getcampaignDetails",
+        "data":{
+          "multiCampaign":"yes"
+        }
+      };
+    var campaignDetails;
+      
+    $.ajax({
+        type: "POST",
+//    async: "false",
+        url:
+        "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestBodyObject),
+        success: function (response) {
+          campaignDetails = response;
+          bindingCampaignList(campaignDetails);
+        },
+        error: function (response) {
+          alert("error");
+        },
+      });
+ };
+
+ function workInProgress(index){
+  
+  $("#myText_"+index).css('visibility','visible');
+  setInterval(function(){ 
+   $("#myText_"+index).css('visibility','hidden');
+    }, 1500);
+}
+  
+  $(document).ready(function(){
+  
+//    $(document)
+//          .ajaxStart(function () {
+//            loader($("#loading").attr("id"));
+//            $("#loading").show();
+//            $("#campaignForm").css("display","none");
+//          })
+//          .ajaxStop(function () {
+//            $("#loading").hide();
+//            $("#campaignForm").css("display","block");
+//          });
+    
+    $(document)
+      .ajaxStart(function () {
+      loader($("#loadingCampaign").attr("id"));
+      $("#loadingCampaign").css("display","block");
+    })
+      .ajaxStop(function () {
+      $("#loadingCampaign").css("display","none");
+    });
+
+    var type = GetParameterValues('type');    
+    $("#logoDiv").on("click",function(){      
+      window.location.href = "<%=getOption('metaServerURL')%>meta/home.jssp";
+      isCampaignTypeEdit = false;
+      //create
+    });
+    console.log(isCampaignTypeEdit);
+        
+            if(isEditCampaign(type) == true){
+                isCampaignTypeEdit = true;
+                //Edit
+        }else{
+            isCampaignTypeEdit = false;
+            //Create
+        }
+       
+    
+    if(type == "create")
+    {        
+
+    }
+    else if(type=="edit")
+    {     
+      getcampaignDetailsFunction();    
+    }
+    var createCampaignJSON = {
+        methodName: "",
+        data: {
+          campaignName: "",
+          initiativeId: "",
+          lobId: "",
+          brandId: "",
+          campaignStartDate: "",
+          campaignEndDate: "",
+          campaignTemplate: "",
+          campaignDescription: "",
+        },
+      };
+    
+    var updateCampaignJSON = {
+      methodName: "",
+      data: {
+        campaignName: "",
+        initiativeId: "",
+        lobId: "",
+        brandId: "",
+        campaignStartDate: "",
+        campaignEndDate: "",
+        campaignTemplate: "",
+        campaignDescription: "",
+        campaignId:""
+      },
+    };
+      
+    requestMetaReadListBodyObject = {
+      methodName: "metaReadList",
+      data: [],
+    };
+    
+    $.ajax({
+      type: "POST",
+//    async: "false",
+      url: "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify(requestMetaReadListBodyObject),
+      success: function (response) {
+        campaignData = response;
+        return campaignData;
+      },
+      error: function (response) {
+        alert("error");
+      },
+    });
+    
+    var createTouchJSON = {
+      methodName: "createTouch",
+      data: {
+        campaignId:"",
+        touchName:"",
+        touchDescription:"",
+        channelId:"",
+        mailFileDueDate:"",
+        estimatedDropDate:"",
+        touchStartDate:"",
+        touchEndDate:"",
+        haveSegments:"",
+        havePhoneAssignments:"",
+        haveUrlAssignments:"",
+        haveOperationAssigned:"",
+        haveLanguage:"",      
+        campaignWorkflowTemplate:""
+      },
+    };
+    
+    var updateTouchJSON = {
+      methodName: "createTouch",
+      data: {
+        campaignId:"",
+        touchName:"",
+        touchDescription:"",
+        channelId:"",
+        mailFileDueDate:"",
+        estimatedDropDate:"",
+        touchStartDate:"",
+        touchEndDate:"",
+        haveSegments:"",
+        havePhoneAssignments:"",
+        haveUrlAssignments:"",
+        haveOperationAssigned:"",
+        haveLanguage:"",      
+        campaignWorkflowTemplate:"",
+        touchId:""
+      },
+    };
+    
+    function submitFormData(formId, methodName) {
+      var fid = $("#" + formId);
+      formData = fid.serializeArray();
+      var jsonObj = {},
+        key,
+        val;
+      
+      formData.forEach(myFunction);
+      function myFunction(value, index) 
+      {
+        key = value.name;
+        val = value.value;
+        jsonObj[key] = val;
+      }
+      
+      if (methodName == "createCampaign") 
+      {
+        createCampaignJSON.methodName = methodName;
+        createCampaignJSON.data = jsonObj;
+        return createCampaignJSON;
+      } 
+      else if (methodName == "updateCampaign") 
+      {
+        updateCampaignJSON.methodName = methodName;
+        updateCampaignJSON.data = jsonObj;
+        updateCampaignJSON.data.campaignId = campaignTouchDetail.metaData[0].campaign_collection[0].campaign.id;
+        return updateCampaignJSON;
+      } 
+      else if (methodName == "createTouch")
+      {
+        createTouchJSON.methodName = methodName;
+        createTouchJSON.data = jsonObj;
+        return createTouchJSON;
+      }
+      else if (methodName == "updateTouch") 
+      {
+        updateTouchJSON.methodName = methodName;
+        updateTouchJSON.data = jsonObj;
+    if(isEditCampaign(type) == true)
+    {
+       updateTouchJSON.data.touchId = responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.id;
+    }
+      else
+      {
+        updateTouchJSON.data.touchId = createTouchResponseObject.data.touchId;
+      }     
+        return updateTouchJSON;
+      }
+    }    
+    
+   
+    
+    $("#campaignName").on("input", function(e){
+      e.preventDefault();
+      // Print entered value in a div box
+          var inputValue = $("#campaignName").val().trim();
+      $("#campaignName").blur(function (e){
+        if($("#campaignName").val()!="")
+        {
+        // $("#campaignName").popover("hide");
+        // $("#campaignName").removeClass("invalid");
+        if(createcampaignResponseObj != undefined)
+        {
+          if(inputValue != createcampaignResponseObj.data.campaignName)
+          {            
+            dropdownbinding();    
+          }
+        }
+        else if(campaignTouchDetail != undefined)
+        {
+          if(inputValue != campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName)
+          {            
+            dropdownbinding();
+          }
+        }
+        else{
+          dropdownbinding();
+        }
+        
+        
+      }
+        else
+        {
+    //       var content = "Campaign Name cannot be empty !";      
+    //   popover(
+    //     $("#campaignName").attr("id"),
+    //     "manual",
+    //     "right",
+    //     content,
+    //     popoverTemplate(content)
+    //   );  
+    //     $("#campaignName").addClass("invalid");
+      }
+        
+      });
+            
+    });
+  
+
+    $('#Overview input').change(function() { 
+      formFlag = true; 
+      $("#step1_Next").val("Save and Continue");
+      return formFlag;
+    }); 
+    $('#Overview select').change(function() { 
+      formFlag = true;              
+      $("#step1_Next").val("Save and Continue");
+      return formFlag;
+    });  
+  $('#Overview textarea').change(function() { 
+      formFlag = true;              
+      $("#step1_Next").val("Save and Continue");
+      return formFlag;
+    });  
+    
+      $("#step1_Next").on('click',function (e) {
+        e.preventDefault();
+//<!-- harinath 12-05-2021 Start -->
+        campaignFormValidationfunction();
+        if(!isCampFormFilled){
+
+        }else{
+             
+  //<!-- harinath 12-05-2021 End -->
+            if(backtocampaignform == false)
+            {
+              createCampaigndata = submitFormData(
+                "Overview",
+                "createCampaign"
+              );
+              if(createCampaigndata!="" || createCampaigndata != undefined)
+              {
+                if(createCampaigndata.data.campaignId == undefined)
+                {
+                  if(formFlag == true)
+                  {                    
+                    $.ajax({
+                      type: "POST",
+//            async: "false",
+                      url:
+                      "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+                      contentType: "application/json",
+                      dataType: "json",
+                      data: JSON.stringify(createCampaigndata),
+                      success: function (response) {
+                        //  alert(response);
+                        createcampaignResponseObj = response;
+                        $(".display").empty();
+                        viewCampaignTouchDetails(createcampaignResponseObj);
+                        displayAddCampaignData();
+                        formFlag = false;   
+                        backtocampaignform = false;
+                      },
+                      error: function (response) {
+                      alert("error");
+                      },
+                    });  
+                  }
+                  else
+                  {
+                    displayAddCampaignData();
+                  }
+                }                
+              }
+              else
+              {
+                displayAddCampaignData();
+              }
+              $(".touchOverview-subtitle").text(""+createCampaigndata.data.campaignName+" > Touch Overview");
+               $(".touchOverview-title").text("Create a New Touch for "+createCampaigndata.data.campaignName);
+        
+            }
+            else
+            {
+              updateCampaigndata = submitFormData(
+                "Overview",
+                "updateCampaign"
+              );
+              if(formFlag == true)
+              {  
+                if(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.id != undefined)
+                {
+                  $.ajax({
+                    type: "POST",
+//            async: "false",
+                    url:
+                    "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(updateCampaigndata),
+                    success: function (response) {  
+                      updatecampaignResponseObj = response;
+                      $(".display").empty();
+                      viewCampaignTouchDetails(updatecampaignResponseObj);
+                      displayAddCampaignData();
+                      formFlag = false;
+                      backtocampaignform = false;
+                    },
+                    error: function (response) {
+                      alert("error");
+                    },
+                  });
+                }
+              }
+              else
+              {
+                displayAddCampaignData();
+              }
+                  $(".touchOverview-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview");
+                    $(".touchOverview-title").text("Create a New Touch for "+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName);  
+            };
+
+            $("#createCampaign").css("display","block");
+            $("#step2_Previous").css("display","block");
+            $("#operationAssignedDiv").css("display","none");
+
+       
+
+        //<!-- harinath 12-05-2021 Start -->
+        isCampFormFilled = false;
+        campaignFormValidationArray = [];
+        //<!-- harinath 12-05-2021 End -->
+        }
+        
+   
+    if(pageType == "create")
+    {
+      $("#backToExistingCampaignDiv").css("display","none");
+      $("#viewCampaign-HeadingDiv").css("display","none");
+      $("#stepIndicator-HeadingDiv").css("display","block");
+      $("#stepIndicator").css("display","block");
+      
+    }
+    else
+    {
+      $("#stepIndicator-HeadingDiv").css("display","none");
+      $("#stepIndicator").css("display","none");
+      $("#viewCampaign-HeadingDiv").css("display","block");
+      $("#backToExistingCampaignDiv").css("display","block");
+    }
+            
+            
+        
+        
+    });  
+
+    $("#tab1_Next").on('click',function (e) {
+      e.preventDefault();
+  
+    touchFormValidationFunction();
+
+      if(!isTouchFormFilled){
+
+      }
+    else
+      {
+            $('.CreateTouchMultiStepForm-fieldset').hide();
+      $("#CreateTouchMultiStepForm_1").show();
+    
+      if($("#tab1_Next").val() == "Save and Continue")
+      {
+      if(touchFormFlag == false)
+      {        
+      createTouchObject = submitFormData(
+        "CreateTouchMultiStepForm_0",
+        "createTouch"
+      );
+      var requestCreateTouchObject = createTouchObject;
+      stepFormCreateSegmentRadio = $('input[name="haveSegments"]:checked').val();
+      stepFormCreatePhoneNumber = $('input[name="havePhoneAssignments"]:checked').val();
+      stepFormCreateUrlAssignment = $('input[name="haveUrlAssignments"]:checked').val();
+      stepFormOperationAssignment = $('input[name="haveOperationAssigned"]:checked').val();  
+      $.ajax({
+        type: "POST",
+//      async: "false",
+        url:
+        "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(requestCreateTouchObject),
+        success: function (response) {
+        createTouchResponseObject = response;
+        if (radioSelectionFlag == "001" || radioSelectionFlag == "011" || radioSelectionFlag == "010" || radioSelectionFlag == "000") 
+        {
+            for (j = 0; j < campaignData.metaData[2].data.length; j++) 
+          {
+              $("#languageTouch").append(
+                $("<option>")
+                .text(campaignData.metaData[2].data[j].Name)
+                .attr("value", campaignData.metaData[2].data[j].ID)
+          );
+          }
+        };
+
+        $("#languageTouch option").eq(0).text('['+createTouchResponseObject.data.touchName+'] Language');
+
+        $(".segment-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments");
+//        if(isEditCampaign(type) == true)
+//        {
+//          $(".segment-title").text("Create Segments for "+responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchName);
+//        }  
+        //else
+        //{
+          $(".segment-title").text("Create Segments for "+createTouchResponseObject.data.touchName);    
+        //}
+        },
+        error: function (response) {
+        alert("error");
+        },
+      });    
+    }
+      else
+      {
+        updateTouchObject = submitFormData(
+          "CreateTouchMultiStepForm_0",
+          "updateTouch"
+        );
+        var requestUpdateTouchObject = updateTouchObject;
+        stepFormCreateSegmentRadio = $('input[name="haveSegments"]:checked').val();
+        stepFormCreatePhoneNumber = $('input[name="havePhoneAssignments"]:checked').val();
+        stepFormCreateUrlAssignment = $('input[name="haveUrlAssignments"]:checked').val();
+        stepFormOperationAssignment = $('input[name="haveOperationAssigned"]:checked').val();
+        $.ajax({
+          type: "POST",
+//      async: "false",
+          url:
+          "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+          contentType: "application/json",
+          dataType: "json",
+          data: JSON.stringify(requestUpdateTouchObject),
+          success: function (response) {
+            responseTouchObject = response;  
+            $(".segment-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments");
+            $(".segment-title").text("Create Segments for this Touch:"+responseTouchObject.data.touchName);
+          },
+          error: function (response) {
+            alert("error");
+          },
+        });  
+      }
+    }
+    else{
+       stepFormCreateSegmentRadio = $('input[name="haveSegments"]:checked').val();
+          stepFormCreatePhoneNumber = $('input[name="havePhoneAssignments"]:checked').val();
+          stepFormCreateUrlAssignment = $('input[name="haveUrlAssignments"]:checked').val();
+          stepFormOperationAssignment = $('input[name="haveOperationAssigned"]:checked').val(); 
+      $(".segment-subtitle").text(""+responseEditTouchObject.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments");
+      $(".segment-title").text("Create Segments for this Touch:"+responseEditTouchObject.metaData[0].campaign_collection[0].touch_collection[0].touch.touchName);
+    }
+      
+       if (stepFormCreateSegmentRadio == "1" && stepFormCreatePhoneNumber == "0" && stepFormCreateUrlAssignment == "0") 
+       {
+         radioSelectionFlag = "100";
+         $("#CreateTouchMultiStepForm_1").show();
+       $(".Select-a-phone-number").css("display","block");
+       $(".orDiv").css("display","block");
+       }
+
+      if (stepFormCreateSegmentRadio == "1" && stepFormCreatePhoneNumber == "1" && stepFormCreateUrlAssignment == "0") 
+      {
+        radioSelectionFlag = "110";
+        $("#CreateTouchMultiStepForm_1").show();
+      $(".Select-a-phone-number").css("display","block");
+      $(".orDiv").css("display","block");
+      }
+
+      if (stepFormCreateSegmentRadio == "1" && stepFormCreatePhoneNumber == "1" && stepFormCreateUrlAssignment == "1") 
+      {
+        radioSelectionFlag = "111";
+        $("#CreateTouchMultiStepForm_1").show();
+      $(".Select-a-phone-number").css("display","block");
+      $(".orDiv").css("display","block");
+      }
+      if (stepFormCreateSegmentRadio == "1" && stepFormCreatePhoneNumber == "0" && stepFormCreateUrlAssignment == "1")
+      {
+        radioSelectionFlag = "101";
+        $("#CreateTouchMultiStepForm_1").show();
+      $(".Select-a-phone-number").css("display","block");
+      $(".orDiv").css("display","block");
+      }
+      if (stepFormCreateSegmentRadio == "0" && stepFormCreatePhoneNumber == "0" && stepFormCreateUrlAssignment == "1") 
+      {
+      radioSelectionFlag = "001";
+      $("#CreateTouchMultiStepForm_2").show();
+      $("#CreateTouchMultiStepForm_1").hide();
+      $(".Select-a-phone-number").css("display","none");
+      $(".orDiv").css("display","none");
+      }
+      if (stepFormCreateSegmentRadio == "0" && stepFormCreatePhoneNumber == "1" && stepFormCreateUrlAssignment == "1") 
+      {
+        radioSelectionFlag = "011";
+        $("#CreateTouchMultiStepForm_2").show();
+        $("#CreateTouchMultiStepForm_1").hide();
+      $(".Select-a-phone-number").css("display","none");
+      $(".orDiv").css("display","none");
+      }
+      if (stepFormCreateSegmentRadio == "0" && stepFormCreatePhoneNumber == "1" && stepFormCreateUrlAssignment == "0") 
+      {
+        radioSelectionFlag = "010";
+        $("#CreateTouchMultiStepForm_2").show();
+        $("#CreateTouchMultiStepForm_1").hide();
+      $(".Select-a-phone-number").css("display","none");
+      $(".orDiv").css("display","none");
+      }
+          if (stepFormCreateSegmentRadio == "0" && stepFormCreatePhoneNumber == "0" && stepFormCreateUrlAssignment == "0") 
+      {
+        radioSelectionFlag = "000";
+        $("#CreateTouchMultiStepForm_2").show();
+        $("#CreateTouchMultiStepForm_1").hide();
+      $(".Select-a-phone-number").css("display","none");
+      $(".orDiv").css("display","none");
+      }
+     if (radioSelectionFlag == "001" || radioSelectionFlag == "011" || radioSelectionFlag == "010" || radioSelectionFlag == "000") 
+     {
+       isSegmentRadioNoChecked = true;
+       $(".Select-a-phone-number").css("display","none");
+       $(".orDiv").css("display","none");
+     }  
+      }
+     //<!-- harinath 11-05-2020 Start -->
+        isTouchFormFilled = false;
+        touchFormValidationArray = [];
+//<!-- harinath 11-05-2020 End -->
+    
+      
+        
+    });
+    
+    
+  $("#backToExistingCampaign").on("click",function(e){
+    e.preventDefault();
+    window.location.href = "/meta/campaign.jssp?type=edit";
+    //getcampaignDetailsFunction();
+  }); 
+    
+    $('#step2_Previous').on('click',function (e) {
+      e.preventDefault();
+      dropdownbinding();
+      displayOverview();
+      backtocampaignform = true;
+      $("#step1_Next").val("Continue"); 
+    $("#backToExistingCampaignDiv").css("display","none");  
+
+
+    if(type== "edit")
+      {
+          $("#campaignName").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName);
+          $("#campaignDescription").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignDescription);     
+          $("#initiativeId").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.initiativeId);       
+          $("#lobId").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.lobId);       
+          $("#brandId").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.brandId);
+          $("#startDate").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignStartDate);
+          $("#endDate").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignendDate);
+          //$("#campaignDescription").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.brandName);
+         // $("#saveandContinue").trigger("click");
+      $(".campaignTemplate").removeClass("enabled"); 
+      $(".campaignTemplate").addClass("disabled");
+      }
+        else
+        {            
+            $("#campaignName").val(createCampaignJSON.data.campaignName);
+            $("#campaignDescription").val(createCampaignJSON.data.campaignDescription);
+            $("#initiativeId").val(createCampaignJSON.data.initiativeId);       
+            $("#lobId").val(createCampaignJSON.data.lobId);       
+            $("#brandId").val(createCampaignJSON.data.brandId);
+            $("#startDate").val(createCampaignJSON.data.campaignStartDate);
+            $("#endDate").val(createCampaignJSON.data.campaignEndDate);           
+           // $("#saveandContinue").trigger("click");
+        }
+    
+    $("#viewCampaign-HeadingDiv").css("display","none");
+    $("#stepIndicator-HeadingDiv").css("display","block");
+    $("#stepIndicator").css("display","block");
+    });
+
+    $('#step2_Next').on('click',function (e) {
+      e.preventDefault();
+      $("#tab1_Next").val("Save and Continue");
+    $("#backToExistingCampaignDiv").css("display","none");  
+      for (var i = 0; i < campaignData.metaData.length; i++) {                        
+        for (var j = 0; j < campaignData.metaData[i].data.length; j++) {  
+          if (campaignData.metaData[i].name == "channel") {
+            $("#addChannel").append(
+              $("<option>")
+              .text(campaignData.metaData[i].data[j].Name)
+              .attr("value", campaignData.metaData[i].data[j].ID)
+            );
+          }      
+        }
+      }      
+      $("#campaignWorkflowTemplate").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.operationtemplateId);  
+      displayCreatTouchStepForm();
+      $(".touchOverview-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview");
+      $(".touchOverview-title").text("Create a New Touch for "+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName);
+      $("#campaignId").val(campaignTouchDetail.metaData[0].campaign_collection[0].campaign.id);
+      $("#CreateTouchMultiStepForm_0").show(); 
+    $("#viewCampaign-HeadingDiv").css("display","none");
+    $("#stepIndicator-HeadingDiv").css("display","block");
+    $("#stepIndicator").css("display","block");
+    });    
+    
+    $("#addSegments").on('click', function (e) {  
+                e.preventDefault();  
+                var segmentList = $("#segmentInput").val();  
+                if (segmentList != "") {  
+                    if (arrayMultipleSegmentNames.length > 0) {  
+                        arrayMultipleSegmentNames.forEach(function (result) {  
+                            if (result['segmentName'] == segmentList) {  
+                                // alert('Segment name['+$segment.val()+'] already exists...');  
+                                isSegnameNameUnique = false;  
+                                return;  
+                            } else {  
+                            }  
+                        });  
+                    } else {  
+                                console.log('Added first segment in Array');  
+                    //<!-- harinath 11-05-2020 Start -->
+                    $("#tab2ContinueError").popover("hide");  
+                    $("#tab2ContinueError").removeClass("invalid");  
+                    $("#duplicateSegmentsError").popover("hide");  
+                    $("#segmentInput").removeClass("invalid");  
+                    $("#addSegments").popover("hide");  
+                    $("#addSegments").removeClass("invalid"); 
+
+                 //<!-- harinath 11-05-2020 End -->
+                        var segmentJSON = {  
+                            "methodName": "createSegment",  
+                            "data": {  
+                                "touchId": createTouchResponseObject.data.touchId,  
+                                "segmentName": segmentList  
+                            }  
+                        }  
+                        console.log(segmentJSON + " segmentJSON");  
+                        $("#segmentInput").val("");  
+                        $("#segmentInput").focus();  
+                        $("#segmentlist").append(  
+                            "<li id=" + segmentList + " class='li'>" +  
+                            segmentList +  
+                            "<img class='segmentTrashImg' src='http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png' /><hr class='hr'/></li>"  
+                        );  
+                        $.ajax({  
+                            type: "POST",  
+//              async: "false",
+                            url: "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",  
+                            contentType: "application/json",  
+                            dataType: "json",  
+                            data: JSON.stringify(segmentJSON),  
+                            success: function (response) {  
+                                segmentResponseObject = response;  
+                                //console.log(JSON.stringify(segmentResponseObject));  
+                                arrayMultipleSegmentNames.push(segmentResponseObject.data);  
+                
+                //<!-- harinath 11-05-2020 Start -->
+                $("#tab2ContinueError").popover("hide");  
+                $("#tab2ContinueError").removeClass("invalid");  
+                $("#duplicateSegmentsError").popover("hide");  
+                $("#segmentInput").removeClass("invalid");  
+                $("#addSegments").popover("hide");  
+                $("#addSegments").removeClass("invalid"); 
+                
+                //<!-- harinath 11-05-2020 End -->
+                  
+                                  },  
+                                  error: function (response) {  
+                                      alert("error");  
+                                  },  
+                              });  
+                          }  
+                          //uniqueSegmentCreation  
+                          console.log('isSegnameNameUnique : ' + isSegnameNameUnique)  
+                          if (isSegnameNameUnique) {
+                  
+                  //<!-- harinath 11-05-2020 Start -->
+                  $("#tab2ContinueError").popover("hide");  
+                  $("#tab2ContinueError").removeClass("invalid");  
+                  $("#duplicateSegmentsError").popover("hide");  
+                  $("#segmentInput").removeClass("invalid");  
+                  $("#addSegments").popover("hide");  
+                  $("#addSegments").removeClass("invalid"); 
+                  
+                  //<!-- harinath 11-05-2020 End -->
+                  
+  
+                                          
+                        if ($("#segmentInput").val() != "") {  
+                            var segmentJSON = {  
+                                "methodName": "createSegment",  
+                                "data": {  
+                                    "touchId": createTouchResponseObject.data.touchId,  
+                                    "segmentName": segmentList  
+                                }  
+                            }  
+                            console.log(segmentJSON + " segmentJSON");  
+                            $("#segmentInput").val("");  
+                 
+                            $("#segmentInput").focus();  
+                            $("#segmentlist").append(  
+                                "<li id=" + segmentList + " class='li'>" +  
+                                segmentList +  
+                                "<img class='segmentTrashImg' src='http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png' /><hr class='hr'/></li>"  
+                            );  
+                            $.ajax({  
+                                type: "POST",  
+//                async: "false",
+                                url: "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",  
+                                contentType: "application/json",  
+                                dataType: "json",  
+                                data: JSON.stringify(segmentJSON),  
+                                success: function (response) {  
+                                    segmentResponseObject = response;  
+                                    //console.log(JSON.stringify(segmentResponseObject));  
+                                    arrayMultipleSegmentNames.push(segmentResponseObject  
+                                        .data);  
+                  
+                  //<!-- harinath 11-05-2020 Start -->
+                  $("#tab2ContinueError").popover("hide");  
+                  $("#tab2ContinueError").removeClass("invalid");  
+                  $("#duplicateSegmentsError").popover("hide");  
+                  $("#segmentInput").removeClass("invalid");  
+                  $("#addSegments").popover("hide");  
+                  $("#addSegments").removeClass("invalid");  
+                                          
+                                        
+                                },  
+                                error: function (response) {  
+                                    alert("error");  
+                                },  
+                            });  
+                        }  
+                    } else {  
+                        console.log('Segment name[' + segmentList + '] already exists...');  
+                        var content = "Segment Name already exists !";        
+                            popover(  
+                                $("#duplicateSegmentsError").attr("id"),  
+                                "manual",  
+                                "right",  
+                                content,  
+                                popoverTemplate(content)  
+                            );    
+                                $("#segmentInput").addClass("invalid");  
+                                $("#segmentInput").focus();  
+                    //     $("#customSegmentErrorDisplay em").html('Segment name already exists');  
+                    // $("#customSegmentErrorDisplay").removeClass('displayNone');  
+                        isSegnameNameUnique = true;  
+                    }  
+                } else {  
+                    // alert("Segment Name cannot be blank...");  
+                   var content = "Enter segment name before adding !";        
+                            popover(  
+                                $("#addSegments").attr("id"),  
+                                "manual",  
+                                "right",  
+                                content,  
+                                popoverTemplate(content)  
+                            );    
+                                $("#segmentInput").addClass("invalid");  
+                    // $("#customSegmentErrorDisplay em").html('Enter segment name before adding');  
+                    // $("#customSegmentErrorDisplay").removeClass('displayNone');  
+                }  
+                $(".segmentTrashImg").on('click', function (e) {  
+                    e.preventDefault();  
+                    // DELETE segment from list        
+                    var currentList = $(this).parent().text();  
+                    $(this).parent().remove();  
+                    var deleteSegmentJSON;  
+                    var getID;  
+                             
+                    $.each(arrayMultipleSegmentNames, function (index, segmentResponseObject) {  
+                        if (currentList == segmentResponseObject.segmentName) {  
+                             getID = segmentResponseObject.segmentId;  
+                             
+                            findAndRemove(arrayMultipleSegmentNames, 'segmentId',  
+                                getID);  
+                            return false;  
+                        };  
+                    }); 
+                    
+                    deleteSegmentJSON = {  
+                                "methodName": "deleteSegment",  
+                                "data": {  
+                                    "segmentId": getID  
+                                },  
+                            }; 
+                            
+                    $.ajax({  
+                        type: "POST",  
+//            async: "false",
+                        url: "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",  
+                        contentType: "application/json",  
+                        dataType: "json",  
+                        data: JSON.stringify(deleteSegmentJSON),  
+                        success: function (response) {  
+                            // alert(response + " deleteSegmentJSONresponse");  
+                        },  
+                        error: function (response) {  
+                            alert("error");  
+                        },  
+                    });  
+                    //        console.log('After Delete');  
+                    //        console.log(arrayMultipleSegmentNames);            
+                });  
+            });
+    
+    $("#tab2_Next").on('click',function (e) {
+      e.preventDefault(); 
+    
+    var getSegmentListLength = arrayMultipleSegmentNames.length;
+      if (getSegmentListLength < 1) {
+            // alert('no segments');
+            var content = "Please add segment to continue!";      
+                    popover(
+                    $("#tab2ContinueError").attr("id"),
+                    "manual",
+                    "right",
+                    content,
+                    popoverTemplate(content)
+                    );
+        }  
+    else
+    {
+      // alert('1 or more than 1 segment');
+       $("#tab2ContinueError").popover("hide");
+            $("#tab2ContinueError").removeClass("invalid");
+      
+       if (radioSelectionFlag == "100" || radioSelectionFlag == "111" || radioSelectionFlag == "101") 
+        {
+        $("#CreateTouchMultiStepForm_2").show();
+        $("#CreateTouchMultiStepForm_3").hide();
+        $("#CreateTouchMultiStepForm_4").hide();
+        }      
+        $('.CreateTouchMultiStepForm-fieldset').hide();
+        $("#CreateTouchMultiStepForm_2").show();
+      
+      var getSegmentListLength = arrayMultipleSegmentNames.length;
+      arrayPushSegmentLanguageID = new Array(getSegmentListLength);
+      arrayPushSegmentPhoneID  = new Array(getSegmentListLength);
+      arrayPushSegmentURL  = new Array(getSegmentListLength);
+      
+      for (i = 0; i < arrayPushSegmentLanguageID.length; i++) 
+      {
+        arrayPushSegmentLanguageID[i] = '';
+        arrayPushSegmentPhoneID[i] = '';
+        arrayPushSegmentURL[i] = '';
+      }
+      
+      for (i = 0; i < getSegmentListLength; i++) 
+      {               
+        $('#createSegmentLanguage').append('<div class="col-lg-12 selectlanguagediv padding"><div class = "segLangLabelName">'+arrayMultipleSegmentNames[i].segmentName+'</div><select class="form-control segmentLanguageClass" id="seglanguage_' + i + '"><option id="0" data-index = "Select Language*">['+arrayMultipleSegmentNames[i].segmentName+'] Language</option></select></div>');
+        for(j=0;j<campaignData.metaData[2].data.length;j++)
+        {
+          if(i == 0)
+          {
+            $("#languageTouch").append(
+              $("<option>")
+              .text(campaignData.metaData[2].data[j].Name)
+              .attr("value", campaignData.metaData[2].data[j].ID)
+            );
+          }          
+          $('#seglanguage_'+i).append('<option id="'+campaignData.metaData[2].data[j].ID+'">'+campaignData.metaData[2].data[j].Name+'</option>');
+        }        
+        $("#seglanguage_" + i).change(function () {
+          var getSelectedIndex = $(this).attr('id').split('_')
+          var getSelectedOptionData = $(this).find('option:selected').attr('id');        
+          arrayPushSegmentLanguageID[getSelectedIndex[1]] = getSelectedOptionData;          
+          for (k = 0; k < arrayPushSegmentLanguageID.length; k++) 
+          {
+            if (arrayPushSegmentLanguageID[k] == '' || arrayPushSegmentLanguageID[k] == '0') 
+            {
+              console.log(k);
+              isSegLanguageSelected = false;
+              break;
+            } 
+            else
+            {  
+              isSegLanguageSelected = true;
+            }
+          }
+        });        
+      }
+      $(".language-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments > Segment Data");
+      $(".language-title").text("Select Language for your Touch or Segment");    
+      
+      
+    }
+     
+
+       
+    
+     
+    });
+    
+    $("#tab2_previous").on('click',function (e) {
+      e.preventDefault();
+      $('.CreateTouchMultiStepForm-fieldset').hide();
+      $("#CreateTouchMultiStepForm_0").show();
+      $("#tab1_Next").val("Continue");
+      $('#CreateTouchMultiStepForm_0 input').change(function() { 
+        touchFormFlag = true; 
+        $("#tab1_Next").val("Save and Continue");
+        return touchFormFlag;
+      }); 
+      $('#CreateTouchMultiStepForm_0 select').change(function() { 
+        touchFormFlag = true;              
+        $("#tab1_Next").val("Save and Continue");
+        return touchFormFlag;
+      });  
+      
+      
+    });
+    
+     $("#languageTouch").change(function(){
+       noSegmentGetLanguage = $("#languageTouch option:selected").attr('value'); 
+       });
+    
+    
+    $("#tab3_Next").on('click',function (e) {
+      e.preventDefault();
+      if (isSegmentRadioNoChecked) 
+      {
+        console.log('No segments');
+        if (Number(noSegmentGetLanguage) > 0) 
+        {
+          if (radioSelectionFlag == "000") 
+          {
+            
+              //<!-- harinath 11-05-2020 Start -->
+            $("#languageTouch").popover("hide");
+            $("#languageTouch").removeClass("invalid");
+                  //<!-- harinath 11-05-2020 End -->
+            
+            
+            createJSONforSegNO();
+            createsegmentCollectionJson();
+            $('.CreateTouchMultiStepForm-fieldset').hide();
+            $('.multiStepFieldsetContainer').hide();
+            $("#addCampaign").show();
+            $("#step2_Submit").removeClass("displayNone");
+             //<!-- harinath 11-05-2020 Start -->
+            noSegmentGetLanguage = "";
+            //<!-- harinath 11-05-2020 End -->
+          }          
+          if (radioSelectionFlag == "101" || radioSelectionFlag == "001") 
+          {
+            $("#CreateTouchMultiStepForm_3").hide();
+            $("#CreateTouchMultiStepForm_2").hide();
+            createDynamicSegmentURL();            
+          }
+          else
+          {
+            
+            $('.CreateTouchMultiStepForm-fieldset').hide();
+            $("#CreateTouchMultiStepForm_3").show(); 
+            for(j=0;j<responsePhoneNumberObject.data.length;j++)
+            {
+              $("#phoneNumberTouch").append('<option id='+responsePhoneNumberObject.data[j].PhoneId+' value='+responsePhoneNumberObject.data[j].PhoneId+'>'+responsePhoneNumberObject.data[j].PhoneNumber+'</option>');
+
+//              $('#segphone_'+i).append('<option   id="'+responsePhoneNumberObject.data[j].PhoneId+'">'+responsePhoneNumberObject.data[j].PhoneNumber+'</option>');
+
+            }  
+          };
+
+          $("#phoneNumberTouch option").eq(0).text('['+createTouchResponseObject.data.touchName+'] Phone Number');
+          // alert('go to next');
+           //<!-- harinath 11-05-2020 Start -->
+          $("#languageTouch").popover("hide");
+          $("#languageTouch").removeClass("invalid");
+          $("#customLanguageErrorDisplay").addClass('displayNone');
+          //<!-- harinath 11-05-2020 End -->
+         // $("#customLanguageErrorDisplay").addClass('displayNone');
+        }
+        else
+        {
+          // alert('Touch language cannot be blank...');
+          // $("#customLanguageErrorDisplay").removeClass('displayNone');
+          var content = "Touch Language cannot be empty !";      
+          popover(
+            $("#languageTouch").attr("id"),
+            "manual",
+            "right",
+            content,
+            popoverTemplate(content)
+          );  
+          $("#languageTouch").addClass("invalid");      
+        }
+      }
+      else
+      {
+
+        if (!isSegLanguageSelected) 
+        {          
+          // alert('Language not selected for all segments');
+            
+          var segmentLanguageClass = $('.segmentLanguageClass');
+          for(i=0;i<segmentLanguageClass.length;i++)
+          {
+            console.log($('#seglanguage_'+i).attr('id'));
+            var getSegmentID = $('#seglanguage_'+i).attr('id');
+            if($('#'+getSegmentID).val() == "["+arrayMultipleSegmentNames[i].segmentName +"] Language")
+            {
+              var content = "Language cannot be empty";      
+              popover(
+                $('#'+getSegmentID).attr("id"),
+                "manual",
+                "right",
+                content,
+                popoverTemplate(content)
+              );  
+              $('#'+getSegmentID).addClass("invalid");    
+            }
+            else
+            {
+              $('#'+getSegmentID).popover("hide");
+              $('#'+getSegmentID).removeClass("invalid");    
+            }
+          }        
+        }
+        else
+        {
+          // alert('segment - all languages are selected');
+          // $("#customLanguageErrorDisplay").addClass('displayNone');
+//          if (radioSelectionFlag == "100") 
+//          {
+//            createJSONforSegYes();  
+//            createsegmentCollectionJson();
+//            $('.CreateTouchMultiStepForm-fieldset').hide();
+//            $('.multiStepFieldsetContainer').hide();
+//            $("#addCampaign").show();
+//            $("#step2_Submit").removeClass("displayNone");    
+//          }
+          $('.CreateTouchMultiStepForm-fieldset').hide();      
+          if (radioSelectionFlag == "101" || radioSelectionFlag == "001") 
+          {
+            $("#CreateTouchMultiStepForm_3").hide();
+            createDynamicSegmentURL();
+            //<!-- harinath 11-05-2020 Start -->
+
+            isSegLanguageSelected = false;
+
+            var segmentLanguageClass = $('.segmentLanguageClass');
+            for(i=0;i<segmentLanguageClass.length;i++)
+            {
+              
+              var getSegmentID = $('#seglanguage_'+i).attr('id');
+              $('#'+getSegmentID).popover("hide");
+              $('#'+getSegmentID).removeClass("invalid");
+            }
+
+            //<!-- harinath 11-05-2020 End -->  
+          }
+          else
+          {
+            var getphoneNumberObject = {
+              "methodName": "getPhoneDetails",
+              "data": {}
+            } 
+            $.ajax({
+              type: "POST",
+//        async: "false",
+              url:
+              "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+              contentType: "application/json",
+              dataType: "json",
+              data: JSON.stringify(getphoneNumberObject),
+              success: function (response) {  
+                responsePhoneObject = response;
+                $("#CreateTouchMultiStepForm_3").show();
+                var getSegmentListLength = arrayMultipleSegmentNames.length;      
+//                arrayPushSegmentPhoneID = [getSegmentListLength];
+                
+                //<!-- harinath 11-05-2020 Start -->
+                         var segmentLanguageClass = $('.segmentLanguageClass');
+                for(i=0;i<segmentLanguageClass.length;i++)
+                {
+                  
+                  var getSegmentID = $('#seglanguage_'+i).attr('id');             
+                  $('#'+getSegmentID).popover("hide");
+                  $('#'+getSegmentID).removeClass("invalid");
+                }
+
+                //<!-- harinath 11-05-2020 End --> 
+                
+                
+                
+                
+                
+                for(i = 0; i < getSegmentListLength; i++) 
+                {   
+                  $('#createSegmentPhoneNo').append('<div class="col-lg-12 selectlanguagediv padding"><div class = "segPhoneLabelName">'+arrayMultipleSegmentNames[i].segmentName+'</div><select  class="form-control segmentPhoneClass" id="segphone_' + i + '"><option id="0" data-index="Select Phone*" >['+arrayMultipleSegmentNames[i].segmentName+'] Phone Number</option></select></div>');           
+                  for(j=0;j<responsePhoneObject.data.length;j++)
+                  {
+                    if(i == 0)
+                    {
+                      $("#phoneNumberTouch").append(
+                        $("<option>")
+                        .text(responsePhoneObject.data[j].PhoneNumber)
+                        .attr("value", responsePhoneObject.data[j].PhoneId)
+                      );
+    
+                    }
+                    $('#segphone_'+i).append('<option   id="'+responsePhoneObject.data[j].PhoneId+'">'+responsePhoneObject.data[j].PhoneNumber+'</option>');
+                  };
+
+                  $("#phoneNumberTouch option").eq(0).text('['+createTouchResponseObject.data.touchName+'] Phone Number');
+                  $("#segphone_" + i).change(function (e) {        
+                    var getSelectedIndex = $(this).attr('id').split('_');
+                    var getSelectedOptionData = $(this).find('option:selected').attr('id');  
+                    arrayPushSegmentPhoneID[getSelectedIndex[1]] = getSelectedOptionData;
+                    for (k = 0; k < arrayPushSegmentLanguageID.length; k++) 
+                    {
+                      if (arrayPushSegmentPhoneID[k] == '' || arrayPushSegmentPhoneID[k] == '0') 
+                      {
+                        console.log(k);
+                        isSegPhoneIdSelected = false;
+                        break;
+                      } 
+                      else 
+                      {
+                        isSegPhoneIdSelected = true;
+                      }
+                    }
+                  });
+                  $(".phoneNumber-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments > Segment Data");
+                  $(".phoneNumber-title").text("Request Phone Numbers by Touch or Segment");
+                }
+              },
+              error: function (response) {
+                alert("error");
+              },
+            });
+            
+            //<!-- harinath 11-05-2020 Start -->
+            isSegLanguageSelected = false;
+            var segmentLanguageClass = $('.segmentLanguageClass');
+            for(i=0;i<segmentLanguageClass.length;i++)
+            {                
+              var getSegmentID = $('#seglanguage_'+i).attr('id');
+              $('#'+getSegmentID).popover("hide");
+              $('#'+getSegmentID).removeClass("invalid");
+            }
+            //<!-- harinath 11-05-2020 End -->            
+          }
+          //<!-- harinath 11-05-2020 Start -->
+          if (radioSelectionFlag == "100") 
+          {
+
+            var segmentLanguageClass = $('.segmentLanguageClass');
+            for(i=0;i<segmentLanguageClass.length;i++)
+            {                
+              var getSegmentID = $('#seglanguage_'+i).attr('id');
+              $('#'+getSegmentID).popover("hide");
+              $('#'+getSegmentID).removeClass("invalid");            
+            }
+            createJSONforSegYes();  
+            createsegmentCollectionJson();
+            $('.CreateTouchMultiStepForm-fieldset').hide();
+            $('.multiStepFieldsetContainer').hide();
+            $("#addCampaign").show();
+            $("#step2_Submit").removeClass("displayNone");               
+            isSegLanguageSelected = false; 
+            var segmentLanguageClass = $('.segmentLanguageClass');
+            for(i=0;i<segmentLanguageClass.length;i++)
+            {
+              
+              var getSegmentID = $('#seglanguage_'+i).attr('id');               
+            
+              $('#'+getSegmentID).popover("hide");
+              $('#'+getSegmentID).removeClass("invalid");
+              
+            }
+              
+          }
+          if (radioSelectionFlag == "100" || radioSelectionFlag == "000" || radioSelectionFlag == "001" || radioSelectionFlag == "101"  ) 
+          {
+            $("#CreateTouchMultiStepForm_3").hide();          
+          }
+
+          //<!-- harinath 11-05-2020 End -->
+        }
+      }    
+    
+     //<!-- harinath 11-05-2020 Start -->
+          if (radioSelectionFlag == "100" || radioSelectionFlag == "000" || radioSelectionFlag == "001" || radioSelectionFlag == "101"  ) 
+          {
+            $("#CreateTouchMultiStepForm_3").hide();
+           
+          
+          };
+    //<!-- harinath 11-05-2020 End -->   
+    });
+    
+    $("#tab3_previous").on('click',function (e) {
+      e.preventDefault();
+      $('.CreateTouchMultiStepForm-fieldset').hide();
+      $("#CreateTouchMultiStepForm_1").show();
+      $("#createSegmentLanguage").empty();
+      $("#createSegmentLanguage").append('<p class="Select-a-phone-number">Select a language for your Segments</p>');
+      if (radioSelectionFlag == "001" || radioSelectionFlag == "011" || radioSelectionFlag == "010" || radioSelectionFlag == "000") 
+      {
+      $('.CreateTouchMultiStepForm-fieldset').hide();
+      $("#CreateTouchMultiStepForm_0").show();
+    }
+    
+    for (i = 0; i < arrayPushSegmentLanguageID.length; i++) {
+      arrayPushSegmentLanguageID[i] = '';
+            arrayPushSegmentPhoneID[i] = '';
+            arrayPushSegmentURL[i] = '';
+
+            $('#seglanguage_' + i).prop('selectedIndex', 0);
+            $('#segphone_' + i).prop('selectedIndex', 0);
+            $('#segurl_' + i).val('');
+
+            isSegLanguageSelected = false;
+            isSegPhoneIdSelected = false;
+            isSegUrlSelected = false;
+    }  
+      
+     });
+      
+    $("#phoneNumberTouch").change(function(){
+    noSegmentGetPhoneId = $("#phoneNumberTouch option:selected").attr('id'); 
+//    noSegmentGetPhoneId = $("#phoneNumberTouch option:selected").attr("value");
+       });
+    
+    $("#tab4_Next").on('click',function (e) {
+      e.preventDefault();
+    if (isSegmentRadioNoChecked) 
+    {
+      if (Number(noSegmentGetPhoneId) > 0) 
+      {  
+        radioSelectionFlag_110_010();
+        $('.CreateTouchMultiStepForm-fieldset').hide();
+        $('#CreateTouchMultiStepForm_4').show();        
+        // alert('go to next');  
+         //<!-- harinath 11-05-2020 Start -->
+        // noSegmentGetPhoneId = ""; 
+        $("#phoneNumberTouch").popover("hide");
+        $("#phoneNumberTouch").removeClass("invalid");
+        //<!-- harinath 11-05-2020 End -->
+      }
+      else 
+      {        
+        var content = "Touch Phone cannot be empty !";      
+        popover(
+          $("#phoneNumberTouch").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#phoneNumberTouch").addClass("invalid");  
+      }
+    }
+    else
+    {
+      if (!isSegPhoneIdSelected) 
+      {
+        var segmentPhoneClass = $('.segmentPhoneClass');
+        for(i=0;i<segmentPhoneClass.length;i++){
+          console.log($('#segphone_'+i).attr('id'));
+          var getSegmentPhoneID = $('#segphone_'+i).attr('id');
+          if($('#'+getSegmentPhoneID).val() == "["+arrayMultipleSegmentNames[i].segmentName+"] Phone Number")
+          {        
+            var content = "Phone cannot be empty";      
+            popover(
+              $('#'+getSegmentPhoneID).attr("id"),
+              "manual",
+              "right",
+              content,
+              popoverTemplate(content)
+            );  
+            $('#'+getSegmentPhoneID).addClass("invalid");
+          }
+          else
+          {
+            $('#'+getSegmentPhoneID).popover("hide");
+            $('#'+getSegmentPhoneID).removeClass("invalid");
+          }
+          
+        }
+      }
+      else
+      {
+        radioSelectionFlag_110_010();
+        $('.CreateTouchMultiStepForm-fieldset').hide();
+        createDynamicSegmentURL();
+        $(".url-subtitle").text(""+campaignTouchDetail.metaData[0].campaign_collection[0].campaign.campaignName+" > Touch Overview > Segments > Segment Data");
+        $(".url-title").text("Request Url by Touch or Segment");
+           //<!-- harinath 11-05-2020 Start -->
+        isSegPhoneIdSelected = false;
+        var segmentPhoneClass = $('.segmentPhoneClass');
+        for(i=0;i<segmentPhoneClass.length;i++)
+        {                
+          var getSegmentID = $('#segphone_'+i).attr('id');               
+            
+          $('#'+getSegmentID).popover("hide");
+          $('#'+getSegmentID).removeClass("invalid");
+          
+        }
+        //<!-- harinath 11-05-2020 End -->
+      }
+    } 
+    });
+    
+    $("#tab4_previous").on('click',function (e) {
+      e.preventDefault();
+      $('.CreateTouchMultiStepForm-fieldset').hide();
+      $("#CreateTouchMultiStepForm_2").show();
+      $("#createSegmentPhoneNo").empty();
+    $("#createSegmentLanguage").append('<p class="Select-a-phone-number">Select a phone number  for your Segments</p>');
+    for (i = 0; i < arrayPushSegmentLanguageID.length; i++)
+    {  
+      arrayPushSegmentPhoneID[i] = '';
+      arrayPushSegmentURL[i] = '';
+            $('#segphone_' + i).prop('selectedIndex', 0);
+            $('#segurl_' + i).val('');
+            isSegPhoneIdSelected = false;
+            isSegUrlSelected = false;
+    }
+  });    
+    
+    $("#tab5_Next").click(function () {
+    if (isSegmentRadioNoChecked) 
+    {
+      if ($(".createTouchUrlLink_inputValue").val() != '') 
+      {
+        // alert('URl value entered...');
+        tab5_Click_Action();                  
+            }
+      else
+      {               
+        var content = "Touch URL cannot be empty !";      
+        popover(
+          $("#touchUrlLink").attr("id"),
+          "manual",
+          "right",
+          content,
+          popoverTemplate(content)
+        );  
+        $("#touchUrlLink").addClass("invalid");
+      }
+    }
+    else
+    {
+      for (k = 0; k < arrayPushSegmentLanguageID.length; k++)
+      {  
+        if (arrayPushSegmentURL[k] == '') 
+        {
+          console.log(k);
+          isSegUrlSelected = false;
+                    break;
+        }
+        else
+        {
+          isSegUrlSelected = true;
+        }
+      }
+
+      if (!isSegUrlSelected) {
+        // alert('URL not selected for all segments');
+        // $("#customURLErrorDisplay").removeClass('displayNone');
+        
+        var segURL_textbox = $('.segURL_textbox');
+        for(i=0;i<segURL_textbox.length;i++)
+        {
+          console.log($('#segurl_'+i).attr('id'));
+          var getSegmentUrlID = $('#segurl_'+i).attr('id');
+          if($('#'+getSegmentUrlID).val() == "")
+          {  
+            var content = "URL cannot be empty";      
+            popover(
+              $('#'+getSegmentUrlID).attr("id"),
+              "manual",
+              "right",
+              content,
+              popoverTemplate(content)
+            );  
+            $('#'+getSegmentUrlID).addClass("invalid");
+            
+          }
+          else
+          {
+            $('#'+getSegmentUrlID).popover("hide");
+            $('#'+getSegmentUrlID).removeClass("invalid");
+          }  
+        }
+      }
+      else
+      {
+        // alert('all URL are selected');
+        tab5_Click_Action();
+         //<!-- harinath 11-05-2020 Start -->
+
+        isSegUrlSelected = false;
+        var segURL_textbox = $('.segURL_textbox');
+        for(i=0;i<segURL_textbox.length;i++)
+        {
+          var getSegmentUrlID = $('#segurl_'+i).attr('id');
+          $('#'+getSegmentUrlID).popover("hide");
+          $('#'+getSegmentUrlID).removeClass("invalid");    
+            }
+        //<!-- harinath 11-05-2020 End -->
+      }
+        }   
+    });
+    
+    $("#tab5_previous").click(function () {
+    $('.CreateTouchMultiStepForm-fieldset').hide();
+    $('#createSegmentUrlLink').empty();            
+    if (radioSelectionFlag == "101" || radioSelectionFlag == "001")
+    {
+           $("#CreateTouchMultiStepForm_2").show();
+    } 
+    else 
+    {
+      $("#CreateTouchMultiStepForm_3").show();
+    }    
+    for (i = 0; i < arrayPushSegmentLanguageID.length; i++) 
+    {
+        arrayPushSegmentURL[i] = '';
+      $('#segurl_' + i).val('');
+      isSegUrlSelected = false;
+    }  
+  });
+    
+  });
+  
+</script>
+<!--
+<script>
+  function TableToCSV()
+  {
+    
+  
+    var table = $('#campaignsListTable').attr("id");
+    var exportBtn = $('#exportCampaign').attr("id");
+
+    const toCsv = function(table) {
+      // Query all rows
+      const rows = document.querySelectorAll("#campaignsListTable tr");
+      return [].slice.call(rows)
+        .map(function(row) {
+        // Query all cells
+        const cells = row.querySelectorAll('th,td')-1;
+        return [].slice.call(cells)
+          .map(function(cell) {
+          return cell.textContent;
+        })
+          .join(',');
+      })
+        .join('\n');
+    };
+
+
+
+    const download = function(text, fileName) {
+      const link = document.createElement('a');
+      link.setAttribute('href', `data:text/csv;charset=utf-8,${encodeURIComponent(text)}`);
+      link.setAttribute('download', fileName);
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+
+    const csv = toCsv(table);
+
+    // Download it
+    download(csv, 'EMBH_CampaignList.csv');
+
+  }
+</script>
+-->
+</body>
+</html>

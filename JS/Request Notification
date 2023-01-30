@@ -1,0 +1,319 @@
+
+loadLibrary("meta:common.js"); 
+loadLibrary("meta:segmentOperation.js"); 
+
+    
+//****************************************************  @@ calling method getSegmentAssignmentData  ********************************************************    
+    
+    function getSegmentAssignmentData(segmentId,flag,havePhone){
+ 
+                            var queryData= xtk.queryDef.create(
+                                           <queryDef schema="meta:segmentAssignment" operation="select">
+                                              <select>
+                                                <node expr="@urlLink"/>
+                                                <node expr="@phoneAssignmentId"/>
+                                                <node expr="[/phoneNumberAssignment/phoneNumberLibrary/@phoneNumber]" alias="@phoneNumber"/>
+                                              </select>
+                                              <where> 
+                                               <condition expr={"@segmentId = '"+segmentId+"'"}/>   
+                                              </where>                           
+                                           </queryDef>);                           
+                            var queryDataXML=queryData.ExecuteQuery();
+                            var urlLinkData=queryDataXML.segmentAssignment.@urlLink.toString();
+                            var phoneNumberAssignmentId=queryDataXML.segmentAssignment.@phoneAssignmentId.toString();
+                            var phoneNumber=queryDataXML.segmentAssignment.@phoneNumber.toString();
+                            
+                            if(flag == "0" && havePhone == "0"){
+                            return urlLinkData;
+                            }
+                            if(flag == "1" && havePhone == "0"){
+                            return phoneNumberAssignmentId;
+                            }
+                            if(flag == "0" && havePhone == "1"){
+                            return phoneNumber;
+                            }
+                            
+                             
+    }
+    
+//****************************************************  @@ calling method checkOperator  ********************************************************
+
+    function checkOperator(){
+     
+          var campaignReviewer= isCampaignMetaReviewer();
+          var campaignMangers= isCampaignMetaManagers();
+          var phoneManagers= isPhoneNumberManagers();
+          var queryConditionXML=<where><condition boolOperator="AND" expr="[touch/@isMarkDeleted] = 0"/><condition boolOperator="AND"><condition boolOperator="OR" expr="@notificationDate >= GetDate() -30 "/><condition  expr="@Status = 'open'"/></condition></where>; 
+          
+          var internalQueryConditionXML = <condition boolOperator="AND"></condition>
+            if(campaignReviewer == true){
+                 
+                 internalQueryConditionXML.appendChild(<condition boolOperator="OR" expr={"@userType = 'Campaign Reviewer'"}/>);  
+                 if(campaignMangers == true){
+                  internalQueryConditionXML.appendChild(<condition boolOperator="OR" expr={"@userType = 'Campaign Manager'"}/>);
+                 } 
+                 if(phoneManagers == true){
+                  internalQueryConditionXML.appendChild(<condition expr={"@userType = 'Phone Manager'"}/>);
+                 } 
+              queryConditionXML.appendChild(internalQueryConditionXML);
+                
+            }
+            else if(campaignMangers == true){
+               
+               internalQueryConditionXML.appendChild(<condition boolOperator="OR"  expr={"@userType = 'Campaign Manager'"}/>);
+                if(campaignReviewer == true){
+                  internalQueryConditionXML.appendChild(<condition boolOperator="OR" expr={"@userType = 'Campaign Reviewer'"}/>);
+                 } 
+                 if(phoneManagers == true){
+                  internalQueryConditionXML.appendChild(<condition expr={"@userType = 'Phone Manager'"}/>);
+                 }      
+               queryConditionXML.appendChild(internalQueryConditionXML);
+              }
+             else if(phoneManagers == true){
+             
+              internalQueryConditionXML.appendChild(<condition boolOperator="OR" expr={"@userType = 'Phone Manager'"}/>);      
+              if(campaignReviewer == true){
+                  internalQueryConditionXML.appendChild(<condition boolOperator="OR" expr={"@userType = 'Campaign Reviewer'"}/>);
+               }
+               if(campaignMangers == true){
+                  internalQueryConditionXML.appendChild(<condition expr={"@userType = 'Campaign Manager'"}/>);
+                 }     
+               queryConditionXML.appendChild(internalQueryConditionXML);
+              } 
+              else{
+                internalQueryConditionXML.appendChild(<condition expr={"@userType = 'all'"}/>);     
+                queryConditionXML.appendChild(internalQueryConditionXML);
+              }        
+           return  queryConditionXML;
+     } 
+
+//*************************************************************** Get all notification record ***********************************************     
+     
+
+function getRequestNotification(){
+        
+        //@@ check login user operator group
+        var queryCondition=checkOperator();                                              
+        
+        var notificationResponse={};
+        var UserType="Campaign Manager";
+        var queryData= xtk.queryDef.create(
+                          <queryDef schema="meta:requestNotification" operation="select">
+                            <select>
+                              <node expr="@id"/>
+                              <node expr="@userType"/>
+                              <node expr="@notificationType"/>
+                              <node expr="@action"/>
+                              <node expr="@actionName"/>
+                              <node expr="@title"/>
+                              <node expr="@description"/>
+                              <node expr="@notificationDate"/>
+                              <node expr="@requestedBy"/>
+                              <node expr="@requestedStatus"/>
+                              <node expr="@touchId"/>
+                              <node expr="@segmentId"/>
+                              <node expr="@segmentAssignmentId"/>
+                              <node expr="@phoneNumberAssignmentId"/>
+                              <node expr="@Status"/> 
+                              <node expr="@campaignId"/> 
+                              <node expr="@notificationType2"/>                              
+                            </select>                                                      
+                              {queryCondition}
+                            <orderBy>                              
+                              <node expr="@notificationDate" sortDesc="true"/>                                                                              
+                            </orderBy>                             
+                           </queryDef>);
+                           
+         var requestXMLData=queryData.ExecuteQuery();
+         
+         var notification=[];
+         var warning=[];
+         for each(var requestData in requestXMLData){
+          var requestNotificationDataJSON={};
+          var requestWarningDataJSON={};
+          if(requestData.@notificationType.toString() == "Notification"){
+            requestNotificationDataJSON.ID=requestData.@id.toString();
+            requestNotificationDataJSON.UserType=requestData.@userType.toString();
+            requestNotificationDataJSON.NotificationType=requestData.@notificationType.toString();
+            requestNotificationDataJSON.Action=requestData.@action.toString();
+            requestNotificationDataJSON.ActionName=requestData.@actionName.toString();
+            requestNotificationDataJSON.Title=requestData.@title.toString();
+            requestNotificationDataJSON.Description=requestData.@description.toString();
+            requestNotificationDataJSON.NotificationDate=requestData.@notificationDate.toString();
+            requestNotificationDataJSON.RequestedBy=requestData.@requestedBy.toString();
+            requestNotificationDataJSON.RequestedStatus=requestData.@requestedStatus.toString();
+            requestNotificationDataJSON.TouchId=requestData.@touchId.toString();
+            requestNotificationDataJSON.SegmentId=requestData.@segmentId.toString();
+            requestNotificationDataJSON.SegmentAssignmentId=requestData.@segmentAssignmentId.toString();
+            requestNotificationDataJSON.PhoneNumberAssignmentId=requestData.@phoneNumberAssignmentId.toString();
+            requestNotificationDataJSON.Status=requestData.@Status.toString();
+            requestNotificationDataJSON.CampaignId=requestData.@campaignId.toString();
+            requestNotificationDataJSON.NotificationType2=requestData.@notificationType2.toString();
+            notification.push(requestNotificationDataJSON);
+          }
+          if(requestData.@notificationType.toString() == "Warning"){
+            requestWarningDataJSON.ID=requestData.@id.toString();
+            requestWarningDataJSON.UserType=requestData.@userType.toString();
+            requestWarningDataJSON.NotificationType=requestData.@notificationType.toString();
+            requestWarningDataJSON.Action=requestData.@action.toString();
+            requestWarningDataJSON.ActionName=requestData.@actionName.toString();
+            requestWarningDataJSON.Title=requestData.@title.toString();
+            requestWarningDataJSON.Description=requestData.@description.toString();
+            requestWarningDataJSON.NotificationDate=requestData.@notificationDate.toString();
+            requestWarningDataJSON.RequestedBy=requestData.@requestedBy.toString();
+            requestWarningDataJSON.RequestedStatus=requestData.@requestedStatus.toString();
+            requestWarningDataJSON.TouchId=requestData.@touchId.toString();
+            requestWarningDataJSON.SegmentId=requestData.@segmentId.toString();
+            requestWarningDataJSON.SegmentAssignmentId=requestData.@segmentAssignmentId.toString();
+            requestWarningDataJSON.PhoneNumberAssignmentId=requestData.@phoneNumberAssignmentId.toString();
+            requestWarningDataJSON.Status=requestData.@Status.toString();
+            requestWarningDataJSON.CampaignId=requestData.@campaignId.toString();
+            requestWarningDataJSON.NotificationType2=requestData.@notificationType2.toString();
+            warning.push(requestWarningDataJSON);
+         }
+       }
+         
+         var data={};
+         data.warning=warning;
+         data.notification=notification;
+         notificationResponse.data=data;
+         
+         return JSON.stringify(notificationResponse);   
+    
+    }
+    
+//********************************************************************* Submit campaign for review ***********************************************************************    
+    
+    function updateStatus(requestBodyObject){
+    
+       if(JSON.stringify(requestBodyObject.data) == '{}'){
+                    return executeResult(300,"Error in request payload data" ,"Fail");
+             }
+             else{
+                        try{  
+                           var response={};                           
+                           xtk.session.Write(<touch xtkschema="meta:touch" _operation="update"  _key="@id"  id={requestBodyObject.data.touchId} status="pending"></touch>);
+                           
+                           //@@ getting segmentdetails based on touchId                           
+                           var segmentIdArray= getSegmentInformation(requestBodyObject.data.touchId);      
+                           
+                           for(var i=0; i<segmentIdArray.length;i++){
+                           
+                              var urlStatus="";
+                              
+                              //@@ get urlLink data from segmentAssignment
+                              var urlLinkData=getSegmentAssignmentData(segmentIdArray[i],0,0); 
+                              if(urlLinkData == "Need URL"){
+                                urlStatus="needsReview";
+                              }
+                              else{
+                                urlStatus="pending";
+                              }
+                              xtk.session.Write(<segmentAssignment xtkschema="meta:segmentAssignment" _operation="update"  _key="@segmentId"  segmentId={segmentIdArray[i]} ctaUrlAssignmentStatus={urlStatus} phoneAssigmentStatus="pending"></segmentAssignment>);   
+                             
+                              //@@ check for segmentId in phoneNumberAssignment table
+                                var jobCount= xtk.queryDef.create(
+                                  <queryDef schema="meta:phoneNumberAssignment" operation="get">
+                                    <select>
+                                      <node expr="Count(@id)" alias="@countId"/>
+                                    </select>                                    
+                                    <where>
+                                       <condition expr={"@segmentId ='"+segmentIdArray[i]+"'"}/>
+                                     </where>                                                                                     
+                                  </queryDef>);
+                                  var sPhoneCount=parseInt(jobCount.ExecuteQuery().@countId); 
+                                      
+                              if(sPhoneCount > 0){ 
+                              //@@ getting phoneAssignmentId of requesting segmentId
+                              var phoneAssignmentId=getPhoneNumberAssignmentId(segmentIdArray[i]);
+                              xtk.session.Write(<phoneNumberAssignment xtkschema="meta:phoneNumberAssignment" _operation="update"  _key="@id"  id={phoneAssignmentId} status="pending"></phoneNumberAssignment>);                        
+                             }
+                           }
+                           
+                           //@@ querying touch data
+                           var queryData= xtk.queryDef.create(
+                              <queryDef schema="meta:touch" operation="select">
+                                <select>
+                                  <node expr="@campaignId"/> 
+                                  <node expr="@havePhoneAssignments"/>  
+                                  <node expr="@haveUrlAssignments"/>
+                                  <node expr="@touchName"/>
+                                  <node expr="[campaign/@campaignName]" alias="@campaignName"/>   
+                                  <node expr="[campaign/initiative/@name]" alias="@initiativeName"/>                                                                                       
+                                </select>                                                      
+                                <where>                                                          
+                                  <condition expr={"@id = '"+requestBodyObject.data.touchId+"'"}/>                            
+                                </where>                             
+                               </queryDef>);
+                           
+                           var touchData=queryData.ExecuteQuery(); 
+                           
+                           //@@ response over successful operation                                                    
+                           var data=[];
+                           for each(var i in touchData){
+                            var touchJSON={};
+                            touchJSON.CampaignId=i.@campaignId.toString();
+                            data.push(touchJSON);
+                           }
+                           response.methodName="submitCampaignForReview";
+                           response.data=data;
+                           
+                           
+                          var havePhone=touchData.touch.@havePhoneAssignments.toString();
+                          var haveUrl=touchData.touch.@haveUrlAssignments.toString();                        
+                          var currentDate=new Date(); 
+                          var requestSubmitter=getOperator();
+                          var campaignId=touchData.touch.@campaignId.toString();
+                          var phoneNumberAssignmentId=0;
+                          var phoneNumber="";
+                          var initiativeName=touchData.touch.@initiativeName.toString();
+                          var campaignName=touchData.touch.@campaignName.toString();
+                          var touchName=touchData.touch.@touchName.toString();
+                          
+                         for(var i=0; i<segmentIdArray.length;i++){
+                          
+                                //@@ if havePhoneAssignments flag is enabled                          
+                                if(havePhone == "1"){  
+                                    phoneNumberAssignmentId=getSegmentAssignmentData(segmentIdArray[i],1,0); 
+                                    phoneNumber=getSegmentAssignmentData(segmentIdArray[i],0,1);                      
+                                    createRequestNotification(segmentIdArray[i],campaignId,"Phone Manager","Notification","1","Approve","Review phone assignment","For Touch - "+touchName+" under Campaign - "+initiativeName+":"+campaignName+", review phone assignment & approve",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,phoneNumberAssignmentId,"open","phone");
+                                    } 
+                                
+                                //@@ if haveUrlAssignments flag is enabled
+                                if(haveUrl == "1"){                                    
+                                   var urlLink=getSegmentAssignmentData(segmentIdArray[i],0,0);
+                                   if(urlLink == "Need URL"){                                   
+                                    createRequestNotification(segmentIdArray[i],campaignId,"Campaign Reviewer","Warning","1","Review","Url needs review","For Touch - "+touchName+" under Campaign - "+initiativeName+":"+campaignName+", Url details required, please add details using suggest alternative option & approve",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","url");
+                                   }
+                                   else{                                  
+                                   createRequestNotification(segmentIdArray[i],campaignId,"Campaign Reviewer","Notification","1","Approve","Review Url details","For Touch -"+touchName+" under Campaign - "+initiativeName+":"+campaignName+", review urls info & approve",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","url");
+                                   }
+                                }   
+                                   
+                         }         
+                                               
+                                 //@@ Campaign Meta Manager notification 
+                                 createRequestNotification("",campaignId,"Campaign Manager","Notification","0","","Touch submitted","Touch - "+touchName+" for Campaign - "+initiativeName+":"+campaignName+" Submitted",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","close","");
+                                
+                                 //@@ Campaign Meta Reviewer notification
+                                 if(havePhone == "0" && haveUrl == "0"){
+                                   createRequestNotification("",campaignId,"Campaign Reviewer","Notification","1","Approve","Review touch","Touch - "+touchName+" for Campaign - "+initiativeName+":"+campaignName+" Submitted, Please review & approve",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","touch");
+                                 } 
+                                 else{                                    
+                                   createRequestNotification("",campaignId,"Campaign Reviewer","Notification","0","","Touch under review","Touch - "+touchName+" for Campaign - "+initiativeName+":"+campaignName+" being reviewed for requested items(Phone/Url)",currentDate,requestSubmitter,"Pending",requestBodyObject.data.touchId,"","open","touch");
+                                 
+                                 }   
+                            
+                         
+                           
+                           return JSON.stringify(response);
+                        }
+                        catch(error){
+                           return executeResult(300,"Error in updating request notification record- "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+                        }
+             }  
+  
+      
+    
+    
+    }

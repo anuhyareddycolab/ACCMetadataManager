@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Screen One</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="../js/script.js"></script>
+
+</head>
+
+<body>
+
+  <div class="formContainer">
+
+    <form id="regForm">
+
+      <div class="tab">
+        <h1>Display Radio Buttons</h1>
+
+
+        <p>Do you want to display Touch Language?</p>
+        <input type="radio" id="LangYes" name="TouchLanguage" value="yes">
+        <label for="LangYes">Yes</label><br>
+        <input type="radio" id="LangNo" name="TouchLanguage" value="no">
+        <label for="LangNo">No</label><br>
+
+
+        <br>
+
+        <p>Do you want to display Touch Phone number?</p>
+        <input type="radio" id="TouchYes" name="TouchPhone" value="yes">
+        <label for="TouchYes">Yes</label><br>
+        <input type="radio" id="TouchNo" name="TouchPhone" value="no">
+        <label for="TouchNo">No</label><br>
+
+
+      </div>
+
+      <div class="tab ">
+
+        <div class="form-group">
+          <label class="form-label hidden TouchlanguageLabel" for="touchLanguage">[Touch] Language</label>
+          <select class="form-select" id="touchLanguage" aria-label="Default select example">
+            <option selected>[Touch] Language</option>
+            <option value="1">English</option>
+            <option value="2">French</option>
+            <option value="3">Spanish</option>
+            <option value="3">Arabic</option>
+          </select>
+        </div>
+
+
+
+        <div class="form-group">
+          <label class="form-label hidden segLangLabel" for="segLang">[Segment 1] Language</label>
+          <select class="form-select" id="segLang" aria-label="Default select example">
+            <option selected>[Segment 1] Language</option>
+            <option value="1">English</option>
+            <option value="2">French</option>
+            <option value="3">Spanish</option>
+            <option value="3">Arabic</option>
+          </select>
+        </div>
+
+
+        <div class="form-group">
+          <label class="form-label hidden segLangLabel2" for="segLang2">[Segment 2] Language</label>
+          <select class="form-select" id="segLang2" aria-label="Default select example">
+            <option selected>[Segment 2] Language</option>
+            <option value="1">English</option>
+            <option value="2">French</option>
+            <option value="3">Spanish</option>
+            <option value="3">Arabic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label hidden segLangLabel3" for="segLang3">[Segment 3] Language</label>
+          <select class="form-select" id="segLang3" aria-label="Default select example">
+            <option selected>[Segment 3] Language</option>
+            <option value="1">English</option>
+            <option value="2">French</option>
+            <option value="3">Spanish</option>
+            <option value="3">Arabic</option>
+          </select>
+        </div>
+
+
+
+
+
+      </div>
+
+      <!-- TAB TWO STARTS------------------------------------------------------------------------------ -->
+
+      <div class="tab">
+
+        <div class="form-group">
+          <label class="form-label hidden x2_TouchlanguageLabel" for="x2_touchLanguage">[Touch] Phone Number</label>
+          <select class="form-select" id="x2_touchLanguage" aria-label="Default select example">
+            <option selected>[Touch] Phone Number</option>
+            <option value="1">11111111</option>
+            <option value="2">22222222</option>
+            <option value="3">3333333</option>
+            <option value="3">44444444</option>
+          </select>
+        </div>
+
+
+
+        <div class="form-group">
+          <label class="form-label hidden x2_segLangLabel" for="x2_segLang">[Segment 1] Phone Number</label>
+          <select class="form-select" id="x2_segLang" aria-label="Default select example">
+            <option selected>[Segment 1] Phone Number</option>
+            <option value="1">11111111</option>
+            <option value="2">22222222</option>
+            <option value="3">3333333</option>
+            <option value="3">44444444</option>
+          </select>
+        </div>
+
+
+        <div class="form-group">
+          <label class="form-label hidden x2_segLangLabel2" for="x2_segLang2">[Segment 2] Phone Number</label>
+          <select class="form-select" id="x2_segLang2" aria-label="Default select example">
+            <option selected>[Segment 2] Phone Number</option>
+            <option value="1">11111111</option>
+            <option value="2">22222222</option>
+            <option value="3">3333333</option>
+            <option value="3">44444444</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label hidden x2_segLangLabel3" for="x2_segLang3">[Segment 3] Phone Number</label>
+          <select class="form-select" id="x2_segLang3" aria-label="Default select example">
+            <option selected>[Segment 3] Phone Number</option>
+            <option value="1">11111111</option>
+            <option value="2">22222222</option>
+            <option value="3">3333333</option>
+            <option value="3">44444444</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="tab" id="displayContent">
+        No Data to be displayed...
+      </div>
+
+      <div style="overflow:auto;">
+        <div style="float:right;">
+          <button type="button" id="prevBtn">Previous</button>
+          <button type="button" id="nextBtn">Next</button>
+        </div>
+      </div>
+      <!-- Circles which indicates the steps of the form: -->
+      <div style="text-align:center;margin-top:40px;visibility: hidden;">
+        <span class="step"></span>
+        <span class="step"></span>
+        <span class="step"></span>
+        <span class="step"></span>
+
+      </div>
+    </form>
+  </div>
+
+</body>
+
+</html>
+

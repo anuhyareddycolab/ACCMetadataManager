@@ -1,0 +1,407 @@
+loadLibrary("/nl/core/shared/nl.js");
+loadLibrary('xtk:common.js');
+loadLibrary('meta:validations.js');
+loadLibrary('meta:common.js');
+var phoneNumbersSegmentJSON={};
+var phoneNumbersSegmentList=[];
+var splChannelIdList=[];
+var revisedSplChannelIdList=[];
+var phoneBrandList,phonelobList,phoneLangList,phoneInitiativeList,phoneChannelList,phoneNumbersReleaseDateList,bestPhoneNumbersList,nextBestPhoneNumbersList,otherPhoneNumbersList,templist,witoutColloffPeriodPhoneNumbersList;
+function getBestPhoneNumbers (requestBodyObject){
+  if(JSON.stringify(requestBodyObject.data) == '{}'){
+          return executeResult(300,"Error in request payload data" ,"Fail");
+          }
+  else{
+    try{
+var brandId=requestBodyObject.data.brandId;
+var lobId=requestBodyObject.data.lobId;
+var initiativeId=requestBodyObject.data.initiativeId;
+var channelId=requestBodyObject.data.channelId;
+var touchStartDate=requestBodyObject.data.touchStartDate;
+
+getsplChannelIdList(splChannelIdList,channelId);
+// logInfo("splChannelIdList ***:"+splChannelIdList);
+
+getrevisedSplChannelIdList(splChannelIdList,channelId);
+for(var i=0;i<requestBodyObject.data.segmentsAssignment.length;i++){ 
+bestPhoneNumbersList=[];
+nextBestPhoneNumbersList=[];
+otherPhoneNumbersList=[];
+templist=[];
+witoutColloffPeriodPhoneNumbersList=[];
+phoneBrandList=[];
+phonelobList=[];
+phoneLangList=[];
+phoneInitiativeList=[];
+phoneChannelList=[];
+phoneNumbersReleaseDateList=[];
+
+// logInfo("bestPhoneNumbersList:"+bestPhoneNumbersList+"nextBestPhoneNumbersList:"+nextBestPhoneNumbersList+"otherPhoneNumbersList:"+otherPhoneNumbersList);
+var langId=requestBodyObject.data.segmentsAssignment[i].languageId; 
+// logInfo("langId ****:"+langId);
+var segmentId=requestBodyObject.data.segmentsAssignment[i].segmentId
+
+
+
+getphoneBrandList(brandId);
+ //// logInfo("phoneBrandList **"+phoneBrandList);
+ getphonelobList(lobId);
+ //// logInfo("phonelobList **"+phonelobList);
+  getphoneLangList(langId);
+ // logInfo("phoneLangList **"+phoneLangList);
+   getphoneInitiativeList(initiativeId);
+ //// logInfo("phoneInitiativeList **"+phoneInitiativeList);
+  getphoneChannelList(channelId);
+ //// logInfo("phoneChannelList **"+phoneChannelList);
+
+ getPhoneNumbersbasedonReleaseDate(touchStartDate,brandId,lobId,langId,initiativeId,channelId,segmentId);
+ // logInfo("phoneNumbersReleaseDateList **"+phoneNumbersReleaseDateList);
+}
+generatePhoneNumberSegmentJSON(phoneNumbersSegmentList,brandId,lobId,langId,initiativeId,channelId);
+return JSON.stringify(phoneNumbersSegmentJSON);
+    }
+catch(error){
+                  return executeResult(300,"Error in validating phone best logic   "+ error + " "+ error.message + ' - ' + error.name ,"Fail");
+              }
+          
+          }
+}
+
+function getphoneBrandList(brandId){ 
+ var phoneMetaBrandquery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/>                                                 
+                            </select> 
+                          <where>                                                                         
+                          <condition expr={"@brandId = '"+brandId+"'"   } />
+                        </where>                                                                           
+                          </queryDef>);
+             //// logInfo("phoneMetaBrandquery @@@@@@@"+phoneMetaBrandquery.BuildQuery () )
+       var phoneMetaBranddata= phoneMetaBrandquery.ExecuteQuery();
+         for each(var phoneNumbers in phoneMetaBranddata){                           
+    var phoneNumberBrand =phoneNumbers.@phoneNumber.toString();
+    //// logInfo("phoneNumberBrand : **"+phoneNumberBrand);
+    phoneBrandList.push(phoneNumberBrand);
+    }
+      
+   return phoneBrandList;
+   }      
+    
+    function getphonelobList(lobId){ 
+ var phoneMetalobquery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/>                                                 
+                            </select> 
+                          <where>                                                                         
+                          <condition expr={"@lobId = '"+lobId+"'"   } />
+                        </where>                                                                           
+                          </queryDef>);
+             //// logInfo("phoneMetaBrandquery @@@@@@@"+phoneMetaBrandquery.BuildQuery () )
+       var phoneMetalobdata= phoneMetalobquery.ExecuteQuery();
+         for each(var phoneNumbers in phoneMetalobdata){                           
+    var phoneNumberlob =phoneNumbers.@phoneNumber.toString();
+    //// logInfo("phoneNumberBrand : **"+phoneNumberBrand);
+    phonelobList.push(phoneNumberlob);
+    }
+      
+   return phonelobList;
+   }
+   
+       function getphoneLangList(langId){ 
+ var phoneMetaLangquery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/>                                                 
+                            </select> 
+                          <where>                                                                         
+                          <condition expr={"@languageId = '"+langId+"'"   } />
+                        </where>                                                                           
+                          </queryDef>);
+             //// logInfo("phoneMetaBrandquery @@@@@@@"+phoneMetaBrandquery.BuildQuery () )
+       var phoneMetaLangdata= phoneMetaLangquery.ExecuteQuery();
+         for each(var phoneNumbers in phoneMetaLangdata){                           
+    var phoneNumberLang =phoneNumbers.@phoneNumber.toString();
+    //// logInfo("phoneNumberBrand : **"+phoneNumberBrand);
+    phoneLangList.push(phoneNumberLang);
+    }
+      
+   return phoneLangList;
+   }  
+   
+   
+function getphoneInitiativeList(initiativeId){ 
+ var phoneMetaInitiativequery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/>                                                 
+                            </select> 
+                          <where>                                                                         
+                          <condition expr={"@initiativeId = '"+initiativeId+"'"   } />
+                        </where>                                                                           
+                          </queryDef>);
+             //// logInfo("phoneMetaBrandquery @@@@@@@"+phoneMetaBrandquery.BuildQuery () )
+       var phoneMetaInitiativedata= phoneMetaInitiativequery.ExecuteQuery();
+         for each(var phoneNumbers in phoneMetaInitiativedata){                           
+    var phoneNumberInitiative =phoneNumbers.@phoneNumber.toString();
+    //// logInfo("phoneNumberInitiative : **"+phoneNumberInitiative);
+    phoneInitiativeList.push(phoneNumberInitiative);
+    }
+      
+   return phoneInitiativeList;
+   }  
+   
+   
+   function getphoneChannelList(channelId){ 
+     var phoneMetaChannelquery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/>                                                 
+                            </select> 
+                          <where>                                                                         
+                          <condition expr={"@channelId = '"+channelId+"'"   } />
+                        </where>                                                                           
+                          </queryDef>);
+             //// logInfo("phoneMetaChannelquery @@@@@@@"+phoneMetaChannelquery.BuildQuery () )
+       var phoneMetaChanneldata= phoneMetaChannelquery.ExecuteQuery();
+         for each(var phoneNumbers in phoneMetaChanneldata){                           
+    var phoneNumberChannel =phoneNumbers.@phoneNumber.toString();
+    //// logInfo("phoneNumberChannel : **"+phoneNumberChannel);
+    phoneChannelList.push(phoneNumberChannel);
+    }
+      
+   return phoneChannelList;
+   }  
+   
+          function getPhoneNumbersbasedonReleaseDate(touchStartDate,brandId,lobId,langId,initiativeId,channelId,segmentId){
+
+      
+ var phoneReleaseDatequery = xtk.queryDef.create(
+                          <queryDef schema="meta:phoneNumberLibrary" operation="select">
+                            <select>        
+                                <node expr="@id"/> 
+                                <node expr="@phoneNumber"/> 
+                <node expr="@channelId"/> 
+                            </select>
+                           <where>             
+ <condition expr={"@isReserved = 0 AND @isPseudoNumber = 0  AND (@brandId LIKE '"+brandId+"' OR @lobId LIKE '"+lobId+"' OR @initiativeId LIKE '"+initiativeId+"' OR @languageId LIKE '"+langId+"' OR @channelId LIKE '"+channelId+"' )"   }/> 
+               
+                        </where>
+                          </queryDef>);
+             // logInfo("phoneReleaseDatequery @@@@@@@"+phoneReleaseDatequery.BuildQuery () )
+       var phoneReleaseDatedata= phoneReleaseDatequery.ExecuteQuery();
+     // logInfo("phoneReleaseDatedata length: **"+phoneReleaseDatedata.length);
+         for each(var phoneNumbers in phoneReleaseDatedata){                           
+    var phoneNumber =phoneNumbers.@phoneNumber.toString();
+  var phoneNumberId =phoneNumbers.@id.toString();
+  var phoneNumberChannelId =phoneNumbers.@channelId.toString();
+    // logInfo("phoneNumber : **"+phoneNumber);
+  if (isSplChannelPhoneNumber(phoneNumberChannelId,revisedSplChannelIdList) != 'yes'){
+  
+    getPhoneNumberScore(phoneNumber,phoneNumberId,touchStartDate);
+    phoneNumbersReleaseDateList.push(phoneNumber);   
+
+    
+    }
+     }
+  generatePhoneNumberSegmentList(bestPhoneNumbersList.sort(sortByProperty('score')),nextBestPhoneNumbersList.sort(sortByProperty('score')),witoutColloffPeriodPhoneNumbersList.sort(sortByProperty('score')),otherPhoneNumbersList.sort(sortByProperty('score')),segmentId);    
+   return phoneNumbersReleaseDateList;
+   
+      }
+   
+ 
+   
+   function   getPhoneNumberScore(phoneNumber,phoneNumberId,touchStartDate){
+   var brandScore=parseInt(getMetaScore (phoneNumber,phoneBrandList,'brand'));
+  // // logInfo("phoneNumber ****"+phoneNumber+"brandScore"+brandScore);
+     var lobScore=parseInt(getMetaScore (phoneNumber,phonelobList,'lob'));
+   //// logInfo("phoneNumber ****"+phoneNumber+"lobScore"+lobScore);
+     var langScore=parseInt(getMetaScore (phoneNumber,phoneLangList,'language'));
+   //// logInfo("phoneNumber ****"+phoneNumber+"langScore"+langScore);
+        var initiativeScore=parseInt(getMetaScore (phoneNumber,phoneInitiativeList,'initiative'));
+   //// logInfo("phoneNumber ****"+phoneNumber+"initiativeScore"+initiativeScore);
+        var channelScore=parseInt(getMetaScore (phoneNumber,phoneChannelList,'channel'));
+   //// logInfo("phoneNumber ****"+phoneNumber+"channelScore"+channelScore);
+   addMetaScore(phoneNumber,phoneNumberId,brandScore,lobScore,langScore,initiativeScore,channelScore,touchStartDate);
+   
+     
+   }
+     function   getMetaScore(phoneNumber,phoneList,metaType){
+var score=0;
+for (var i = 0; i < phoneList.length; i++) {
+ // logInfo(" getMetaScore incoming release date phoneNumber ***"+phoneNumber+"phoneBrand ***"+phoneBrandList[i] +"metaType ****"+metaType);  
+  if (phoneNumber == phoneList[i])
+    if(metaType == 'brand')
+        score=45;
+    else if(metaType == 'lob')
+        score=15;
+    else if(metaType == 'language')
+        score=10;
+    else if(metaType == 'initiative')
+        score=3;
+   else if(metaType == 'channel')
+        score=2;
+  else
+    score=0;
+}
+   
+   return score;
+   
+   }
+   
+   
+function   addMetaScore(phoneNumber,phoneNumberId,brandScore,lobScore,langScore,initiativeScore,channelScore,touchStartDate){
+  var finalScore=brandScore+lobScore+langScore+initiativeScore+channelScore;
+   //// logInfo("phoneNumber ****"+phoneNumber+"finalScore ****"+finalScore);
+   var brandName=getMetaName(phoneNumberId,'iBrandId','MetaBrand');
+   //// logInfo("brandName: "+brandName);
+   var lobName=getMetaName(phoneNumberId,'ilobId','MetaLineOfBusiness');
+   //// logInfo("lobName: "+lobName);
+    var langName=getMetaName(phoneNumberId,'iLanguageId','MetaLanguage');
+   //// logInfo("langName: "+langName);
+   var initiativeName=getMetaName(phoneNumberId,'iinitiativeId','MetaInitiative');
+   //// logInfo("initiativeName: "+initiativeName);
+   var channelName=getMetaName(phoneNumberId,'iChannelId','MetaChannel');
+   //// logInfo("channelName: "+channelName);
+var coolOffPeriod=getCoolOffPeriod(phoneNumberId);
+var releaseDate=getPhoneNumberReleaseDate(phoneNumberId);
+releaseDate=new Date(releaseDate).toISOString().slice(0, 10)
+var releaedateWithOutCollOffPeriod=calculateReleaedateWithOutCollOffPeriod(releaseDate,phoneNumberId,coolOffPeriod);
+                       
+                   
+
+                        var metaJson={};
+                            metaJson.phoneNumber=phoneNumber; 
+              metaJson.phoneNumberId=phoneNumberId; 
+                            metaJson.brandName=brandName;                       
+                            metaJson.lobName=lobName;
+                            metaJson.languageName=langName; 
+              metaJson.initiativeName=initiativeName;
+              metaJson.channelName=channelName;
+        metaJson.availability="Available";
+        metaJson.score=finalScore; 
+    //logInfo("phoneNumberId:&&&& "+phoneNumberId+"coolOffPeriod: "+coolOffPeriod+"releaseDate: "+releaseDate+"touchStartDate: "+touchStartDate+"releaedateWithOutCollOffPeriod: "+releaedateWithOutCollOffPeriod);
+        if(finalScore == 75 && ((touchStartDate > releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod))){
+              bestPhoneNumbersList.push(metaJson); 
+        }
+        else if (finalScore <=74 && finalScore >=70 && ((touchStartDate > releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod))){
+              nextBestPhoneNumbersList.push(metaJson); 
+        }
+        else if (finalScore <=74 && finalScore >=70 && ((touchStartDate < releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod))){
+              witoutColloffPeriodPhoneNumbersList.push(metaJson); 
+        }
+    else if (finalScore <=69 && finalScore >=45 && ((touchStartDate > releaseDate)  && (touchStartDate > releaedateWithOutCollOffPeriod))){
+              otherPhoneNumbersList.push(metaJson); 
+        }
+        else{
+        templist.push(metaJson);   
+        }
+    //return phoneNumbersList;
+  
+                     
+
+
+}
+
+function generatePhoneNumberSegmentList(bestPhoneNumbersList,nextBestPhoneNumbersList,witoutColloffPeriodPhoneNumbersList,otherPhoneNumbersList,segmentId){
+  var phoneNumbersJSON={};
+  phoneNumbersJSON.segmentId=segmentId;
+     phoneNumbersJSON.bestPhoneNumbers=bestPhoneNumbersList;
+    phoneNumbersJSON.nextBestPhoneNumbers=nextBestPhoneNumbersList;
+  phoneNumbersJSON.nextBestWitoutColloffPeriodPhoneNumbers=witoutColloffPeriodPhoneNumbersList;
+    phoneNumbersJSON.otherPhoneNumbers=otherPhoneNumbersList;
+  
+     // logInfo("phoneNumbersJSON :"+JSON.stringify(phoneNumbersJSON));
+   phoneNumbersSegmentList.push(phoneNumbersJSON);
+     return phoneNumbersSegmentList;
+}
+
+
+
+function   getMetaName(phoneNumberId,columnName,schemaName){
+  
+var metaId = sqlGetString("SELECT "+columnName+" FROM  MetaPhoneNumberLibrary WHERE iPhoneNumberLibraryId =  '"+phoneNumberId+"' ");
+//// logInfo("metaId"+metaId);
+if(schemaName == 'MetaLineOfBusiness')
+  columnName='iLineOfBusinessId';
+  var metaName = sqlGetString("SELECT sName FROM  "+schemaName+" WHERE "+columnName+" = " + parseInt(metaId));
+   //// logInfo("metaName"+metaName);         
+     return metaName;
+}
+
+function   getSplChannelId(channelName){
+    var ChannelmetaId = sqlGetString("SELECT iChannelId FROM  MetaChannel WHERE sName  =  '"+channelName+"'");
+   //// logInfo("metaName"+metaName);         
+     return ChannelmetaId;
+}
+
+function   getsplChannelIdList(splChannelIdList,channelId){
+  var splChannelIdNameList=[];
+  var splchannels=getOption("metaSpecialChannelList");
+   splChannelIdNameList=splchannels.split(",");
+    for (var i = 0; i < splChannelIdNameList.length; i++) {
+    splChannelIdList.push(getSplChannelId(splChannelIdNameList[i]));   
+}
+// logInfo("splChannelIdList****"+splChannelIdList);
+return splChannelIdList;
+}
+
+function   getrevisedSplChannelIdList(splChannelIdList,channelId){
+// logInfo("splChannelIdList.length **"+splChannelIdList.length);
+    for (var j = 0; j < splChannelIdList.length; j++) {
+  // logInfo("splChannelIdList[i] : **"+splChannelIdList[j]+"channelId:**"+channelId);    
+    if(splChannelIdList[j]!=channelId){
+    revisedSplChannelIdList.push(splChannelIdList[j]);   
+}
+    }
+// logInfo("revisedSplChannelIdList****"+revisedSplChannelIdList);
+return revisedSplChannelIdList;
+
+}
+function   isSplChannelPhoneNumber(phoneChannelId,revisedSplChannelIdList){
+  
+for (var i = 0; i < revisedSplChannelIdList.length; i++) {
+  var isSplChannelId='yes';
+  // logInfo("revisedSplChannelIdList[i] : **"+revisedSplChannelIdList[i]+"phoneChannelId:**"+phoneChannelId);
+    if(revisedSplChannelIdList[i]!=phoneChannelId){
+    isSplChannelId = 'no';
+  }
+  else{
+  isSplChannelId = 'yes';
+  break;
+}
+
+  
+  }
+// logInfo("isSplChannelId**"+isSplChannelId);  
+return isSplChannelId;
+}
+      
+
+
+function generatePhoneNumberSegmentJSON(phoneNumbersSegmentList){
+
+  phoneNumbersSegmentJSON.methodName="getBestPhoneNumbers";
+     phoneNumbersSegmentJSON.data=phoneNumbersSegmentList;
+
+     // logInfo("phoneNumbersSegmentJSON :"+JSON.stringify(phoneNumbersSegmentJSON));
+     return phoneNumbersSegmentJSON;
+}
+  
+  function sortByProperty(property){  
+   return function(a,b){  
+      if(a[property] < b[property])  
+         return 1;  
+      else if(a[property] > b[property])  
+         return -1;  
+  
+      return 0;  
+   }  
+}
+   

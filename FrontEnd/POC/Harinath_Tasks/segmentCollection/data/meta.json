@@ -1,0 +1,686 @@
+
+{
+    "methodName": "metaReadList",
+    "metaData": [
+        {
+            "name": "initiative",
+            "data": [
+                {
+                    "ID": "20811",
+                    "Name": "march4th-5",
+                    "Code": "INIT100470"
+                },
+                {
+                    "ID": "20450",
+                    "Name": "d",
+                    "Code": "INIT100443"
+                },
+                {
+                    "ID": "20601",
+                    "Name": "the new initiative ",
+                    "Code": "INIT100455"
+                },
+                {
+                    "ID": "20360",
+                    "Name": "initiative2 ",
+                    "Code": "INIT100430"
+                },
+                {
+                    "ID": "20330",
+                    "Name": "initiative",
+                    "Code": "INIT100429"
+                },
+                {
+                    "ID": "20480",
+                    "Name": "dsgf",
+                    "Code": "INIT100444"
+                },
+                {
+                    "ID": "20391",
+                    "Name": "new init 2 march",
+                    "Code": "INIT100442"
+                },
+                {
+                    "ID": "20420",
+                    "Name": "testInit2",
+                    "Code": "INIT100440"
+                },
+                {
+                    "ID": "20421",
+                    "Name": "testInit3",
+                    "Code": "INIT100441"
+                },
+                {
+                    "ID": "20510",
+                    "Name": "q",
+                    "Code": "INIT100448"
+                },
+                {
+                    "ID": "20390",
+                    "Name": "testInit",
+                    "Code": "INIT100439"
+                },
+                {
+                    "ID": "20540",
+                    "Name": "init33",
+                    "Code": "INIT100449"
+                },
+                {
+                    "ID": "20570",
+                    "Name": "init333",
+                    "Code": "INIT100450"
+                },
+                {
+                    "ID": "20631",
+                    "Name": "",
+                    "Code": "INIT100453"
+                },
+                {
+                    "ID": "20662",
+                    "Name": "initiative: initiative",
+                    "Code": "INIT100459"
+                },
+                {
+                    "ID": "20632",
+                    "Name": "test234",
+                    "Code": "INIT100454"
+                },
+                {
+                    "ID": "20664",
+                    "Name": "init43",
+                    "Code": "INIT100462"
+                },
+                {
+                    "ID": "20720",
+                    "Name": "march4th",
+                    "Code": "INIT100463"
+                },
+                {
+                    "ID": "20780",
+                    "Name": "march4th-2",
+                    "Code": "INIT100465"
+                },
+                {
+                    "ID": "20782",
+                    "Name": "march4th-3",
+                    "Code": "INIT100468"
+                },
+                {
+                    "ID": "20840",
+                    "Name": "march4th-4",
+                    "Code": "INIT100469"
+                },
+                {
+                    "ID": "20783",
+                    "Name": "march4th-6",
+                    "Code": "INIT100471"
+                },
+                {
+                    "ID": "20812",
+                    "Name": "march4th-7",
+                    "Code": "INIT100472"
+                },
+                {
+                    "ID": "20841",
+                    "Name": "march4th-8",
+                    "Code": "INIT100473"
+                },
+                {
+                    "ID": "20870",
+                    "Name": "march4",
+                    "Code": "INIT100474"
+                },
+                {
+                    "ID": "20930",
+                    "Name": "asdfg",
+                    "Code": "INIT100476"
+                },
+                {
+                    "ID": "20990",
+                    "Name": "march15th",
+                    "Code": "INIT100478"
+                },
+                {
+                    "ID": "21260",
+                    "Name": "initiative: initiate",
+                    "Code": "INIT100493"
+                },
+                {
+                    "ID": "21020",
+                    "Name": "march15th-2",
+                    "Code": "INIT100479"
+                },
+                {
+                    "ID": "21050",
+                    "Name": "march17",
+                    "Code": "INIT100480"
+                },
+                {
+                    "ID": "21080",
+                    "Name": "march17-2",
+                    "Code": "INIT100481"
+                },
+                {
+                    "ID": "21110",
+                    "Name": "march17-3",
+                    "Code": "INIT100482"
+                },
+                {
+                    "ID": "21111",
+                    "Name": "march17-4",
+                    "Code": "INIT100483"
+                },
+                {
+                    "ID": "21230",
+                    "Name": "111111111111111",
+                    "Code": "INIT100491"
+                },
+                {
+                    "ID": "21140",
+                    "Name": "abcdefg",
+                    "Code": "INIT100484"
+                },
+                {
+                    "ID": "21170",
+                    "Name": "sflkasdlfkasdjfklajf",
+                    "Code": "INIT100485"
+                },
+                {
+                    "ID": "21112",
+                    "Name": "yetAnotherTest",
+                    "Code": "INIT100486"
+                },
+                {
+                    "ID": "21171",
+                    "Name": "march17-5",
+                    "Code": "INIT100487"
+                },
+                {
+                    "ID": "21113",
+                    "Name": "march17-6",
+                    "Code": "INIT100488"
+                },
+                {
+                    "ID": "21172",
+                    "Name": "testtesttesttesttest",
+                    "Code": "INIT100489"
+                },
+                {
+                    "ID": "21200",
+                    "Name": "01",
+                    "Code": "INIT100490"
+                },
+                {
+                    "ID": "21051",
+                    "Name": "011",
+                    "Code": "INIT100492"
+                },
+                {
+                    "ID": "21290",
+                    "Name": "fffff",
+                    "Code": "INIT100494"
+                },
+                {
+                    "ID": "21320",
+                    "Name": "hfh",
+                    "Code": "INIT100495"
+                }
+            ]
+        },
+        {
+            "name": "channel",
+            "data": [
+                {
+                    "ID": "1003",
+                    "Name": "channel1",
+                    "Code": "LANG2"
+                },
+                {
+                    "ID": "1573",
+                    "Name": "changean1",
+                    "Code": "LANG31"
+                },
+                {
+                    "ID": "1513",
+                    "Name": "change100",
+                    "Code": "LANG29"
+                },
+                {
+                    "ID": "1543",
+                    "Name": "change101",
+                    "Code": "LANG30"
+                },
+                {
+                    "ID": "1033",
+                    "Name": "channel2",
+                    "Code": "LANG3"
+                },
+                {
+                    "ID": "1034",
+                    "Name": "channel3",
+                    "Code": "LANG4"
+                },
+                {
+                    "ID": "1063",
+                    "Name": "channel4",
+                    "Code": "LANG5"
+                },
+                {
+                    "ID": "1213",
+                    "Name": "ch0803",
+                    "Code": "LANG13"
+                },
+                {
+                    "ID": "1243",
+                    "Name": "channel5",
+                    "Code": "LANG14"
+                },
+                {
+                    "ID": "1273",
+                    "Name": "edqdq",
+                    "Code": "LANG15"
+                },
+                {
+                    "ID": "1244",
+                    "Name": " djah jah j",
+                    "Code": "LANG16"
+                },
+                {
+                    "ID": "1303",
+                    "Name": "sdadq",
+                    "Code": "LANG17"
+                },
+                {
+                    "ID": "1304",
+                    "Name": "cha93",
+                    "Code": "LANG18"
+                },
+                {
+                    "ID": "1333",
+                    "Name": "querytest",
+                    "Code": "LANG19"
+                },
+                {
+                    "ID": "1933",
+                    "Name": "changea1k",
+                    "Code": "LANG51"
+                },
+                {
+                    "ID": "1334",
+                    "Name": "new channel15",
+                    "Code": "LANG20"
+                },
+                {
+                    "ID": "1603",
+                    "Name": "changea1",
+                    "Code": "LANG32"
+                },
+                {
+                    "ID": "1363",
+                    "Name": "c3",
+                    "Code": "LANG21"
+                },
+                {
+                    "ID": "1305",
+                    "Name": "c4",
+                    "Code": "LANG22"
+                },
+                {
+                    "ID": "1393",
+                    "Name": "vc",
+                    "Code": "LANG23"
+                },
+                {
+                    "ID": "1453",
+                    "Name": "c15",
+                    "Code": "LANG27"
+                },
+                {
+                    "ID": "1633",
+                    "Name": "channel2000",
+                    "Code": "LANG33"
+                },
+                {
+                    "ID": "1663",
+                    "Name": "channel3000",
+                    "Code": "LANG34"
+                },
+                {
+                    "ID": "1753",
+                    "Name": "cccc",
+                    "Code": "LANG44"
+                },
+                {
+                    "ID": "1783",
+                    "Name": "uyjyu",
+                    "Code": "LANG45"
+                },
+                {
+                    "ID": "1813",
+                    "Name": "channel17",
+                    "Code": "LANG46"
+                },
+                {
+                    "ID": "1843",
+                    "Name": "channel18",
+                    "Code": "LANG47"
+                },
+                {
+                    "ID": "1873",
+                    "Name": "channel19",
+                    "Code": "LANG48"
+                },
+                {
+                    "ID": "1874",
+                    "Name": "channel20",
+                    "Code": "LANG49"
+                },
+                {
+                    "ID": "1903",
+                    "Name": "ccccc",
+                    "Code": "LANG50"
+                },
+                {
+                    "ID": "1963",
+                    "Name": "channel1001001001",
+                    "Code": "LANG52"
+                },
+                {
+                    "ID": "1993",
+                    "Name": "asqwed",
+                    "Code": "LANG53"
+                },
+                {
+                    "ID": "2023",
+                    "Name": "c1",
+                    "Code": "LANG54"
+                },
+                {
+                    "ID": "2053",
+                    "Name": "c145",
+                    "Code": "LANG55"
+                },
+                {
+                    "ID": "2083",
+                    "Name": "jjjj",
+                    "Code": "LANG56"
+                }
+            ]
+        },
+        {
+            "name": "language",
+            "data": [
+                {
+                    "ID": "1481",
+                    "Name": "Irish Gaelic",
+                    "Code": "LANG20"
+                },
+                {
+                    "ID": "1061",
+                    "Name": "Klingon",
+                    "Code": "LANG4"
+                },
+                {
+                    "ID": "1121",
+                    "Name": "qwerty1122233",
+                    "Code": "1002"
+                },
+                {
+                    "ID": "1181",
+                    "Name": "test3245",
+                    "Code": "LANG1004"
+                },
+                {
+                    "ID": "1001",
+                    "Name": "abc",
+                    "Code": "LANG2"
+                },
+                {
+                    "ID": "1031",
+                    "Name": "abcd",
+                    "Code": "LANG3"
+                },
+                {
+                    "ID": "1091",
+                    "Name": "Spanish",
+                    "Code": "LANG6"
+                },
+                {
+                    "ID": "1062",
+                    "Name": "German",
+                    "Code": "LANG5"
+                },
+                {
+                    "ID": "1211",
+                    "Name": "Russian",
+                    "Code": "LANG7"
+                },
+                {
+                    "ID": "1212",
+                    "Name": "Mandarin",
+                    "Code": "LANG8"
+                },
+                {
+                    "ID": "1241",
+                    "Name": "Hindi",
+                    "Code": "LANG9"
+                },
+                {
+                    "ID": "1332",
+                    "Name": "yyy",
+                    "Code": "LANG14"
+                },
+                {
+                    "ID": "1391",
+                    "Name": "Arabic",
+                    "Code": "LANG17"
+                },
+                {
+                    "ID": "1421",
+                    "Name": "Esperanto",
+                    "Code": "LANG18"
+                },
+                {
+                    "ID": "1451",
+                    "Name": "cccc",
+                    "Code": "LANG19"
+                },
+                {
+                    "ID": "1511",
+                    "Name": "bhh",
+                    "Code": "LANG21"
+                }
+            ]
+        },
+        {
+            "name": "lineOfBusiness",
+            "data": [
+                {
+                    "ID": "1004",
+                    "Name": "abcde",
+                    "Code": "LOBS5"
+                },
+                {
+                    "ID": "1153",
+                    "Name": "lob3",
+                    "Code": "LOBS12"
+                },
+                {
+                    "ID": "1001",
+                    "Name": "abc",
+                    "Code": "LOBS2"
+                },
+                {
+                    "ID": "1003",
+                    "Name": "abcd",
+                    "Code": "LOBS4"
+                },
+                {
+                    "ID": "1061",
+                    "Name": "testtesttest",
+                    "Code": "LOBS7"
+                },
+                {
+                    "ID": "1091",
+                    "Name": "JKHJK",
+                    "Code": "LOBS8"
+                },
+                {
+                    "ID": "1031",
+                    "Name": "march4",
+                    "Code": "LOBS6"
+                },
+                {
+                    "ID": "1121",
+                    "Name": "yyyy",
+                    "Code": "LOBS9"
+                },
+                {
+                    "ID": "1151",
+                    "Name": "lob1",
+                    "Code": "LOBS10"
+                },
+                {
+                    "ID": "1152",
+                    "Name": "lob2",
+                    "Code": "LOBS11"
+                },
+                {
+                    "ID": "1181",
+                    "Name": "ccc",
+                    "Code": "LOBS13"
+                },
+                {
+                    "ID": "1211",
+                    "Name": "bnbn",
+                    "Code": "LOBS14"
+                }
+            ]
+        },
+        {
+            "name": "brand",
+            "data": [
+                {
+                    "ID": "1245",
+                    "Name": "brand165365",
+                    "Code": ""
+                },
+                {
+                    "ID": "1545",
+                    "Name": "test32456",
+                    "Code": "BRND24"
+                },
+                {
+                    "ID": "1575",
+                    "Name": "change4",
+                    "Code": "BRND25"
+                },
+                {
+                    "ID": "1695",
+                    "Name": "change8",
+                    "Code": "BRND29"
+                },
+                {
+                    "ID": "1725",
+                    "Name": "change7",
+                    "Code": "BRND30"
+                },
+                {
+                    "ID": "1755",
+                    "Name": "change62",
+                    "Code": "BRND31"
+                },
+                {
+                    "ID": "1785",
+                    "Name": "change63",
+                    "Code": "BRND32"
+                },
+                {
+                    "ID": "1815",
+                    "Name": "change65",
+                    "Code": "BRND33"
+                },
+                {
+                    "ID": "1515",
+                    "Name": "qwerty11222",
+                    "Code": ""
+                },
+                {
+                    "ID": "1665",
+                    "Name": "change9",
+                    "Code": "BRND28"
+                },
+                {
+                    "ID": "1485",
+                    "Name": "change3",
+                    "Code": ""
+                },
+                {
+                    "ID": "1395",
+                    "Name": "brand2",
+                    "Code": ""
+                },
+                {
+                    "ID": "1456",
+                    "Name": "brand4",
+                    "Code": ""
+                },
+                {
+                    "ID": "1455",
+                    "Name": "brand3",
+                    "Code": ""
+                },
+                {
+                    "ID": "1426",
+                    "Name": "brand5",
+                    "Code": ""
+                },
+                {
+                    "ID": "1275",
+                    "Name": "qwerty",
+                    "Code": ""
+                },
+                {
+                    "ID": "1335",
+                    "Name": "qwerty1",
+                    "Code": ""
+                },
+                {
+                    "ID": "1365",
+                    "Name": "qwerty11",
+                    "Code": ""
+                },
+                {
+                    "ID": "1398",
+                    "Name": "brand6",
+                    "Code": ""
+                },
+                {
+                    "ID": "1875",
+                    "Name": "yyy",
+                    "Code": "BRND37"
+                },
+                {
+                    "ID": "1905",
+                    "Name": "brand7",
+                    "Code": "BRND38"
+                },
+                {
+                    "ID": "1906",
+                    "Name": "brand8",
+                    "Code": "BRND39"
+                },
+                {
+                    "ID": "1935",
+                    "Name": "ccc",
+                    "Code": "BRND40"
+                },
+                {
+                    "ID": "1965",
+                    "Name": "gjg",
+                    "Code": "BRND41"
+                }
+            ]
+        }
+    ]
+}

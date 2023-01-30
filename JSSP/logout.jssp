@@ -1,0 +1,21 @@
+<%
+loadLibrary("meta:common_Back.js");
+// ##validate sesion 
+if( validateSession(response,request))
+  return;
+%>
+
+
+<%@ page stringGroup="xtk:core" %>
+<%
+var disconnect=request.getParameter('disconnect');
+var targetURL=request.getParameter('target');
+
+  var redirecturl="/nl/jsp/login.jsp?disconnect=true&target="+targetURL;
+ 
+ 
+if(disconnect){
+  xtk.session.Logoff();
+response.sendRedirect(redirecturl);
+}
+%>

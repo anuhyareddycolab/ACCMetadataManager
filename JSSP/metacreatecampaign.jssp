@@ -1,0 +1,1126 @@
+﻿<% loadLibrary("meta:common.js"); if( validateSession(response,request)) return;
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Emblem Health</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap.min.css"
+    crossorigin="anonymous" />
+    <!-- Datepicker CSS -->
+    <!-- <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css"
+      rel="stylesheet"
+    /> -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>bootstrap-datetimepicker.css"
+    crossorigin="anonymous" />
+    <!-- Datepicker CSS -->
+    <!-- Bootstrap JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>jquery-3.5.1.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"
+      type="text/javascript"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Datepicker JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>moment.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script> -->
+    <script
+      src="<%=getOption('metaResourceDirectoryDefault')%>bootstrap-datetimepicker.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Datepicker JS -->
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Style.css" /> <link
+    rel="stylesheet"
+    href="<%=getOption("metaResourceDirectoryDefault")%>Header.css" />
+    <script type="text/javascript">
+      $(document).ready(function (e) {
+        $(".calenderImage").datepicker({
+          format: "yyyy-mm-dd",
+          autoclose: true,
+          todayHighlight: true,
+          weekStart: 1,
+          dayNamesMin: [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
+          // dayNamesMin: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        });
+        // moment.updateLocale("en", {
+        //   weekdaysMin: ["S", "M", "T", "W", "T", "F", "S"],
+        // });
+      });
+    </script>
+  </head>
+
+  <body>
+    <header class="header">
+      <%try{document.write(header(request));} catch (err) { return false;}%>
+    </header>
+    <main>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-md-3"></div>
+
+          <div class="col-md-6 col-md-offset-3 col-sm-12 mainHeading">
+            <center>
+              <h5><b>Create a New Campaign</b></h5>
+            </center>
+          </div>
+          <div class="col-lg-3 col-md-3"></div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-3"></div>
+
+          <div class="col-md-12 col-md-offset-3 col-sm-12">
+            <form id="msform">
+              <!-- progressbar -->
+              <div class="row">
+                <div class="col-lg-3 col-md-3"></div>
+                <div class="col-md-6 col-md-offset-3 col-sm-12">
+                  <ul id="progressbar">
+                    <li class="active">. Overview</li>
+                    <li>. Add Campaign Data</li>
+                    <li>. Submit for Approval</li>
+                  </ul>
+                </div>
+                <div class="col-lg-3 col-md-3"></div>
+              </div>
+              <!-- fieldsets -->
+              <fieldset class="overViewfieldset">
+                <h3 class="fs-subtitle">Let's get started</h3>
+                <h2 class="fs-title">
+                  Please Provide Campaign Overview Information
+                </h2>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="campaignName"
+                      id="campaignName"
+                      required
+                    />
+                    <span class="form-floating-label">Campaign Name*</span>
+                  </div>
+                  <div class="col-lg-12 selectdiv touchlabel">
+                    <p class="margin-bottom-0">
+                      Select Inititaive* :
+                    </p>
+                    <select
+                      name="initiativeId"
+                      class="form-control"
+                      id="initiativeId"
+                      required
+                      ><i class="arrow down"></i>
+                      <option value="Select Inititaive" selected="selected"
+                        >Select Inititaive*</option
+                      >
+                    </select>
+                  </div>
+                  <div class="col-lg-12 selectdiv touchlabel">
+                    <p class="margin-bottom-0">
+                      Select Line of Business* :
+                    </p>
+                    <select
+                      name="lobId"
+                      class="form-control"
+                      id="lobId"
+                      required
+                      ><i class="arrow down"></i>
+                      <option value="Line of Business" selected="selected"
+                        >Select Line of Business*</option
+                      >
+                    </select>
+                  </div>
+                  <div class="col-lg-12 selectdiv touchlabel">
+                    <p class="margin-bottom-0">
+                      Select Brand :
+                    </p>
+                    <select
+                      name="brandId"
+                      class="form-control"
+                      id="brandId"
+                      required
+                      ><i class="arrow down"></i>
+                      <option value="Select Brand" selected="selected"
+                        >Select Brand</option
+                      >
+                    </select>
+                  </div>
+                  <div class="col-lg-12 margin-bottom-10">
+                    <span class="selectCampaignDates"
+                      >Select Campaigns Dates :</span
+                    >
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="row">
+                      <div class="col-lg-6 touchlabel">
+                        <p class="margin-bottom-0">
+                          Start Date* :
+                        </p>
+                        <input
+                          name="campaignStartDate"
+                          type="text"
+                          class="form-control calenderImage"
+                          id="startDate"
+                          placeholder="Start Date*"
+                          required
+                        />
+                      </div>
+                      <div class="col-lg-6 touchlabel">
+                        <p class="margin-bottom-0">
+                          End Date :
+                        </p>
+                        <input
+                          name="campaignEndDate"
+                          type="text"
+                          class="form-control calenderImage"
+                          id="endDate"
+                          placeholder="End Date"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12 selectCampaignDates">
+                    <p>
+                      Will you need a campaign template for this Campaign ?
+                    </p>
+                    <input
+                      type="radio"
+                      id="campaigntemplateYes"
+                      name="campaignTemplate"
+                      value="1"
+                    />
+                    <label>Yes</label><br />
+                    <input
+                      type="radio"
+                      id="campaigntemplateNo"
+                      name="campaignTemplate"
+                      value="0"
+                      checked
+                    />
+                    <label>No</label>
+                  </div>
+                  <div class="col-lg-12 selectCampaignDates">
+                    <p class="margin-bottom-0">
+                      Campaign description :
+                    </p>
+                    <textarea
+                      id="campaignDescription"
+                      name="campaignDescription"
+                      rows="4"
+                      cols="50"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="next btn button-login saveandContinue"
+                  id="saveandContinue"
+                >
+                  Save and Continue
+                </button>
+                <!-- <input type="button" name="next" class="next action-button" value="Next" /> -->
+              </fieldset>
+              <fieldset class="addCampaignTablefieldset">
+                <div class="row">
+                  <!-- <form id="createTouchform"> -->
+                  <!-- fieldsets -->
+                  <div class="col-lg-12 table">
+                    <fieldset class="tablefieldset">
+                      <input
+                        type="button"
+                        name="previous"
+                        class="previous action-button-previous"
+                        value="Previous"
+                      />
+                      <input
+                        type="button"
+                        name="next"
+                        class="action-button"
+                        value="Next"
+                        id="createNewTouch"
+                      />
+                    </fieldset>
+                  </div>
+                  <div class="col-lg-12 touchForm" style="display: none;">
+                    <fieldset
+                      class="addCampaignfieldset1"
+                      id="createTouchstep1"
+                    >
+                      <h3 class="fs-subtitle">
+                        [Campaign Name] > Touch Overview
+                      </h3>
+                      <h2 class="fs-title">
+                        Create a New Touch for [Campaign Name]
+                      </h2>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="touchName"
+                            id="touchName"
+                            required
+                          /><span class="form-floating-label">Touch Name*</span>
+                        </div>
+                        <div class="col-lg-12 touchlabel">
+                          <p class="margin-bottom-0">
+                            Touch Description :
+                          </p>
+                          <textarea
+                            id="touchDescription"
+                            name="touchDescription"
+                            rows="4"
+                            cols="50"
+                          ></textarea>
+                        </div>
+                        <div class="col-lg-12 selectdiv touchlabel">
+                          <p class="margin-bottom-0">
+                            Select Channel* :
+                          </p>
+                          <select
+                            name="channelName"
+                            class="form-control"
+                            id="addChannel"
+                            required
+                            ><i class="arrow down"></i>
+                            <option value="Select Channel" selected="selected"
+                              >Select Channel*</option
+                            >
+                          </select>
+                        </div>
+                        <div class="col-lg-12 margin-bottom-10 touchlabel">
+                          <span class="selectCampaignDates"
+                            >Select Touch Dates :</span
+                          ><br />
+                        </div>
+                        <div class="col-lg-12">
+                          <div class="row">
+                            <div class="col-lg-6 touchlabel">
+                              <p class="margin-bottom-0">
+                                Mail File Due Date:
+                              </p>
+                              <input
+                                name="mailFileDueDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="mailFileDueDate"
+                                placeholder="Mail File Due Date"
+                              />
+                            </div>
+                            <div class="col-lg-6 touchlabel">
+                              <p class="margin-bottom-0">
+                                Estimated Drop Date:
+                              </p>
+                              <input
+                                name="estimatedDropDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="estimatedDropDate"
+                                placeholder="Estimated Drop Date"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-12">
+                          <div class="row">
+                            <div class="col-lg-6 touchlabel">
+                              <p class="margin-bottom-0">
+                                Touch Start Date:
+                              </p>
+                              <input
+                                name="touchstartDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="touchstartDate"
+                                placeholder="Start Date*"
+                              />
+                            </div>
+                            <div class="col-lg-6 touchlabel">
+                              <p class="margin-bottom-0">
+                                Touch End Date:
+                              </p>
+                              <input
+                                name="touchendDate"
+                                type="text"
+                                class="form-control calenderImage"
+                                id="touchendDate"
+                                placeholder="End Date"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-12 touchlabel">
+                          <p>
+                            Would you like to create segments for this Touch?*
+                          </p>
+                          <input
+                            type="radio"
+                            id="segmentYes"
+                            name="haveSegments"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label><br />
+                          <input
+                            type="radio"
+                            id="segmentNo"
+                            name="haveSegments"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                        <div class="col-lg-12 touchlabel" id="phoneNumberDiv">
+                          <p>
+                            Will you need a Phone Number(s) for this Touch?*
+                          </p>
+                          <input
+                            type="radio"
+                            id="PhoneNumberYes"
+                            name="havePhoneAssignements"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label><br />
+                          <input
+                            type="radio"
+                            id="PhoneNumberNo"
+                            name="havePhoneAssignements"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                        <div
+                          class="col-lg-12 touchlabel"
+                          id="urlAssignmentsDiv"
+                        >
+                          <p>
+                            Would you need a Url Assignments for this Touch?*
+                          </p>
+                          <input
+                            type="radio"
+                            id="urlAssignmentsYes"
+                            name="haveUrlAssignments"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label><br />
+                          <input
+                            type="radio"
+                            id="urlAssignmentsNo"
+                            name="haveUrlAssignments"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                        <div
+                          class="col-lg-12 touchlabel"
+                          id="operationAssignedDiv"
+                        >
+                          <p>
+                            Will you like to assigned Operation for this Touch?*
+                          </p>
+                          <input
+                            type="radio"
+                            id="operationAssignedYes"
+                            name="haveOperationAssigned"
+                            value="1"
+                          />
+                          <label for="age1">Yes</label><br />
+                          <input
+                            type="radio"
+                            id="operationAssignedNo"
+                            name="haveOperationAssigned"
+                            value="0"
+                            checked
+                          />
+                          <label for="age2">No</label>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="btn button-login saveandContinue"
+                        id="continueStep1"
+                      >
+                        Continue
+                      </button>
+                      <!-- <input type="button" name="next" class="next action-button" value="Next" /> -->
+                    </fieldset>
+                    <fieldset
+                      class="addCampaignfieldset2"
+                      id="createTouchstep2"
+                    >
+                      <h3 class="fs-subtitle">
+                        [Campaign Name] > Touch Overview > Segments
+                      </h3>
+                      <h2 class="fs-title">
+                        Create Segments for this Touch : [Touch]
+                      </h2>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <!-- <form> -->
+                          <div class="form-inline">
+                            <input
+                              class="form-control segmentInput col-10"
+                              type="text"
+                              name="task"
+                              id="segmentInput"
+                            />
+                            <button id="addSegments">
+                              Add +
+                            </button>
+                          </div>
+                          <br />
+
+                          <p class="segmentlabel">
+                            Your Segments
+                          </p>
+                          <ul id="segmentlist" class="segmentlist"></ul>
+                          <!-- </form> -->
+                        </div>
+                      </div>
+                      <button type="button" class="btn backbtn" id="backStep1">
+                        <img
+                          class="backImg"
+                          src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"
+                        />
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        class="btn button-login saveandContinue"
+                        id="continueStep2"
+                      >
+                        Continue
+                      </button>
+                      <!-- <input type="button" name="next" class="next action-button" value="Next" /> -->
+                    </fieldset>
+                    <fieldset
+                      class="addCampaignfieldset3"
+                      id="createTouchstep3"
+                    >
+                      <h3 class="fs-subtitle">
+                        [Campaign Name] › Touch Overview › Segments › Segment
+                        Data
+                      </h3>
+                      <h2 class="fs-title">
+                        Select Language for your Touch or Segment
+                      </h2>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <span class="radiobuttonLabel"
+                            >Select a lanugage for your touch</span
+                          >
+                        </div>
+                        <div class="col-lg-12 selectdiv">
+                          <select
+                            name="languageTouch"
+                            class="form-control"
+                            id="languageTouch"
+                            required
+                            ><i class="arrow down"></i>
+                            <option value="Language" selected="selected"
+                              >[Touch] Language*</option
+                            >
+                          </select>
+                        </div>
+                        <div class="col-lg-12">
+                          <center><span class="or">-OR-</span></center>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="col-lg-12">
+                          <span class="radiobuttonLabel"
+                            >Select a language for your Segments</span
+                          >
+                        </div>
+                        <div class="col-lg-12 selectdiv">
+                          <select
+                            name="segmentlanguageTouch"
+                            class="form-control"
+                            id="segmentlanguageTouch1"
+                            required
+                            ><i class="arrow down"></i>
+                            <option value="Language" selected="selected"
+                              >[Segment 1] Language</option
+                            >
+                          </select>
+                        </div>
+                        <div class="col-lg-12 selectdiv">
+                          <select
+                            name="segmentlanguageTouch"
+                            class="form-control"
+                            id="segmentlanguageTouch2"
+                            required
+                            ><i class="arrow down"></i>
+                            <option value="Language" selected="selected"
+                              >[Segment 2] Language</option
+                            >
+                          </select>
+                        </div>
+                        <div class="col-lg-12 selectdiv">
+                          <select
+                            name="segmentlanguageTouch"
+                            class="form-control"
+                            id="segmentlanguageTouch3"
+                            required
+                            ><i class="arrow down"></i>
+                            <option value="Language" selected="selected"
+                              >[Segment 3] Language</option
+                            >
+                          </select>
+                        </div>
+                      </div>
+                      <button type="button" class="btn backbtn" id="backStep2">
+                        <img
+                          class="backImg"
+                          src="<%=getOption('metaResourceDirectoryDefault')%>back-arrow.png"
+                        />
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        class="next btn button-login saveandContinue"
+                        id="continueStep3"
+                      >
+                        Save
+                      </button>
+                      <!-- <input type="button" name="next" class="next action-button" value="Next" /> -->
+                    </fieldset>
+                  </div>
+                  <!-- </form> -->
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="col-lg-3 col-md-3"></div>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+    <script src="<%=getOption('metaResourceDirectoryDefault')%>Index.js"></script>
+    <script type="text/javascript">
+              var createCampaigndata;
+                  $(document).ready(function () {
+                    var formJSON = {
+                      methodName: "",
+                      data: {
+                        campaignName: "",
+                        initiativeId: "",
+                        lobId: "",
+                        brandId: "",
+                        campaignStartDate: "",
+                        campaignEndDate: "",
+                        campaignTemplate: "",
+                        campaignDescription: "",
+                      },
+                    };
+                    var campaignData = {};
+                    var requestBodyObject = {
+                      methodName: "metaReadList",
+                      data: [],
+                    };
+                    $.ajax({
+                      type: "POST",
+                      url: "http://zeus2embhapp90.embhdb.com/meta/manageList_back.jssp",
+                      contentType: "application/json",
+                      dataType: "json",
+                      data: JSON.stringify(requestBodyObject),
+                      success: function (response) {
+                        campaignData = response;
+                        return campaignData;
+                      },
+                      error: function (response) {
+                        alert("error");
+                      },
+                    });
+
+                    var createTouchJSON = {
+                      methodName: "createTouch",
+                      data: {
+                        campaignId:"",
+                        touchName:"",
+                        touchDescription:"",
+                        channelId:"",
+                        mailFileDueDate:"",
+                        estimatedDropDate:"",
+                        touchStartDate:"",
+                        touchEndDate:"",
+                        haveSegments:"",
+                        havePhoneAssignements:"",
+                        haveUrlAssignments:"",
+                        haveOperationAssigned:"",
+                      },
+                    };
+                    function submitFormData(formId, methodName) {
+                      var fid = $("#" + formId);
+                      var formData = fid.serializeArray();
+                      var jsonObj = {},
+                        key,
+                        val;
+
+                      formData.forEach(myFunction);
+                      function myFunction(value, index) {
+                        key = value.name;
+                        val = value.value;
+                        jsonObj[key] = val;
+                      }
+
+                      if (methodName == "createCampaign") {
+                        formJSON.methodName = methodName;
+                        formJSON.data = jsonObj;
+                        return formJSON;
+                      } else if (methodName == "createTouch") {
+                        createTouchJSON.methodName = methodName;
+                        createTouchJSON.data = jsonObj;
+                        return createTouchJSON;
+                      } 
+                    }
+                    $("#saveandContinue").click(function (e) {
+                      e.preventDefault();
+                      if($("#campaignName").val()!=""){
+                        $("#campaignName").popover("hide");
+                        $("#campaignName").removeClass("invalid");
+                        if($("#initiativeId").val()!="Select Inititaive"){
+                          $("#initiativeId").popover("hide");
+                          $("#initiativeId").removeClass("invalid");
+                          if($("#lobId").val()!="Line of Business"){
+                            $("#lobId").popover("hide");
+                            $("#lobId").removeClass("invalid");
+                            if($("#startDate").val()!=""){
+                              $("#startDate").popover("hide");
+                              $("#startDate").removeClass("invalid");
+                               createCampaigndata = submitFormData(
+                              "msform .overViewfieldset",
+                              "createCampaign"
+                            );
+                            //console.log(data);
+                            $.ajax({
+                              type: "POST",
+                              url:
+                                "http://zeus2embhapp90.embhdb.com/meta/campaignOperation_back.jssp",
+                              contentType: "application/json",
+                              dataType: "json",
+                              data: JSON.stringify(createCampaigndata),
+                              success: function (response) {
+                              //  alert(response);
+                              },
+                              error: function (response) {
+                                alert("error");
+                              },
+                            });
+                            if (animating) return false;
+                            animating = true;
+                            current_fs = $(this).parent();
+                            next_fs = $(this).parent().next();
+                            //Highlight Previous indicator removed
+                            $("#progressbar li")
+                              .eq($("fieldset").index(current_fs))
+                              .removeClass("active");
+                            //activate next step on progressbar using the index of next_fs
+                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                            //show the next fieldset
+                            next_fs.show();
+                            //hide the current fieldset with style
+                            current_fs.animate(
+                              { opacity: 0 },
+                              {
+                                step: function (now, mx) {
+                                  //as the opacity of current_fs reduces to 0 - stored in "now"
+                                  //1. scale current_fs down to 80%
+                                  scale = 1 - (1 - now) * 0.2;
+                                  //2. bring next_fs from the right(50%)
+                                  left = now * 50 + "%";
+                                  //3. increase opacity of next_fs to 1 as it moves in
+                                  opacity = 1 - now;
+                                  current_fs.css({
+                                    transform: "scale(" + scale + ")",
+                                    position: "absolute",
+                                  });
+                                  next_fs.css({ left: left, opacity: opacity });
+                                },
+                                duration: 800,
+                                complete: function () {
+                                  current_fs.hide();
+                                  animating = false;
+                                },
+                                //this comes from the custom easing plugin
+                                easing: "easeInOutBack",
+                              }
+                            );
+                            }else{
+                              var trigger = "manual";
+                              var placement = "left";
+                              var content = "Please Select Start Date";
+                              var template =
+                                '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please Select Start Date</em></p></div></div></div>';
+                              popover(
+                                $("#startDate").attr("id"),
+                                trigger,
+                                placement,
+                                content,
+                                template
+                              );
+                              $("#startDate").addClass("invalid");
+                            }
+                          }else{
+                            var trigger = "manual";
+                            var placement = "right";
+                            var content = "Please Select Line of Business";
+                            var template =
+                              '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please Select Line of Business</em></p></div></div></div>';
+                            popover(
+                              $("#lobId").attr("id"),
+                              trigger,
+                              placement,
+                              content,
+                              template
+                            );
+                            $("#lobId").addClass("invalid");
+                          }
+                        }else{
+                          var trigger = "manual";
+                          var placement = "right";
+                          var content = "Please Select Inititaive";
+                          var template =
+                            '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Please Select Inititaive</em></p></div></div></div>';
+                          popover(
+                            $("#initiativeId").attr("id"),
+                            trigger,
+                            placement,
+                            content,
+                              template
+                          );
+                          $("#initiativeId").addClass("invalid");
+                        }
+                      }else{
+                        var trigger = "manual";
+                        var placement = "right";
+                        var content = "Campaign Name cannot be empty !";
+                        var template =
+                          '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Campaign Name cannot be empty</em></p></div></div></div>';
+                        popover(
+                          $("#campaignName").attr("id"),
+                          trigger,
+                          placement,
+                          content,
+                          template
+                        );
+                        $("#campaignName").addClass("invalid");
+                      }
+                      $("#phoneNumberDiv").css("display","none");
+                      $("#urlAssignmentsDiv").css("display","none");
+            $("#operationAssignedDiv").css("display","none");
+            $(".fs-subtitle").text(""+createCampaigndata.data.campaignName+" > Touch Overview");
+            $(".fs-title").text("Create a New Touch for "+createCampaigndata.data.campaignName);
+                    });
+                    $("#campaignName").blur(function (e) {
+                      e.preventDefault();
+                      if($("#campaignName").val()!=""){
+                        $("#campaignName").popover("hide");
+                        $("#campaignName").removeClass("invalid");
+                      }else{
+                               var trigger = "manual";
+                               var placement = "right";
+                               var content = "Campaign Name cannot be empty !";
+                               var template =
+                                 '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Campaign Name cannot be empty</em></p></div></div></div>';
+                               popover(
+                                 $("#campaignName").attr("id"),
+                                 trigger,
+                                 placement,
+                                 content,
+                                 template
+                               );
+                               $("#campaignName").addClass("invalid");
+                      }
+                      $("#initiativeId").empty();
+                      $("#initiativeId").append(
+                        "<option value='Select Inititaive' selected='selected'>Select Inititaive*</option>"
+                      );
+                      $("#lobId").empty();
+                      $("#lobId").append(
+                        "<option value='Line of Business' selected='selected'>Selet Line of Business*</option>"
+                      );
+                      $("#brandId").empty();
+                      $("#brandId").append(
+                        "<option value='Select Brand' selected='selected'>Select Brand</option>"
+                      );
+                      for (var i = 0; i < campaignData.metaData.length; i++) {
+                        //  console.log(campaignData.metaData[i] + " loop1");
+                        for (var j = 0; j < campaignData.metaData[i].data.length; j++) {
+                          //console.log(campaignData.metaData[i].data[j]);
+                          //console.log(campaignData.metaData[i].data[j].Name + "loop2");
+                          if (campaignData.metaData[i].name == "initiative") {
+                            $("#initiativeId").append(
+                              $("<option>")
+                                .text(campaignData.metaData[i].data[j].Name)
+                                .attr("value", campaignData.metaData[i].data[j].ID)
+                            );
+                          } else if (campaignData.metaData[i].name == "lineOfBusiness") {
+                            $("#lobId").append(
+                              $("<option>")
+                                .text(campaignData.metaData[i].data[j].Name)
+                                .attr("value", campaignData.metaData[i].data[j].ID)
+                            );
+                          } else if (campaignData.metaData[i].name == "brand") {
+                            $("#brandId").append(
+                              $("<option>")
+                                .text(campaignData.metaData[i].data[j].Name)
+                                .attr("value", campaignData.metaData[i].data[j].ID)
+                            );
+                          }
+                        }
+                      }
+                    });
+          $("#touchName").blur(function(e){
+            e.preventDefault();
+            if ($("#touchName").val() != "") 
+                        {
+                          var touchName = $("#touchName").val();
+                          var campaignIdValue = "1301"
+                          var validateTouchName = {
+                            methodName: "validateTouchName",
+                            data: {
+                campaignId:campaignIdValue,
+                              touchName: touchName,
+                            },
+                          };
+                        }
+            $.ajax({
+                            type: "POST",
+                            url:
+                              "http://zeus2embhapp90.embhdb.com/meta/validations_back.jssp",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify(validateTouchName),
+                            success: function (response) {
+                             if (response.Status == "Failed") {
+                              var trigger = "manual";
+                              var placement = "right";
+                              var content = "Touch Name already Exists with Selected Initiative !";
+                              var template =
+                                '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Touch Name already Exists with Selected Initiative !</em></p></div></div></div>';
+                              popover(
+                                $("#TouchName").attr("id"),
+                                trigger,
+                                placement,
+                                content,
+                                template
+                              );
+                            $("#TouchName").addClass("invalid");
+                            $("#continueStep1").attr("disabled","disabled");
+                            $("#continueStep1").removeAttr("enabled","enabled");
+                          }else{
+                            $("#TouchName").popover("hide");
+                            $("#TouchName").removeClass("invalid");
+                            $("#continueStep1").attr("enabled","enabled");
+                            $("#continueStep1").removeAttr("disabled","disabled");
+                          }
+                             },
+                             error: function (response) {
+                               alert("error");
+                             },
+                            });          
+          });
+                    $("select[name=addChannel]").on("change", function (e) {
+                      e.preventDefault();
+                      if ($(this).val() == "") {
+                        //  var url = ("http://zeus2embhapp90.embhdb.com/meta/Campaign_frontend.jssp"); //please insert the url of the your current page here, we are assuming the url is 'index.php'
+                        $(".channelModal").css("display", "block");
+                        $("select[name=addChannel]").append("<option>hello</option>");
+                        //  $("select[name=addChannel]").load(url + " select[name=addChannel]"); //note: the space before #div1 is very important
+                      }
+                    });
+                    $("select[name=initiativeId]").on("change", function (e) {
+                      e.preventDefault();
+                      if ($("#campaignName").val() != "") {
+                        {
+                          var campName = $("#campaignName").val();
+                          var initiativeIdValue = $("#initiativeId").val();
+                          var validateCampaignName = {
+                            methodName: "validateCampaignName",
+                            data: {
+                              campaignName: campName,
+                              initiativeId: initiativeIdValue,
+                            },
+                          };
+                        }
+                        $.ajax({
+                          type: "POST",
+                          url:
+                            "http://zeus2embhapp90.embhdb.com/meta/validations_back.jssp",
+                          contentType: "application/json",
+                          dataType: "json",
+                          data: JSON.stringify(validateCampaignName),
+                          success: function (response) {
+                            //  alert("success");
+                            if (response.Status == "Failed") {
+                              var trigger = "manual";
+                              var placement = "right";
+                              var content = "Campaign Name already Exists with Selected Initiative !";
+                              var template =
+                                '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p><img src="<%=getOption('metaResourceDirectoryDefault')%>WarningIcon.png" alt="WarningIcon">&nbsp;&nbsp;<em>Campaign Name already Exists with Selected Initiative !</em></p></div></div></div>';
+                              popover(
+                                $("#campaignName").attr("id"),
+                                trigger,
+                                placement,
+                                content,
+                                template
+                              );
+                            $("#campaignName").addClass("invalid");
+                            $("#saveandContinue").attr("disabled","disabled");
+                            $("#saveandContinue").removeAttr("enabled","enabled");
+                          }else{
+                            $("#campaignName").popover("hide");
+                            $("#campaignName").removeClass("invalid");
+                            $("#saveandContinue").attr("enabled","enabled");
+                            $("#saveandContinue").removeAttr("disabled","disabled");
+                          }
+                          },
+                          error: function (response) {
+                            //console.log(response);
+                            alert("error");
+                            //return response;
+                            //var message = $(".error").val();
+                            //errorMessage(message);
+                          },
+                        });
+                      } else {
+                      }
+                    });
+                    $("input[type='radio'][name='haveSegments']").click(function() {
+                        var value = $(this).val();
+      if(value == "1")
+      {
+          $("#phoneNumberDiv").css("display","block");
+           $("#urlAssignmentsDiv").css("display","block");
+           if(createCampaigndata.data.campaignTemplate == "1" && value == "1"){
+           $("#operationAssignedDiv").css("display","block");
+           }else{$("#operationAssignedDiv").css("display","none");}
+      }
+      else
+      {
+          $("#phoneNumberDiv").css("display","none");
+           $("#urlAssignmentsDiv").css("display","none");
+           $("#operationAssignedDiv").css("display","none");
+      }
+                    });
+
+                    function select(value) {
+                      if (value == "segmentTouchYes") {
+                        //alert("yes");
+                        $(".yesSrc").attr(
+                          "src",
+                          "http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-radio-button-un-selected-20.png"
+                        );
+                      } else {
+                        //  alert("no");
+                      }
+                    }
+
+                    $("#addSegments").click(function (e) {
+                      e.preventDefault();
+                      var mylist = $("#segmentInput").val();
+                      if (mylist != "") {
+                        $("#segmentlist").append(
+                          "<li class='li'>" +
+                            mylist +
+                            "<img class='segmentTrashImg' src='http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-trash-purple-20.png' /><hr class='hr'/></li>"
+                        );
+                        $("#segmentInput").val("");
+                        $("#segmentInput").focus();
+                        $("#segmentInput").popover("hide");
+                        $("#segmentInput").removeClass("invalid");
+                        $(".segmentTrashImg").click(function (e) {
+                          e.preventDefault();
+                          $(this).closest(".li").remove();
+                        });
+                        //  return false;
+                      }
+                    });
+                    $("#createNewTouch").click(function (e) {
+                      e.preventDefault();
+                      $(".table").css("display", "none");
+                      $(".touchForm").css("display", "block");
+                      // $(".table").hide();
+                      // $(".touchForm").show();
+                    });
+                    $("#continueStep1").click(function (e) {
+                      e.preventDefault();
+                      var data = submitFormData(
+                      "msform .addCampaignfieldset1",
+                      "createTouch"
+                      );
+                      console.log(data);
+                      $("#createTouchstep1").css("display", "none");
+                      $("#createTouchstep2").css("display", "block");
+                    });
+                    $("#backStep1").click(function (e) {
+                      e.preventDefault();
+                      $("#createTouchstep1").css("display", "block");
+                      $("#createTouchstep2").css("display", "none");
+                    });
+                    $("#continueStep2").click(function (e) {
+                      e.preventDefault();
+                      $("#createTouchstep2").css("display", "none");
+                      $("#createTouchstep3").css("display", "block");
+                    });
+                    $("#backStep2").click(function (e) {
+                      e.preventDefault();
+                      $("#createTouchstep2").css("display", "block");
+                      $("#createTouchstep3").css("display", "none");
+                    });
+                    $("#continueStep3").click(function (e) {
+                      e.preventDefault();
+                      $(".table").css("display", "block");
+                      $(".touchForm").css("display", "none");
+                      var createTouchdata = submitFormData(
+                        "msform .addCampaignTablefieldset",
+                        "createTouch"
+                      );
+                      console.log(createTouchdata + "createTouchdata");
+                    });
+                  });
+    </script>
+  </body>
+</html>

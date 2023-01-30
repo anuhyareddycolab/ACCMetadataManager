@@ -1,0 +1,798 @@
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: "Arial";
+  background: #f5f5f5;
+  overflow-x: hidden;
+}
+.arrow {
+  border: none !important;
+}
+.popover {
+  border-radius: 2px;
+  box-shadow: 0 2px 4px 0 rgba(222, 222, 222, 0.5);
+  border: 1px solid #dfdfdf;
+}
+.popover-content {
+  margin: 5px 5px 0px 5px !important;
+  padding: 5px 5px 0px 5px !important;
+}
+.popover p {
+  margin-bottom: 0.8rem !important;
+}
+#loading {
+  display: none;
+  position: fixed;
+  border-radius: 5px;
+  margin: 0;
+  margin-top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.loaderImg {
+  width: 70px;
+  height: 70px;
+}
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 550px) {
+  #loginBtn {
+    font-size: 14px;
+    color: #343741;
+    width: 60% !important;
+  }
+  #resetBtn,
+  #forgetResetPasswordBtn {
+    font-size: 14px;
+    font-weight: normal;
+    width: 64% !important;
+    color: #343741;
+  }
+  .form-group {
+    margin-bottom: 2rem;
+    padding: 0px !important;
+  }
+  .mainDiv {
+    padding: 2rem 2rem 0 2rem !important;
+  }
+  .manage-list {
+    padding: 0 2rem !important;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .mainDiv {
+    padding: 2rem 2rem 0 2rem !important;
+  }
+  .manage-list {
+    padding: 0 2rem !important;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 780px) {
+  #resetBtn,
+  #forgetResetPasswordBtn {
+    font-size: 14px;
+    font-weight: normal;
+    width: 54% !important;
+    color: #343741;
+  }
+  .mainDiv {
+    padding: 3rem 3rem 0 3rem !important;
+  }
+  .manage-list {
+    padding: 0 3rem !important;
+  }
+}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .mainDiv {
+    padding: 4rem 6rem 0 6rem !important;
+  }
+  .manage-list {
+    padding: 0 6rem !important;
+  }
+}
+
+.logo-center {
+  margin-right: auto;
+  width: 15%;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  padding: 2rem 0 0 !important;
+}
+.center-img {
+  display: block;
+  width: 50%;
+  padding: 2rem 0 0 !important;
+  margin-left: 4.2rem;
+}
+
+.loginForm {
+  margin: 10%;
+}
+.forgetForm,
+.ResetForm {
+  margin: 6% 4%;
+}
+
+/* Login Page */
+
+.invalid {
+  border: 1px solid red !important;
+}
+
+/* input:not(:focus):valid ~ .floating-label  */
+input:focus ~ .floating-label,
+input:not(:focus):valid ~ .floating-label {
+  top: -20px;
+  bottom: 10px;
+  left: 2px;
+  font-size: 11px;
+  opacity: 1;
+}
+input:focus ~ .form-floating-label,
+input:not(:focus):valid ~ .form-floating-label {
+  top: -20px;
+  bottom: 10px;
+  left: 14px !important;
+  font-size: 11px;
+  opacity: 1;
+}
+.floating-label {
+  position: absolute;
+  pointer-events: none;
+  left: 8px;
+  top: 10px;
+  transition: 0.2s ease all;
+  font-weight: 500 !important;
+  font-size: 0.8rem !important;
+  color: #141e33 !important;
+}
+.form-floating-label {
+  position: absolute;
+  pointer-events: none;
+  left: 24px !important;
+  top: 10px;
+  transition: 0.2s ease all;
+  font-weight: 500 !important;
+  font-size: 0.8rem !important;
+  color: #141e33 !important;
+}
+.form-group-position {
+  position: relative !important;
+}
+.form-group {
+  margin-bottom: 2rem;
+  /* padding: 0px 2rem; */
+}
+#form-error {
+  font-size: 0.875rem !important;
+  margin-bottom: 1.2rem !important;
+  text-align: center !important;
+}
+.form-control {
+  border-radius: 0rem;
+  border: 1px solid #959595;
+}
+.logoText {
+  letter-spacing: 0.5px;
+  color: #343741;
+  text-align: center;
+  font-family: Arial;
+  font-size: 0.875rem;
+  margin: 0 0 0 2.2rem;
+}
+
+#loginDiv,
+#resetDiv,
+#forgetDiv {
+  position: relative;
+}
+
+#loginBtn {
+  font-size: 14px;
+  width: 33%;
+  color: #343741;
+}
+#resetBtn,
+#forgetResetPasswordBtn {
+  font-size: 14px;
+  font-weight: normal;
+  width: 60%;
+  color: #343741;
+}
+.vertical-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 15%);
+  padding: 0px;
+  /* margin: 80px 458px 0; */
+  /* box-shadow: 0 2px 4px 0 #cccccc;
+  border: solid 1px #f5f5f5; */
+  box-shadow: none;
+  border: none;
+}
+
+.button-login,
+.button-login:hover,
+.button-login:visited,
+.button-login:active {
+  background-color: #efb21a;
+  color: #343741;
+  border: none;
+  border-radius: 20px;
+  /* width: 34%; */
+}
+
+#forgotPassword,
+#backtoLogin {
+  text-decoration: underline;
+  color: #5b3880;
+  font-size: 15px;
+}
+
+/* Forget Password and Reset */
+#resetPasswordBtn,
+#forgetResetPasswordBtn {
+  font-size: 14px;
+  font-weight: normal;
+  color: #343741;
+}
+
+#loginbody,
+#resetPassword,
+#forgetPasswordbody {
+  padding: 1.25rem 0px;
+}
+
+.passwordBody {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.25rem;
+  text-align: center;
+  font-weight: bold;
+}
+.confirmPassword-BottomMargin {
+  margin-bottom: 1rem !important;
+}
+.message {
+  color: red;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+#forgot-formMessage {
+  color: green;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+#forgot-formBody,
+#reset-formBody {
+  margin: 1rem;
+}
+.goBackButton {
+  font-size: 12px;
+  margin: 2rem;
+  font-weight: bold;
+}
+/*Index Page */
+
+.jumbotron {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  background-color: #ffffff;
+  border-radius: 0rem;
+}
+
+.bellIcon {
+  padding: 0px;
+}
+
+.borderleft {
+  border-left: 1px solid #cccccc;
+}
+
+.name {
+  padding: 1rem 0;
+}
+
+.mainDiv {
+  padding: 4rem 6rem 0 6rem;
+}
+
+.headline {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.bodyText {
+  text-align: center;
+  padding: 0.8rem;
+  font-size: 1rem;
+}
+.card-position {
+  position: relative !important;
+}
+.card {
+  height: 100%;
+  border-radius: 0 !important;
+  position: absolute;
+  border: none !important;
+  box-shadow: 0 2px 4px 0 #cccccc;
+}
+
+.card-spacing {
+  margin: 0 0 2rem 0;
+  padding-right: 0rem;
+}
+.card-body-margin-top {
+  margin-top: 0px !important;
+}
+.card-body {
+  padding: 3rem 1.45rem 1.45rem !important;
+  background: #fff !important;
+  margin-top: 87px;
+}
+.card-footer {
+  padding: 2.25rem;
+  background-color: #fff;
+  border: none;
+  text-align: center;
+}
+
+.btn-warning,
+.btn-outline-secondary {
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  padding: 0.5rem 1.5rem;
+  /* width: 100%; */
+  white-space: normal;
+}
+
+.manage-list {
+  padding: 0 6rem;
+}
+.manage-list-body-adminOnly {
+  padding: 0 1rem 0rem 1rem !important;
+  margin: 0px !important;
+}
+.manage-list-body {
+  padding: 0rem 3rem 1rem !important;
+  margin-top: 0px !important;
+}
+
+.vertical-middle-Managebutton {
+  transform: translateY(30%);
+}
+.mode {
+  background-color: rgba(244, 44, 188, 0.89);
+  color: white;
+  border-radius: 0.2rem;
+  /* height: 1.75rem; */
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.no-padding {
+  padding: 0px !important;
+}
+/* MultiStep Form*/
+.mainHeading {
+  color: #141e33;
+  margin: 5rem 0rem 0rem !important;
+}
+#msform,
+#createTouchform {
+  /* text-align: center; */
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+#msform fieldset,
+#createTouchform fieldset {
+  background: white;
+  border: 0 none;
+  border-radius: 0px;
+  box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+  padding: 3rem 3rem 1rem;
+  box-sizing: border-box;
+  width: 80%;
+  margin: 0 10%;
+  /*stacking fieldsets above each other*/
+  position: relative;
+}
+
+/*Hide all except first fieldset*/
+#msform fieldset:not(:first-of-type),
+#createTouchform fieldset:not(:first-of-type) {
+  display: none;
+}
+
+/*inputs*/
+#msform input,
+#msform textarea,
+#msform select,
+#createTouchform input,
+#createTouchform textarea,
+#createTouchform select {
+  padding: 0.6rem;
+  border: 1px solid #959595;
+  border-radius: 0px;
+  margin-bottom: 1.6rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: Helvetica;
+  color: #495060;
+  font-size: 13px;
+  height: auto;
+}
+
+#msform input:focus,
+#msform textarea:focus,
+#createTouchform input:focus,
+#createTouchform textarea:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #ee0979;
+  outline-width: 0;
+  transition: All 0.5s ease-in;
+  -webkit-transition: All 0.5s ease-in;
+  -moz-transition: All 0.5s ease-in;
+  -o-transition: All 0.5s ease-in;
+}
+.selectdiv:after {
+  content: "\f078";
+  font: normal normal normal 17px/1 FontAwesome;
+  color: #efb21a;
+  right: 11px;
+  top: 3px;
+  height: 34px;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  pointer-events: none;
+}
+.selectdiv select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  /* Add some styling */
+}
+.form-control option {
+  font-size: 0.875rem !important;
+}
+/*buttons*/
+#msform .action-button,
+#createTouchform .action-button {
+  width: 100px;
+  background: #ee0979;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 25px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+
+#msform .action-button:hover,
+#msform .action-button:focus,
+#createTouchform .action-button:hover,
+#createTouchform .action-button:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #ee0979;
+}
+
+#msform .action-button-previous,
+#createTouchform .action-button-previous {
+  width: 100px;
+  background: #c5c5f1;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 25px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus,
+#createTouchform .action-button-previous:hover,
+#createTouchform .action-button-previous:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #c5c5f1;
+}
+
+/*headings*/
+.fs-title {
+  font-size: 1.25rem;
+  color: #141e33;
+  margin-bottom: 28px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.fs-subtitle {
+  font-weight: normal;
+  font-size: 0.875rem;
+  color: #141e33;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/*progressbar*/
+#progressbar {
+  margin-bottom: 30px;
+  overflow: hidden;
+  /*CSS counters to number the steps*/
+  counter-reset: step;
+}
+
+#progressbar li {
+  list-style-type: none;
+  /* color: white; */
+  /* text-transform: uppercase; */
+  font-size: 1rem;
+  /* width: 29%; */
+  width: auto;
+  float: left;
+  position: relative;
+  padding: 0rem 1.7rem;
+  /* letter-spacing: 1px; */
+}
+
+li.active {
+  font-weight: bold;
+  color: #5b3880;
+}
+
+li.active:before {
+  font-weight: bold;
+  color: #5b3880 !important;
+}
+
+#progressbar li:before {
+  content: counter(step);
+  counter-increment: step;
+  width: 24px;
+  height: 24px;
+  line-height: 26px;
+  /* display: block; */
+  font-size: 1rem;
+  color: #333;
+  /* background: white; */
+  border-radius: 25px;
+  margin: 0 auto 10px auto;
+}
+
+/*progressbar connectors*/
+#progressbar li:after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  /* background: white; */
+  position: absolute;
+  left: -50%;
+  top: 9px;
+  z-index: -1;
+  /*put it behind the numbers*/
+}
+
+#progressbar li:first-child:after {
+  /*connector not needed before the first step*/
+  content: none;
+}
+
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+/* #progressbar li.active:before, #progressbar li.active:after {
+    background: #ee0979;
+    color: white;
+} */
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.tablefieldset {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  margin: 0px !important;
+}
+/* Not relevant to this form */
+/* .dme_link {
+    margin-top: 30px;
+    text-align: center;
+}
+.dme_link a {
+    background: #FFF;
+    font-weight: bold;
+    color: #ee0979;
+    border: 0 none;
+    border-radius: 25px;
+    cursor: pointer;
+    padding: 5px 25px;
+    font-size: 12px;
+}
+
+.dme_link a:hover, .dme_link a:focus {
+    background: #C5C5F1;
+    text-decoration: none;
+} */
+/* DatePicker Image */
+.calenderImage {
+  background-image: url(http://zeus2embhapp90.embhdb.com/res/EMBH_Dev/icon-calendar-grey-20.png);
+  background-repeat: no-repeat;
+  background-position: 94%;
+  cursor: pointer;
+}
+.selectCampaignDates {
+  float: left;
+  font-size: 0.875rem;
+  color: #141e33;
+}
+.saveandContinue {
+  font-size: 0.875rem;
+  float: right;
+}
+.datepicker table tr td.today,
+.datepicker table tr td.today.disabled,
+.datepicker table tr td.today.disabled:hover,
+.datepicker table tr td.today:hover {
+  height: 27px;
+  width: 27px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #5b3880;
+  background-color: #fff;
+  background-image: linear-gradient(to bottom, #fff, #fff);
+  background-repeat: repeat-x;
+}
+.datepicker .datepicker-switch {
+  color: #5b3880;
+}
+/* Modal Pop Up Start */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 13%; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.closeImg {
+  float: right;
+} /* Modal Pop Up End */
+.overViewfieldset {
+  width: auto !important;
+  margin: 0 30% !important;
+}
+.addCampaignfieldset {
+  margin: 0 30% !important;
+  width: auto !important;
+}
+.addCampaignTablefieldset {
+  background: none !important;
+  border: none !important;
+  border-radius: 0px !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+.radiobuttonLabel {
+  color: #141e33;
+  text-align: left;
+  font-size: 1rem;
+}
+.radiobuttonValue {
+  font-size: 0.875rem;
+}
+.radiobuttonImg {
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+}
+.segmentlist {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.segmentlabel {
+  font-size: 0.875rem;
+  color: #141e33;
+}
+.hr {
+  margin: 0.4rem 0rem;
+  border: 0.5px solid #cccccc;
+}
+.segmentTrashImg {
+  float: right;
+  padding: 0.2rem;
+}
+.segmentlist li {
+  color: #5b3880;
+  font-size: 0.875rem;
+}
+.segmentInput {
+  width: auto !important;
+  margin: 0px !important;
+}
+#addSegments {
+  color: #141e33;
+  font-size: 0.875rem;
+  padding: 0.59rem;
+  border-radius: 0px;
+  background-color: #efb21a;
+  border-color: #efb21a;
+}
+.backbtn {
+  background: none;
+  padding: 0px;
+}
+.backImg {
+  width: 15px;
+  height: 14px;
+}
+.or {
+  font-size: 0.875rem;
+  color: #5b3880;
+  font-weight: bold;
+}

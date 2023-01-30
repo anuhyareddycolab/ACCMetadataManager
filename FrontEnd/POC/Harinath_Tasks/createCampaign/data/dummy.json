@@ -1,0 +1,106 @@
+  
+
+       {
+          "campaign_collection":[
+             {
+                "campaign":{
+                   "brandId":"1245",
+                   "brandName":"brand165365",
+                   "campaignCode":"CAM100008",
+                   "campaignDescription":"",
+                   "campaignName":"Medicare2",
+                   "campaignStartDate":"2021-03-22",
+                   "campaignendDate":"2021-03-25",
+                   "created":"2021-03-30 09:18:51.225Z",
+                   "createdBy-id":"5963222",
+                   "id":"1122",
+                   "initiativeId":"20330",
+                   "initiativeName":"initiative",
+                   "isArchived":"0",
+                   "isDeleted":"0",
+                   "isMarkDeleted":"0",
+                   "lastModified":"2021-03-30 09:18:51.225Z",
+                   "lobId":"1001",
+                   "lobName":"abc",
+                   "modifiedBy-id":"5963222",
+                   "operationtemplateId":"0"
+                },
+                "touch_collection":[
+                   {
+                      "touch":{
+                         "campaignId":"1122",
+                         "channelId":"1034",
+                         "channelName":"channel3",
+                         "created":"2021-04-01 09:19:09.811Z",
+                         "createdBy-id":"5963222",
+                         "estimatedDropDate":"2021-03-22",
+                         "haveOperationAssigned":"0",
+                         "havePhoneAssignments":"0",
+                         "haveSegments":"0",
+                         "haveUrlAssignments":"0",
+                         "id":"1001",
+                         "isArchived":"0",
+                         "isDeleted":"0",
+                         "isMarkDeleted":"0",
+                         "isReviewed":"0",
+                         "lastModified":"2021-04-08 13:58:16.578Z",
+                         "mailFileDueDate":"2021-03-22",
+                         "modifiedBy-id":"138221",
+                         "operationId":"0",
+                         "touchCode":"TCH1001",
+                         "touchDescription":"abcd",
+                         "touchEndDate":"2021-03-29",
+                         "touchName":"Anu touch1",
+                         "touchStartDate":"2021-03-22"
+                      },
+                      "segment_collection":[
+                         {
+                            "segment":{
+                               "created":"2021-04-01 18:33:46.945Z",
+                               "createdBy-id":"138221",
+                               "id":"1031",
+                               "isArchived":"0",
+                               "isDeleted":"0",
+                               "isMarkDeleted":"0",
+                               "lastModified":"2021-04-16 09:34:13.683Z",
+                               "modifiedBy-id":"138221",
+                               "segmentCode":"SEG1002",
+                               "segmentName":"segment10",
+                               "touchId":"1001"
+                            },
+                            "segmentAssignment_collection":[
+                               {
+                                  "segmentAssignment":{
+                                     "created":"2021-04-19 10:00:57.782Z",
+                                     "createdBy-id":"5513642",
+                                     "ctaUrlAssignmentStatus":"0",
+                                     "id":"1452",
+                                     "isArchived":"0",
+                                     "isDeleted":"0",
+                                     "isMarkDeleted":"0",
+                                     "languageId":"1091",
+                                     "languageName":"Spanish",
+                                     "lastModified":"2021-04-19 10:00:57.766Z",
+                                     "metaStatus":"0",
+                                     "modifiedBy-id":"5513642",
+                                     "phoneAssigmentStatus":"0",
+                                     "phoneNumber":"987654321",
+                                     "phoneNumberId":"1031",
+                                     "segmentAssignmentCode":"SEGA1000025",
+                                     "segmentId":"1031",
+                                     "urlLink":"www.googlek.com",
+                                     "urlLinkVanity":"",
+                                     "urlLinkWithUTM":""
+                                  }
+                               }
+                            ]
+                         }
+                        
+                      ]
+                   }
+                ]
+             }
+          ]
+       }
+ 
+ 

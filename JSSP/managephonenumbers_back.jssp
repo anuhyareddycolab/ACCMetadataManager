@@ -1,0 +1,68 @@
+<%@ page import="/nl/core/shared/nl.js" %><%
+
+loadLibrary("meta:common.js"); 
+loadLibrary("meta:managephonenumbers.js");
+ if( validateSession(response,request))
+  return;  
+response.setContentType('application/json');
+
+try{
+
+    var requestBodyString=request.getBodyAsString();    
+    var errorResponse = {};
+    
+    logMessage(requestBodyString,debugFlag);
+    logInfo("typeof(requestBodyString) :"+typeof(requestBodyString));
+    
+    var strCheck= isJSON(requestBodyString);
+    logMessage(strCheck,debugFlag);
+    
+    if(requestBodyString.length == 0 || typeof(requestBodyString) != 'string' || requestBodyString == "" || requestBodyString == undefined || strCheck == false || isNaN(requestBodyString) == false || JSON.stringify(JSON.parse(requestBodyString)) == '{}'){
+          errorResponse={"MessageID":"500","Message":"Bad request payload","Status":"Fail"};      
+          document.write(JSON.stringify(errorResponse));      
+    }
+     else if(JSON.parse(requestBodyString).methodName == "viewPhoneNumber"){
+          var ResponseObject={}; 
+             var methodName='viewPhoneNumber';
+      var phoneNumberId=requestBodyString.data.phoneNumberId;      
+          ResponseObject.methodName=methodName;                           
+            ResponseObject.data=viewPhoneNumber(phoneNumberId)                //calling function
+           
+            ResponseObject=JSON.stringify(ResponseObject);
+            logMessage(ResponseObject,debugFlag);
+            document.write(ResponseObject);  
+}
+    else if(JSON.parse(requestBodyString).methodName == "readPhoneNumbers"){
+          var ResponseObject={};                            
+            ResponseObject=readPhoneNumbers() ;               //calling function
+           
+            ResponseObject=JSON.stringify(ResponseObject);
+            logMessage(ResponseObject,debugFlag);
+            document.write(ResponseObject);        
+}
+
+
+    else if(JSON.parse(requestBodyString).methodName.indexOf("createPhoneNumber")!= -1){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createPhoneNumber(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }     
+    else if(JSON.parse(requestBodyString).methodName.indexOf("updatePhoneNumber")!= -1){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=updatePhoneNumber(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+    else{
+          errorResponse={"MessageID":"500","Message":"Error in request/response payload","Status":"Fail"};         
+          document.write(JSON.stringify(errorResponse)); 
+    }
+    
+}//end of try block
+catch(e){    
+   document.write(e); 
+  }    
+
+
+%>

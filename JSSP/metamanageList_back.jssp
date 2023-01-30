@@ -1,0 +1,94 @@
+﻿<%@ page import="/nl/core/shared/nl.js" %><%
+var login="krgupta";
+logonEscalation(login);
+loadLibrary("meta:common_Back.js"); 
+loadLibrary("meta:manageList_back.js"); 
+   
+response.setContentType('application/json');
+try{
+
+    var requestBodyString=request.getBodyAsString();    
+    var errorResponse = {};
+    
+    logMessage(requestBodyString,debugFlag);
+    logInfo("typeof(requestBodyString) :"+typeof(requestBodyString));
+    
+    var strCheck= isJSON(requestBodyString);
+    logMessage(strCheck,debugFlag);
+    
+    if(requestBodyString.length == 0 || typeof(requestBodyString) != 'string' || requestBodyString == "" || requestBodyString == undefined || strCheck == false || isNaN(requestBodyString) == false || JSON.stringify(JSON.parse(requestBodyString)) == '{}'){
+          errorResponse={"MessageID":"300","Message":"Bad request payload","Status":"Fail"};      
+          document.write(JSON.stringify(errorResponse));      
+    }
+    else if(JSON.parse(requestBodyString).methodName.length == 0){
+          errorResponse={"MessageID":"300","Message":"Method Name is invalid in request payload","Status":"Fail"};         
+          document.write(JSON.stringify(errorResponse)); 
+    }
+    else if(JSON.parse(requestBodyString).methodName == "viewManageList"){
+          var ResponseObject={}; 
+          var methodName="viewManageList";
+          ResponseObject.methodName=methodName;
+          var metaData=[];
+          var metalist;
+          metalist = getOption("metaListCategory");                     //option to get managelist category
+          var category=[];
+          category=metalist.split(",");
+            for(var i = 0; i < category.length; i++){
+            var metalistdata=getMetaLists(category[i])                //calling function
+            metaData.push(metalistdata);
+            ResponseObject.metaData=metaData;    
+             }
+            ResponseObject=JSON.stringify(ResponseObject);
+            logMessage(ResponseObject,debugFlag);
+            document.write(ResponseObject);  
+    }
+    else if(JSON.parse(requestBodyString).methodName == "createInitiative"){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+     else if(JSON.parse(requestBodyString).methodName == "createBrand"){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+     else if(JSON.parse(requestBodyString).methodName == "createChannel"){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+     else if(JSON.parse(requestBodyString).methodName == "createLOB"){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+     else if(JSON.parse(requestBodyString).methodName == "createLanguage"){
+         var requestBodyObject=JSON.parse(requestBodyString);
+         var ResponseObject=createManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+     else if(JSON.parse(requestBodyString).methodName.indexOf("update")!= -1){
+         var requestBodyObject=JSON.parse(requestBodyString); 
+         var ResponseObject=updateManageMetaList(requestBodyObject);
+         logMessage(ResponseObject,debugFlag);
+         document.write(ResponseObject);  
+    }
+    else{
+          errorResponse={"MessageID":"300","Message":"Error in request/response payload","Status":"Fail"};         
+          document.write(JSON.stringify(errorResponse)); 
+    }
+    
+}//end of try block
+catch(e){    
+   document.write(e); 
+  }
+
+      
+
+
+%>
